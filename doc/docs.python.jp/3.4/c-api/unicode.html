@@ -1,0 +1,1827 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Unicode オブジェクトと codec &mdash; Python 3.4.3 ドキュメント</title>
+    
+    <link rel="stylesheet" href="../_static/pydoctheme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.4.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Python 3.4.3 ドキュメント 内を検索"
+          href="../_static/opensearch.xml"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="Python 3.4.3 ドキュメント" href="../contents.html" />
+    <link rel="up" title="具象オブジェクト (concrete object) レイヤ" href="concrete.html" />
+    <link rel="next" title="タプルオブジェクト (tuple object)" href="tuple.html" />
+    <link rel="prev" title="bytearray オブジェクト" href="bytearray.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/py.png" />
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/_jp.js"></script>
+    <script type="text/javascript" src="../_static/version_switch.js"></script>
+    
+ 
+
+  <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-34175846-1', 'python.jp');
+        ga('send', 'pageview');
+
+      </script>
+  <body role="document">  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="tuple.html" title="タプルオブジェクト (tuple object)"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="bytearray.html" title="bytearray オブジェクト"
+             accesskey="P">前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="https://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.4.3</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Python/C API リファレンスマニュアル</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="concrete.html" accesskey="U">具象オブジェクト (concrete object) レイヤ</a> &raquo;</li> 
+      </ul>
+    </div>    
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="unicode-objects-and-codecs">
+<span id="unicodeobjects"></span><h1>Unicode オブジェクトと codec<a class="headerlink" href="#unicode-objects-and-codecs" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="unicode-objects">
+<h2>Unicode オブジェクト<a class="headerlink" href="#unicode-objects" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Python3.3 の <span class="target" id="index-7"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0393"><strong>PEP 393</strong></a> 実装から、メモリ効率を維持しながらUnicode文字の完全な範囲を扱えるように、Unicodeオブジェクトは内部的に多様な表現を用いています。すべてのコードポイントが128、256または65536以下の文字列に対して特別なケースが存在しますが、それ以外ではコードポイントは1114112以下(これはすべてのUnicode範囲です)でなければなりません。</p>
+<p><a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE*</span></code></a> および UTF-8表現はオンデマンドで作成され、Unicode オブジェクト内にキャッシュされます。<a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE*</span></code></a> 表現は推奨されず、非効率ですので、重要なタスクを実行し、メモリを消費している状況下では避けるべきです。</p>
+<p>古いAPI群と新しいAPI群での変換のために、ユニコードオブジェクトは、オブジェクトがどのように生成されたかによって、内部的に２つの状態を持ちます。</p>
+<ul class="simple">
+<li><p class="first">&#8220;正規化された&#8221; unicode オブジェクトは、非推奨ではないunicode APIで作成されたすべてのオブジェクトです。これらのオブジェクトは実装が許すかぎり最も効率の良い表現を使用します。</p>
+</li>
+<li>&#8220;legacy&#8221; unicode objects have been created through one of the deprecated
+APIs (typically <a class="reference internal" href="#c.PyUnicode_FromUnicode" title="PyUnicode_FromUnicode"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_FromUnicode()</span></code></a>) and only bear the
+<a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE*</span></code></a> representation; you will have to call
+<a class="reference internal" href="#c.PyUnicode_READY" title="PyUnicode_READY"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_READY()</span></code></a> on them before calling any other API.</li>
+</ul>
+<div class="section" id="unicode-type">
+<h3>Unicode 型<a class="headerlink" href="#unicode-type" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>以下は Python の Unicode 実装に用いられている基本 Unicode オブジェクト型です:</p>
+<dl class="type">
+<dt id="c.Py_UCS4">
+<code class="descname">Py_UCS4</code><a class="headerlink" href="#c.Py_UCS4" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="c.Py_UCS2">
+<code class="descname">Py_UCS2</code><a class="headerlink" href="#c.Py_UCS2" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="c.Py_UCS1">
+<code class="descname">Py_UCS1</code><a class="headerlink" href="#c.Py_UCS1" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>これらの型は、それぞれ、32ビット、16ビット、そして8ビットの文字を保持するのに充分な幅を持つ符号なしの整数型のtypedefです。単一のUnicode文字を扱う場合は、 <a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4"><code class="xref c c-type docutils literal"><span class="pre">Py_UCS4</span></code></a> を用いてください。</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="type">
+<dt id="c.Py_UNICODE">
+<code class="descname">Py_UNICODE</code><a class="headerlink" href="#c.Py_UNICODE" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>これは、<code class="xref c c-type docutils literal"><span class="pre">wchar_t</span></code> のtypedef で、プラットフォームに依存して16ビットか32ビットの型になります。</p>
+<div class="versionchanged">
+<p><span class="versionmodified">バージョン 3.3 で変更: </span>以前のバージョンでは、Pythonをビルドした際に &#8220;narrow&#8221; または &#8220;wide&#8221; Unicode バージョンのどちらを選択したかによって、 16ビットか32ビットのどちらかの型になっていました。</p>
+</div>
+</dd></dl>
+
+<dl class="type">
+<dt id="c.PyASCIIObject">
+<code class="descname">PyASCIIObject</code><a class="headerlink" href="#c.PyASCIIObject" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="c.PyCompactUnicodeObject">
+<code class="descname">PyCompactUnicodeObject</code><a class="headerlink" href="#c.PyCompactUnicodeObject" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="c.PyUnicodeObject">
+<code class="descname">PyUnicodeObject</code><a class="headerlink" href="#c.PyUnicodeObject" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>These subtypes of <a class="reference internal" href="structures.html#c.PyObject" title="PyObject"><code class="xref c c-type docutils literal"><span class="pre">PyObject</span></code></a> represent a Python Unicode object.  In
+almost all cases, they shouldn&#8217;t be used directly, since all API functions
+that deal with Unicode objects take and return <a class="reference internal" href="structures.html#c.PyObject" title="PyObject"><code class="xref c c-type docutils literal"><span class="pre">PyObject</span></code></a> pointers.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="var">
+<dt id="c.PyUnicode_Type">
+<a class="reference internal" href="type.html#c.PyTypeObject" title="PyTypeObject">PyTypeObject</a> <code class="descname">PyUnicode_Type</code><a class="headerlink" href="#c.PyUnicode_Type" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>この <a class="reference internal" href="type.html#c.PyTypeObject" title="PyTypeObject"><code class="xref c c-type docutils literal"><span class="pre">PyTypeObject</span></code></a> のインスタンスは、Python Unicode型を表します。これは、Pythonコードに <code class="docutils literal"><span class="pre">str</span></code> として露出されます。</p>
+</dd></dl>
+
+<p>以下の API は実際には C マクロで、Unicode オブジェクト内部の読み出し専用データに対するチェックやアクセスを高速に行います:</p>
+<dl class="function">
+<dt id="c.PyUnicode_Check">
+int <code class="descname">PyUnicode_Check</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*o</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_Check" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>o</em> が Unicode 文字列型か Unicode 文字列型のサブタイプであるときに真を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_CheckExact">
+int <code class="descname">PyUnicode_CheckExact</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*o</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_CheckExact" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>o</em> が Unicode 文字列型で、かつ Unicode 文字列型のサブタイプでないときに真を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_READY">
+int <code class="descname">PyUnicode_READY</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*o</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_READY" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Ensure the string object <em>o</em> is in the &#8220;canonical&#8221; representation.  This is
+required before using any of the access macros described below.</p>
+<p>Returns 0 on success and -1 with an exception set on failure, which in
+particular happens if memory allocation fails.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_GET_LENGTH">
+Py_ssize_t <code class="descname">PyUnicode_GET_LENGTH</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*o</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_GET_LENGTH" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the length of the Unicode string, in code points.  <em>o</em> has to be a
+Unicode object in the &#8220;canonical&#8221; representation (not checked).</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_1BYTE_DATA">
+<a class="reference internal" href="#c.Py_UCS1" title="Py_UCS1">Py_UCS1</a>* <code class="descname">PyUnicode_1BYTE_DATA</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*o</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_1BYTE_DATA" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="c.PyUnicode_2BYTE_DATA">
+<a class="reference internal" href="#c.Py_UCS2" title="Py_UCS2">Py_UCS2</a>* <code class="descname">PyUnicode_2BYTE_DATA</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*o</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_2BYTE_DATA" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="c.PyUnicode_4BYTE_DATA">
+<a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a>* <code class="descname">PyUnicode_4BYTE_DATA</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*o</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_4BYTE_DATA" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a pointer to the canonical representation cast to UCS1, UCS2 or UCS4
+integer types for direct character access.  No checks are performed if the
+canonical representation has the correct character size; use
+<a class="reference internal" href="#c.PyUnicode_KIND" title="PyUnicode_KIND"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_KIND()</span></code></a> to select the right macro.  Make sure
+<a class="reference internal" href="#c.PyUnicode_READY" title="PyUnicode_READY"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_READY()</span></code></a> has been called before accessing this.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="macro">
+<dt id="c.PyUnicode_WCHAR_KIND">
+<code class="descname">PyUnicode_WCHAR_KIND</code><a class="headerlink" href="#c.PyUnicode_WCHAR_KIND" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="c.PyUnicode_1BYTE_KIND">
+<code class="descname">PyUnicode_1BYTE_KIND</code><a class="headerlink" href="#c.PyUnicode_1BYTE_KIND" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="c.PyUnicode_2BYTE_KIND">
+<code class="descname">PyUnicode_2BYTE_KIND</code><a class="headerlink" href="#c.PyUnicode_2BYTE_KIND" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="c.PyUnicode_4BYTE_KIND">
+<code class="descname">PyUnicode_4BYTE_KIND</code><a class="headerlink" href="#c.PyUnicode_4BYTE_KIND" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return values of the <a class="reference internal" href="#c.PyUnicode_KIND" title="PyUnicode_KIND"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_KIND()</span></code></a> macro.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_KIND">
+int <code class="descname">PyUnicode_KIND</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*o</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_KIND" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return one of the PyUnicode kind constants (see above) that indicate how many
+bytes per character this Unicode object uses to store its data.  <em>o</em> has to
+be a Unicode object in the &#8220;canonical&#8221; representation (not checked).</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_DATA">
+void* <code class="descname">PyUnicode_DATA</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*o</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_DATA" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a void pointer to the raw unicode buffer.  <em>o</em> has to be a Unicode
+object in the &#8220;canonical&#8221; representation (not checked).</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_WRITE">
+void <code class="descname">PyUnicode_WRITE</code><span class="sig-paren">(</span>int<em>&nbsp;kind</em>, void<em>&nbsp;*data</em>, Py_ssize_t<em>&nbsp;index</em>, <a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;value</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_WRITE" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Write into a canonical representation <em>data</em> (as obtained with
+<a class="reference internal" href="#c.PyUnicode_DATA" title="PyUnicode_DATA"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_DATA()</span></code></a>).  This macro does not do any sanity checks and is
+intended for usage in loops.  The caller should cache the <em>kind</em> value and
+<em>data</em> pointer as obtained from other macro calls.  <em>index</em> is the index in
+the string (starts at 0) and <em>value</em> is the new code point value which should
+be written to that location.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_READ">
+<a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a> <code class="descname">PyUnicode_READ</code><span class="sig-paren">(</span>int<em>&nbsp;kind</em>, void<em>&nbsp;*data</em>, Py_ssize_t<em>&nbsp;index</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_READ" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Read a code point from a canonical representation <em>data</em> (as obtained with
+<a class="reference internal" href="#c.PyUnicode_DATA" title="PyUnicode_DATA"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_DATA()</span></code></a>).  No checks or ready calls are performed.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_READ_CHAR">
+<a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a> <code class="descname">PyUnicode_READ_CHAR</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*o</em>, Py_ssize_t<em>&nbsp;index</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_READ_CHAR" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Read a character from a Unicode object <em>o</em>, which must be in the &#8220;canonical&#8221;
+representation.  This is less efficient than <a class="reference internal" href="#c.PyUnicode_READ" title="PyUnicode_READ"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_READ()</span></code></a> if you
+do multiple consecutive reads.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_MAX_CHAR_VALUE">
+<code class="descname">PyUnicode_MAX_CHAR_VALUE</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*o</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_MAX_CHAR_VALUE" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the maximum code point that is suitable for creating another string
+based on <em>o</em>, which must be in the &#8220;canonical&#8221; representation.  This is
+always an approximation but more efficient than iterating over the string.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_ClearFreeList">
+int <code class="descname">PyUnicode_ClearFreeList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_ClearFreeList" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>free list をクリアします。解放された要素数を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_GET_SIZE">
+Py_ssize_t <code class="descname">PyUnicode_GET_SIZE</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*o</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_GET_SIZE" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the size of the deprecated <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> representation, in
+code units (this includes surrogate pairs as 2 units).  <em>o</em> has to be a
+Unicode object (not checked).</p>
+<div class="deprecated-removed">
+<p><span class="versionmodified">Deprecated since version 3.3, will be removed in version 4.0: </span>Part of the old-style Unicode API, please migrate to using
+<a class="reference internal" href="#c.PyUnicode_GET_LENGTH" title="PyUnicode_GET_LENGTH"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_GET_LENGTH()</span></code></a>.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_GET_DATA_SIZE">
+Py_ssize_t <code class="descname">PyUnicode_GET_DATA_SIZE</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*o</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_GET_DATA_SIZE" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the size of the deprecated <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> representation in
+bytes.  <em>o</em> has to be a Unicode object (not checked).</p>
+<div class="deprecated-removed">
+<p><span class="versionmodified">Deprecated since version 3.3, will be removed in version 4.0: </span>Part of the old-style Unicode API, please migrate to using
+<a class="reference internal" href="#c.PyUnicode_GET_LENGTH" title="PyUnicode_GET_LENGTH"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_GET_LENGTH()</span></code></a>.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_AS_UNICODE">
+<a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a>* <code class="descname">PyUnicode_AS_UNICODE</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*o</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AS_UNICODE" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="c.PyUnicode_AS_DATA">
+const char* <code class="descname">PyUnicode_AS_DATA</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*o</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AS_DATA" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a pointer to a <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> representation of the object.  The
+returned buffer is always terminated with an extra null code point.  It
+may also contain embedded null code points, which would cause the string
+to be truncated when used in most C functions.  The <code class="docutils literal"><span class="pre">AS_DATA</span></code> form
+casts the pointer to <code class="xref c c-type docutils literal"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*</span></code>.  The <em>o</em> argument has to be
+a Unicode object (not checked).</p>
+<div class="versionchanged">
+<p><span class="versionmodified">バージョン 3.3 で変更: </span>This macro is now inefficient &#8211; because in many cases the
+<a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> representation does not exist and needs to be created
+&#8211; and can fail (return <em>NULL</em> with an exception set).  Try to port the
+code to use the new <code class="xref c c-func docutils literal"><span class="pre">PyUnicode_nBYTE_DATA()</span></code> macros or use
+<a class="reference internal" href="#c.PyUnicode_WRITE" title="PyUnicode_WRITE"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_WRITE()</span></code></a> or <a class="reference internal" href="#c.PyUnicode_READ" title="PyUnicode_READ"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_READ()</span></code></a>.</p>
+</div>
+<div class="deprecated-removed">
+<p><span class="versionmodified">Deprecated since version 3.3, will be removed in version 4.0: </span>Part of the old-style Unicode API, please migrate to using the
+<code class="xref c c-func docutils literal"><span class="pre">PyUnicode_nBYTE_DATA()</span></code> family of macros.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="unicode-character-properties">
+<h3>Unicode 文字プロパティ<a class="headerlink" href="#unicode-character-properties" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Unicode は数多くの異なる文字プロパティ (character property) を提供しています。よく使われる文字プロパティは、以下のマクロで利用できます。これらのマクロは Python の設定に応じて、各々 C の関数に対応付けられています。</p>
+<dl class="function">
+<dt id="c.Py_UNICODE_ISSPACE">
+int <code class="descname">Py_UNICODE_ISSPACE</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;ch</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_ISSPACE" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>ch</em> が空白文字かどうかに応じて 1 または 0 を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Py_UNICODE_ISLOWER">
+int <code class="descname">Py_UNICODE_ISLOWER</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;ch</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_ISLOWER" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>ch</em> が小文字かどうかに応じて 1 または 0 を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Py_UNICODE_ISUPPER">
+int <code class="descname">Py_UNICODE_ISUPPER</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;ch</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_ISUPPER" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>ch</em> が大文字かどうかに応じて 1 または 0 を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Py_UNICODE_ISTITLE">
+int <code class="descname">Py_UNICODE_ISTITLE</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;ch</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_ISTITLE" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>ch</em> がタイトルケース文字 (titlecase character) かどうかに応じて 1 または 0 を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Py_UNICODE_ISLINEBREAK">
+int <code class="descname">Py_UNICODE_ISLINEBREAK</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;ch</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_ISLINEBREAK" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>ch</em> が改行文字かどうかに応じて 1 または 0 を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Py_UNICODE_ISDECIMAL">
+int <code class="descname">Py_UNICODE_ISDECIMAL</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;ch</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_ISDECIMAL" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>ch</em> が 10 進の数字文字かどうかに応じて 1 または 0 を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Py_UNICODE_ISDIGIT">
+int <code class="descname">Py_UNICODE_ISDIGIT</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;ch</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_ISDIGIT" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>ch</em> が 2 進の数字文字かどうかに応じて 1 または 0 を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Py_UNICODE_ISNUMERIC">
+int <code class="descname">Py_UNICODE_ISNUMERIC</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;ch</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_ISNUMERIC" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>ch</em> が数字文字かどうかに応じて 1 または 0 を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Py_UNICODE_ISALPHA">
+int <code class="descname">Py_UNICODE_ISALPHA</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;ch</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_ISALPHA" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>ch</em> がアルファベット文字かどうかに応じて 1 または 0 を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Py_UNICODE_ISALNUM">
+int <code class="descname">Py_UNICODE_ISALNUM</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;ch</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_ISALNUM" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>ch</em> が英数文字かどうかに応じて 1 または 0 を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Py_UNICODE_ISPRINTABLE">
+int <code class="descname">Py_UNICODE_ISPRINTABLE</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;ch</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_ISPRINTABLE" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return 1 or 0 depending on whether <em>ch</em> is a printable character.
+Nonprintable characters are those characters defined in the Unicode character
+database as &#8220;Other&#8221; or &#8220;Separator&#8221;, excepting the ASCII space (0x20) which is
+considered printable.  (Note that printable characters in this context are
+those which should not be escaped when <a class="reference internal" href="../library/functions.html#repr" title="repr"><code class="xref py py-func docutils literal"><span class="pre">repr()</span></code></a> is invoked on a string.
+It has no bearing on the handling of strings written to <a class="reference internal" href="../library/sys.html#sys.stdout" title="sys.stdout"><code class="xref py py-data docutils literal"><span class="pre">sys.stdout</span></code></a> or
+<a class="reference internal" href="../library/sys.html#sys.stderr" title="sys.stderr"><code class="xref py py-data docutils literal"><span class="pre">sys.stderr</span></code></a>.)</p>
+</dd></dl>
+
+<p>以下の API は、高速に直接文字変換を行うために使われます:</p>
+<dl class="function">
+<dt id="c.Py_UNICODE_TOLOWER">
+<a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a> <code class="descname">Py_UNICODE_TOLOWER</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;ch</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_TOLOWER" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>ch</em> を小文字に変換したものを返します。</p>
+<div class="deprecated">
+<p><span class="versionmodified">バージョン 3.3 で撤廃: </span>This function uses simple case mappings.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Py_UNICODE_TOUPPER">
+<a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a> <code class="descname">Py_UNICODE_TOUPPER</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;ch</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_TOUPPER" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>ch</em> を大文字に変換したものを返します。</p>
+<div class="deprecated">
+<p><span class="versionmodified">バージョン 3.3 で撤廃: </span>This function uses simple case mappings.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Py_UNICODE_TOTITLE">
+<a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a> <code class="descname">Py_UNICODE_TOTITLE</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;ch</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_TOTITLE" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>ch</em> をタイトルケース文字に変換したものを返します。</p>
+<div class="deprecated">
+<p><span class="versionmodified">バージョン 3.3 で撤廃: </span>This function uses simple case mappings.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Py_UNICODE_TODECIMAL">
+int <code class="descname">Py_UNICODE_TODECIMAL</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;ch</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_TODECIMAL" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>ch</em> を 10 進の正の整数に変換したものを返します。不可能ならば <code class="docutils literal"><span class="pre">-1</span></code> を返します。このマクロは例外を送出しません。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Py_UNICODE_TODIGIT">
+int <code class="descname">Py_UNICODE_TODIGIT</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;ch</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_TODIGIT" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>ch</em> を一桁の 2 進整数に変換したものを返します。不可能ならば <code class="docutils literal"><span class="pre">-1</span></code> を返します。このマクロは例外を送出しません。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Py_UNICODE_TONUMERIC">
+double <code class="descname">Py_UNICODE_TONUMERIC</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;ch</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_TONUMERIC" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>ch</em> を <code class="xref c c-type docutils literal"><span class="pre">double</span></code> に変換したものを返します。不可能ならば <code class="docutils literal"><span class="pre">-1.0</span></code> を返します。このマクロは例外を送出しません。</p>
+</dd></dl>
+
+<p>These APIs can be used to work with surrogates:</p>
+<dl class="macro">
+<dt id="c.Py_UNICODE_IS_SURROGATE">
+<code class="descname">Py_UNICODE_IS_SURROGATE</code><span class="sig-paren">(</span>ch<span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_IS_SURROGATE" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Check if <em>ch</em> is a surrogate (<code class="docutils literal"><span class="pre">0xD800</span> <span class="pre">&lt;=</span> <span class="pre">ch</span> <span class="pre">&lt;=</span> <span class="pre">0xDFFF</span></code>).</p>
+</dd></dl>
+
+<dl class="macro">
+<dt id="c.Py_UNICODE_IS_HIGH_SURROGATE">
+<code class="descname">Py_UNICODE_IS_HIGH_SURROGATE</code><span class="sig-paren">(</span>ch<span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_IS_HIGH_SURROGATE" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Check if <em>ch</em> is an high surrogate (<code class="docutils literal"><span class="pre">0xD800</span> <span class="pre">&lt;=</span> <span class="pre">ch</span> <span class="pre">&lt;=</span> <span class="pre">0xDBFF</span></code>).</p>
+</dd></dl>
+
+<dl class="macro">
+<dt id="c.Py_UNICODE_IS_LOW_SURROGATE">
+<code class="descname">Py_UNICODE_IS_LOW_SURROGATE</code><span class="sig-paren">(</span>ch<span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_IS_LOW_SURROGATE" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Check if <em>ch</em> is a low surrogate (<code class="docutils literal"><span class="pre">0xDC00</span> <span class="pre">&lt;=</span> <span class="pre">ch</span> <span class="pre">&lt;=</span> <span class="pre">0xDFFF</span></code>).</p>
+</dd></dl>
+
+<dl class="macro">
+<dt id="c.Py_UNICODE_JOIN_SURROGATES">
+<code class="descname">Py_UNICODE_JOIN_SURROGATES</code><span class="sig-paren">(</span>high, low<span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UNICODE_JOIN_SURROGATES" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Join two surrogate characters and return a single Py_UCS4 value.
+<em>high</em> and <em>low</em> are respectively the leading and trailing surrogates in a
+surrogate pair.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="creating-and-accessing-unicode-strings">
+<h3>Creating and accessing Unicode strings<a class="headerlink" href="#creating-and-accessing-unicode-strings" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Unicode オブジェクトを生成したり、Unicode のシーケンスとしての基本的なプロパティにアクセスしたりするには、以下の API を使ってください:</p>
+<dl class="function">
+<dt id="c.PyUnicode_New">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_New</code><span class="sig-paren">(</span>Py_ssize_t<em>&nbsp;size</em>, <a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;maxchar</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_New" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Create a new Unicode object.  <em>maxchar</em> should be the true maximum code point
+to be placed in the string.  As an approximation, it can be rounded up to the
+nearest value in the sequence 127, 255, 65535, 1114111.</p>
+<p>This is the recommended way to allocate a new Unicode object.  Objects
+created using this function are not resizable.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_FromKindAndData">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_FromKindAndData</code><span class="sig-paren">(</span>int<em>&nbsp;kind</em>, const void<em>&nbsp;*buffer</em>, Py_ssize_t<em>&nbsp;size</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_FromKindAndData" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Create a new Unicode object with the given <em>kind</em> (possible values are
+<a class="reference internal" href="#c.PyUnicode_1BYTE_KIND" title="PyUnicode_1BYTE_KIND"><code class="xref c c-macro docutils literal"><span class="pre">PyUnicode_1BYTE_KIND</span></code></a> etc., as returned by
+<a class="reference internal" href="#c.PyUnicode_KIND" title="PyUnicode_KIND"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_KIND()</span></code></a>).  The <em>buffer</em> must point to an array of <em>size</em>
+units of 1, 2 or 4 bytes per character, as given by the kind.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_FromStringAndSize">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_FromStringAndSize</code><span class="sig-paren">(</span>const char<em>&nbsp;*u</em>, Py_ssize_t<em>&nbsp;size</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_FromStringAndSize" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Create a Unicode object from the char buffer <em>u</em>.  The bytes will be
+interpreted as being UTF-8 encoded.  The buffer is copied into the new
+object. If the buffer is not <em>NULL</em>, the return value might be a shared
+object, i.e. modification of the data is not allowed.</p>
+<p>If <em>u</em> is <em>NULL</em>, this function behaves like <a class="reference internal" href="#c.PyUnicode_FromUnicode" title="PyUnicode_FromUnicode"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_FromUnicode()</span></code></a>
+with the buffer set to <em>NULL</em>.  This usage is deprecated in favor of
+<a class="reference internal" href="#c.PyUnicode_New" title="PyUnicode_New"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_New()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_FromString">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a> *<code class="descname">PyUnicode_FromString</code><span class="sig-paren">(</span>const char<em>&nbsp;*u</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_FromString" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>UTF-8 エンコードされたNUL文字終端のchar 型バッファ <em>u</em> から Unicode オブジェクトを生成します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_FromFormat">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_FromFormat</code><span class="sig-paren">(</span>const char<em>&nbsp;*format</em>, ...<span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_FromFormat" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><code class="xref c c-func docutils literal"><span class="pre">printf()</span></code> スタイルの <em>format</em> 文字列と可変長引数を受け取り、結果の unicode 文字の長さを計算し、フォーマットされた文字列を含む unicode オブジェクトを返します。可変長引数は C の型を持っていて、 <em>format</em> ASCII エンコード文字列で指定された書式指定文字に完全に従う必要があります。以下の書式指定文字が利用できます:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="29%" />
+<col width="44%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><p class="first last">フォーマット文字</p>
+</th>
+<th class="head"><p class="first last">型</p>
+</th>
+<th class="head"><p class="first last">コメント</p>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="xref py py-attr docutils literal"><span class="pre">%%</span></code></td>
+<td><em>n/a</em></td>
+<td><p class="first last">文字 % のリテラル。</p>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-attr docutils literal"><span class="pre">%c</span></code></td>
+<td><p class="first last">int型</p>
+</td>
+<td><p class="first last">C の整数型で表現される単一の文字。</p>
+</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-attr docutils literal"><span class="pre">%d</span></code></td>
+<td><p class="first last">int型</p>
+</td>
+<td><p class="first last">C の <code class="docutils literal"><span class="pre">printf(&quot;%d&quot;)</span></code> と全く同じ。</p>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-attr docutils literal"><span class="pre">%u</span></code></td>
+<td>unsigned int</td>
+<td><p class="first last">C の <code class="docutils literal"><span class="pre">printf(&quot;%u&quot;)</span></code> と全く同じ。</p>
+</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-attr docutils literal"><span class="pre">%ld</span></code></td>
+<td><p class="first last">long型</p>
+</td>
+<td><p class="first last">C の <code class="docutils literal"><span class="pre">printf(&quot;%ld&quot;)</span></code> と全く同じ。</p>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-attr docutils literal"><span class="pre">%li</span></code></td>
+<td><p class="first last">long型</p>
+</td>
+<td><p class="first last">C の <code class="docutils literal"><span class="pre">printf(&quot;%li&quot;)</span></code> と全く同じ。</p>
+</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-attr docutils literal"><span class="pre">%lu</span></code></td>
+<td>unsigned long</td>
+<td><p class="first last">C の <code class="docutils literal"><span class="pre">printf(&quot;%lu&quot;)</span></code> と全く同じ。</p>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-attr docutils literal"><span class="pre">%lld</span></code></td>
+<td>long long</td>
+<td><p class="first last">C の <code class="docutils literal"><span class="pre">printf(&quot;%lld&quot;)</span></code> と全く同じ。</p>
+</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-attr docutils literal"><span class="pre">%lli</span></code></td>
+<td>long long</td>
+<td><p class="first last">C の <code class="docutils literal"><span class="pre">printf(&quot;%lli&quot;)</span></code> と全く同じ。</p>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-attr docutils literal"><span class="pre">%llu</span></code></td>
+<td>unsigned long long</td>
+<td><p class="first last">C の <code class="docutils literal"><span class="pre">printf(&quot;%llu&quot;)</span></code> と全く同じ。</p>
+</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-attr docutils literal"><span class="pre">%zd</span></code></td>
+<td>Py_ssize_t</td>
+<td><p class="first last">C の <code class="docutils literal"><span class="pre">printf(&quot;%zd&quot;)</span></code> と全く同じ。</p>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-attr docutils literal"><span class="pre">%zi</span></code></td>
+<td>Py_ssize_t</td>
+<td><p class="first last">C の <code class="docutils literal"><span class="pre">printf(&quot;%zi&quot;)</span></code> と全く同じ。</p>
+</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-attr docutils literal"><span class="pre">%zu</span></code></td>
+<td>size_t</td>
+<td><p class="first last">C の <code class="docutils literal"><span class="pre">printf(&quot;%zu&quot;)</span></code> と全く同じ。</p>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-attr docutils literal"><span class="pre">%i</span></code></td>
+<td><p class="first last">int型</p>
+</td>
+<td><p class="first last">C の <code class="docutils literal"><span class="pre">printf(&quot;%i&quot;)</span></code> と全く同じ。</p>
+</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-attr docutils literal"><span class="pre">%x</span></code></td>
+<td><p class="first last">int型</p>
+</td>
+<td><p class="first last">C の <code class="docutils literal"><span class="pre">printf(&quot;%x&quot;)</span></code> と全く同じ。</p>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-attr docutils literal"><span class="pre">%s</span></code></td>
+<td>char*</td>
+<td><p class="first last">null で終端された C の文字列。</p>
+</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-attr docutils literal"><span class="pre">%p</span></code></td>
+<td>void*</td>
+<td><p class="first last">C ポインタの 16 進表記。 <code class="docutils literal"><span class="pre">printf(&quot;%p&quot;)</span></code> とほとんど同じだが、プラットフォームにおける <code class="docutils literal"><span class="pre">printf</span></code> の定義に関わりなく先頭にリテラル <code class="docutils literal"><span class="pre">0x</span></code> が付きます。</p>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-attr docutils literal"><span class="pre">%A</span></code></td>
+<td>PyObject*</td>
+<td><p class="first last"><a class="reference internal" href="../library/functions.html#ascii" title="ascii"><code class="xref py py-func docutils literal"><span class="pre">ascii()</span></code></a> の戻り値。</p>
+</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-attr docutils literal"><span class="pre">%U</span></code></td>
+<td>PyObject*</td>
+<td><p class="first last">unicode オブジェクト。</p>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-attr docutils literal"><span class="pre">%V</span></code></td>
+<td>PyObject*, char *</td>
+<td><p class="first last">unicode オブジェクト(<em>NULL</em> でも良い)と、 2つめの引数として NUL 終端の C 文字列 (2つめの引数は1つめの引数が <em>NULL</em> だった時にのみ利用されます)。</p>
+</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-attr docutils literal"><span class="pre">%S</span></code></td>
+<td>PyObject*</td>
+<td><p class="first last"><a class="reference internal" href="object.html#c.PyObject_Str" title="PyObject_Str"><code class="xref c c-func docutils literal"><span class="pre">PyObject_Str()</span></code></a> の戻り値。</p>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-attr docutils literal"><span class="pre">%R</span></code></td>
+<td>PyObject*</td>
+<td><p class="first last"><a class="reference internal" href="object.html#c.PyObject_Repr" title="PyObject_Repr"><code class="xref c c-func docutils literal"><span class="pre">PyObject_Repr()</span></code></a> の戻り値。</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>識別できない書式指定文字があった場合、残りの書式文字列はそのまま出力文字列にコピーされ、残りの引数は無視されます。</p>
+<div class="admonition note">
+<p class="first admonition-title">注釈</p>
+<p class="last"><cite>&#8220;%lld&#8221;</cite> と <cite>&#8220;%llu&#8221;</cite> 書式指定文字は <code class="xref py py-const docutils literal"><span class="pre">HAVE_LONG_LONG</span></code> が定義されている時だけ利用できます。</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注釈</p>
+<p class="last">The width formatter unit is number of characters rather than bytes.
+The precision formatter unit is number of bytes for <code class="docutils literal"><span class="pre">&quot;%s&quot;</span></code> and
+<code class="docutils literal"><span class="pre">&quot;%V&quot;</span></code> (if the <code class="docutils literal"><span class="pre">PyObject*</span></code> argument is NULL), and a number of
+characters for <code class="docutils literal"><span class="pre">&quot;%A&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;%U&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;%S&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;%R&quot;</span></code> and <code class="docutils literal"><span class="pre">&quot;%V&quot;</span></code>
+(if the <code class="docutils literal"><span class="pre">PyObject*</span></code> argument is not NULL).</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">バージョン 3.2 で変更: </span>Support for <code class="docutils literal"><span class="pre">&quot;%lld&quot;</span></code> and <code class="docutils literal"><span class="pre">&quot;%llu&quot;</span></code> added.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">バージョン 3.3 で変更: </span>Support for <code class="docutils literal"><span class="pre">&quot;%li&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;%lli&quot;</span></code> and <code class="docutils literal"><span class="pre">&quot;%zi&quot;</span></code> added.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">バージョン 3.4 で変更: </span>Support width and precision formatter for <code class="docutils literal"><span class="pre">&quot;%s&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;%A&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;%U&quot;</span></code>,
+<code class="docutils literal"><span class="pre">&quot;%V&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;%S&quot;</span></code>, <code class="docutils literal"><span class="pre">&quot;%R&quot;</span></code> added.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_FromFormatV">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_FromFormatV</code><span class="sig-paren">(</span>const char<em>&nbsp;*format</em>, va_list<em>&nbsp;vargs</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_FromFormatV" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>ちょうど２つの引数を取ることを除いて、 <a class="reference internal" href="#c.PyUnicode_FromFormat" title="PyUnicode_FromFormat"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_FromFormat()</span></code></a> と同じです。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_FromEncodedObject">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_FromEncodedObject</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*obj</em>, const char<em>&nbsp;*encoding</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_FromEncodedObject" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>あるエンコード方式でエンコードされたオブジェクト <em>obj</em> を Unicode オブジェクトに型強制して、参照カウントをインクリメントして返します。</p>
+<p><a class="reference internal" href="../library/functions.html#bytes" title="bytes"><code class="xref py py-class docutils literal"><span class="pre">bytes</span></code></a>, <a class="reference internal" href="../library/functions.html#bytearray" title="bytearray"><code class="xref py py-class docutils literal"><span class="pre">bytearray</span></code></a> and other
+<a class="reference internal" href="../glossary.html#term-bytes-like-object"><span class="xref std std-term">bytes-like objects</span></a>
+are decoded according to the given <em>encoding</em> and using the error handling
+defined by <em>errors</em>. Both can be <em>NULL</em> to have the interface use the default
+values (see the next section for details).</p>
+<p>その他のUnicodeオブジェクトを含むオブジェクトは <a class="reference internal" href="../library/exceptions.html#TypeError" title="TypeError"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code></a> 例外を引き起こします。</p>
+<p>この API は、エラーが生じたときには <em>NULL</em> を返します。呼び出し側は返されたオブジェクトに対し参照カウンタを 1 つ減らす (decref) する責任があります。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_GetLength">
+Py_ssize_t <code class="descname">PyUnicode_GetLength</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_GetLength" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the length of the Unicode object, in code points.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_CopyCharacters">
+int <code class="descname">PyUnicode_CopyCharacters</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*to</em>, Py_ssize_t<em>&nbsp;to_start</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*from</em>, Py_ssize_t<em>&nbsp;from_start</em>, Py_ssize_t<em>&nbsp;how_many</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_CopyCharacters" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Copy characters from one Unicode object into another.  This function performs
+character conversion when necessary and falls back to <code class="xref c c-func docutils literal"><span class="pre">memcpy()</span></code> if
+possible.  Returns <code class="docutils literal"><span class="pre">-1</span></code> and sets an exception on error, otherwise returns
+<code class="docutils literal"><span class="pre">0</span></code>.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_Fill">
+Py_ssize_t <code class="descname">PyUnicode_Fill</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em>, Py_ssize_t<em>&nbsp;start</em>, Py_ssize_t<em>&nbsp;length</em>, <a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;fill_char</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_Fill" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Fill a string with a character: write <em>fill_char</em> into
+<code class="docutils literal"><span class="pre">unicode[start:start+length]</span></code>.</p>
+<p>Fail if <em>fill_char</em> is bigger than the string maximum character, or if the
+string has more than 1 reference.</p>
+<p>Return the number of written character, or return <code class="docutils literal"><span class="pre">-1</span></code> and raise an
+exception on error.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_WriteChar">
+int <code class="descname">PyUnicode_WriteChar</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em>, Py_ssize_t<em>&nbsp;index</em>, <a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;character</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_WriteChar" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Write a character to a string.  The string must have been created through
+<a class="reference internal" href="#c.PyUnicode_New" title="PyUnicode_New"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_New()</span></code></a>.  Since Unicode strings are supposed to be immutable,
+the string must not be shared, or have been hashed yet.</p>
+<p>This function checks that <em>unicode</em> is a Unicode object, that the index is
+not out of bounds, and that the object can be modified safely (i.e. that it
+its reference count is one), in contrast to the macro version
+<code class="xref c c-func docutils literal"><span class="pre">PyUnicode_WRITE_CHAR()</span></code>.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_ReadChar">
+<a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a> <code class="descname">PyUnicode_ReadChar</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em>, Py_ssize_t<em>&nbsp;index</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_ReadChar" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Read a character from a string.  This function checks that <em>unicode</em> is a
+Unicode object and the index is not out of bounds, in contrast to the macro
+version <a class="reference internal" href="#c.PyUnicode_READ_CHAR" title="PyUnicode_READ_CHAR"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_READ_CHAR()</span></code></a>.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_Substring">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_Substring</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*str</em>, Py_ssize_t<em>&nbsp;start</em>, Py_ssize_t<em>&nbsp;end</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_Substring" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a substring of <em>str</em>, from character index <em>start</em> (included) to
+character index <em>end</em> (excluded).  Negative indices are not supported.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_AsUCS4">
+<a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a>* <code class="descname">PyUnicode_AsUCS4</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*u</em>, <a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;*buffer</em>, Py_ssize_t<em>&nbsp;buflen</em>, int<em>&nbsp;copy_null</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AsUCS4" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Copy the string <em>u</em> into a UCS4 buffer, including a null character, if
+<em>copy_null</em> is set.  Returns <em>NULL</em> and sets an exception on error (in
+particular, a <a class="reference internal" href="../library/exceptions.html#ValueError" title="ValueError"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code></a> if <em>buflen</em> is smaller than the length of
+<em>u</em>).  <em>buffer</em> is returned on success.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_AsUCS4Copy">
+<a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a>* <code class="descname">PyUnicode_AsUCS4Copy</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*u</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AsUCS4Copy" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Copy the string <em>u</em> into a new UCS4 buffer that is allocated using
+<a class="reference internal" href="memory.html#c.PyMem_Malloc" title="PyMem_Malloc"><code class="xref c c-func docutils literal"><span class="pre">PyMem_Malloc()</span></code></a>.  If this fails, <em>NULL</em> is returned with a
+<a class="reference internal" href="../library/exceptions.html#MemoryError" title="MemoryError"><code class="xref py py-exc docutils literal"><span class="pre">MemoryError</span></code></a> set.  The returned buffer always has an extra
+null code point appended.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="deprecated-py-unicode-apis">
+<h3>廃止予定の Py_UNICODE API群<a class="headerlink" href="#deprecated-py-unicode-apis" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<div class="deprecated-removed">
+<p><span class="versionmodified">Deprecated since version 3.3, will be removed in version 4.0.</span></p>
+</div>
+<p>これらのAPI 関数は <span class="target" id="index-8"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0393"><strong>PEP 393</strong></a> の実装により廃止予定です。Python 3.x では削除されないため、拡張モジュールはこれらの関数を引き続き使えますが、これらの関数の使用はパフォーマンスとメモリに影響があることを念頭に置いてください。</p>
+<dl class="function">
+<dt id="c.PyUnicode_FromUnicode">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_FromUnicode</code><span class="sig-paren">(</span>const <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;*u</em>, Py_ssize_t<em>&nbsp;size</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_FromUnicode" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Create a Unicode object from the Py_UNICODE buffer <em>u</em> of the given size. <em>u</em>
+may be <em>NULL</em> which causes the contents to be undefined. It is the user&#8217;s
+responsibility to fill in the needed data.  The buffer is copied into the new
+object.</p>
+<p>If the buffer is not <em>NULL</em>, the return value might be a shared object.
+Therefore, modification of the resulting Unicode object is only allowed when
+<em>u</em> is <em>NULL</em>.</p>
+<p>If the buffer is <em>NULL</em>, <a class="reference internal" href="#c.PyUnicode_READY" title="PyUnicode_READY"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_READY()</span></code></a> must be called once the
+string content has been filled before using any of the access macros such as
+<a class="reference internal" href="#c.PyUnicode_KIND" title="PyUnicode_KIND"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_KIND()</span></code></a>.</p>
+<p>Please migrate to using <a class="reference internal" href="#c.PyUnicode_FromKindAndData" title="PyUnicode_FromKindAndData"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_FromKindAndData()</span></code></a> or
+<a class="reference internal" href="#c.PyUnicode_New" title="PyUnicode_New"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_New()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_AsUnicode">
+<a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a>* <code class="descname">PyUnicode_AsUnicode</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AsUnicode" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a read-only pointer to the Unicode object&#8217;s internal
+<a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> buffer, or <em>NULL</em> on error. This will create the
+<a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE*</span></code></a> representation of the object if it is not yet
+available. The buffer is always terminated with an extra null code point.
+Note that the resulting <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> string may also contain
+embedded null code points, which would cause the string to be truncated when
+used in most C functions.</p>
+<p>Please migrate to using <a class="reference internal" href="#c.PyUnicode_AsUCS4" title="PyUnicode_AsUCS4"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_AsUCS4()</span></code></a>,
+<a class="reference internal" href="#c.PyUnicode_Substring" title="PyUnicode_Substring"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_Substring()</span></code></a>, <a class="reference internal" href="#c.PyUnicode_ReadChar" title="PyUnicode_ReadChar"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_ReadChar()</span></code></a> or similar new
+APIs.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_TransformDecimalToASCII">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_TransformDecimalToASCII</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_TransformDecimalToASCII" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Create a Unicode object by replacing all decimal digits in
+<a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> buffer of the given <em>size</em> by ASCII digits 0&#8211;9
+according to their decimal value.  Return <em>NULL</em> if an exception occurs.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_AsUnicodeAndSize">
+<a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a>* <code class="descname">PyUnicode_AsUnicodeAndSize</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em>, Py_ssize_t<em>&nbsp;*size</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AsUnicodeAndSize" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#c.PyUnicode_AsUnicode" title="PyUnicode_AsUnicode"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_AsUnicode()</span></code></a>, but also saves the <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-func docutils literal"><span class="pre">Py_UNICODE()</span></code></a>
+array length (excluding the extra null terminator) in <em>size</em>.
+Note that the resulting <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE*</span></code></a> string
+may contain embedded null code points, which would cause the string to be
+truncated when used in most C functions.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_AsUnicodeCopy">
+<a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a>* <code class="descname">PyUnicode_AsUnicodeCopy</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AsUnicodeCopy" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Create a copy of a Unicode string ending with a null code point. Return <em>NULL</em>
+and raise a <a class="reference internal" href="../library/exceptions.html#MemoryError" title="MemoryError"><code class="xref py py-exc docutils literal"><span class="pre">MemoryError</span></code></a> exception on memory allocation failure,
+otherwise return a new allocated buffer (use <a class="reference internal" href="memory.html#c.PyMem_Free" title="PyMem_Free"><code class="xref c c-func docutils literal"><span class="pre">PyMem_Free()</span></code></a> to free
+the buffer). Note that the resulting <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE*</span></code></a> string may
+contain embedded null code points, which would cause the string to be
+truncated when used in most C functions.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.2 で追加.</span></p>
+</div>
+<p>Please migrate to using <a class="reference internal" href="#c.PyUnicode_AsUCS4Copy" title="PyUnicode_AsUCS4Copy"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_AsUCS4Copy()</span></code></a> or similar new APIs.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_GetSize">
+Py_ssize_t <code class="descname">PyUnicode_GetSize</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_GetSize" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the size of the deprecated <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> representation, in
+code units (this includes surrogate pairs as 2 units).</p>
+<p>Please migrate to using <a class="reference internal" href="#c.PyUnicode_GetLength" title="PyUnicode_GetLength"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_GetLength()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_FromObject">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_FromObject</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*obj</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_FromObject" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p><code class="docutils literal"><span class="pre">PyUnicode_FromEncodedObject(obj,</span> <span class="pre">NULL,</span> <span class="pre">&quot;strict&quot;)</span></code> を行うショートカットで、インタプリタは Unicode への型強制が必要な際に常にこの関数を使います。</p>
+</dd></dl>
+
+</div>
+<div class="section" id="locale-encoding">
+<h3>Locale Encoding<a class="headerlink" href="#locale-encoding" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>The current locale encoding can be used to decode text from the operating
+system.</p>
+<dl class="function">
+<dt id="c.PyUnicode_DecodeLocaleAndSize">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_DecodeLocaleAndSize</code><span class="sig-paren">(</span>const char<em>&nbsp;*str</em>, Py_ssize_t<em>&nbsp;len</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_DecodeLocaleAndSize" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Decode a string from the current locale encoding. The supported
+error handlers are <code class="docutils literal"><span class="pre">&quot;strict&quot;</span></code> and <code class="docutils literal"><span class="pre">&quot;surrogateescape&quot;</span></code>
+(<span class="target" id="index-2"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0383"><strong>PEP 383</strong></a>). The decoder uses <code class="docutils literal"><span class="pre">&quot;strict&quot;</span></code> error handler if
+<em>errors</em> is <code class="docutils literal"><span class="pre">NULL</span></code>.  <em>str</em> must end with a null character but
+cannot contain embedded null characters.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<p class="last">Use <a class="reference internal" href="#c.PyUnicode_DecodeFSDefaultAndSize" title="PyUnicode_DecodeFSDefaultAndSize"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_DecodeFSDefaultAndSize()</span></code></a> to decode a string from
+<code class="xref c c-data docutils literal"><span class="pre">Py_FileSystemDefaultEncoding</span></code> (the locale encoding read at
+Python startup).</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_DecodeLocale">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_DecodeLocale</code><span class="sig-paren">(</span>const char<em>&nbsp;*str</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_DecodeLocale" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Similar to <a class="reference internal" href="#c.PyUnicode_DecodeLocaleAndSize" title="PyUnicode_DecodeLocaleAndSize"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_DecodeLocaleAndSize()</span></code></a>, but compute the string
+length using <code class="xref c c-func docutils literal"><span class="pre">strlen()</span></code>.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_EncodeLocale">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_EncodeLocale</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_EncodeLocale" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Encode a Unicode object to the current locale encoding. The
+supported error handlers are <code class="docutils literal"><span class="pre">&quot;strict&quot;</span></code> and <code class="docutils literal"><span class="pre">&quot;surrogateescape&quot;</span></code>
+(<span class="target" id="index-3"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0383"><strong>PEP 383</strong></a>). The encoder uses <code class="docutils literal"><span class="pre">&quot;strict&quot;</span></code> error handler if
+<em>errors</em> is <code class="docutils literal"><span class="pre">NULL</span></code>. Return a <a class="reference internal" href="../library/functions.html#bytes" title="bytes"><code class="xref py py-class docutils literal"><span class="pre">bytes</span></code></a> object. <em>str</em> cannot
+contain embedded null characters.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<p class="last">Use <a class="reference internal" href="#c.PyUnicode_EncodeFSDefault" title="PyUnicode_EncodeFSDefault"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_EncodeFSDefault()</span></code></a> to encode a string to
+<code class="xref c c-data docutils literal"><span class="pre">Py_FileSystemDefaultEncoding</span></code> (the locale encoding read at
+Python startup).</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="file-system-encoding">
+<h3>File System Encoding<a class="headerlink" href="#file-system-encoding" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>To encode and decode file names and other environment strings,
+<code class="xref c c-data docutils literal"><span class="pre">Py_FileSystemEncoding</span></code> should be used as the encoding, and
+<code class="docutils literal"><span class="pre">&quot;surrogateescape&quot;</span></code> should be used as the error handler (<span class="target" id="index-4"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0383"><strong>PEP 383</strong></a>). To
+encode file names during argument parsing, the <code class="docutils literal"><span class="pre">&quot;O&amp;&quot;</span></code> converter should be
+used, passing <a class="reference internal" href="#c.PyUnicode_FSConverter" title="PyUnicode_FSConverter"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_FSConverter()</span></code></a> as the conversion function:</p>
+<dl class="function">
+<dt id="c.PyUnicode_FSConverter">
+int <code class="descname">PyUnicode_FSConverter</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>*<em>&nbsp;obj</em>, void*<em>&nbsp;result</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_FSConverter" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>ParseTuple converter: encode <a class="reference internal" href="../library/stdtypes.html#str" title="str"><code class="xref py py-class docutils literal"><span class="pre">str</span></code></a> objects to <a class="reference internal" href="../library/functions.html#bytes" title="bytes"><code class="xref py py-class docutils literal"><span class="pre">bytes</span></code></a> using
+<a class="reference internal" href="#c.PyUnicode_EncodeFSDefault" title="PyUnicode_EncodeFSDefault"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_EncodeFSDefault()</span></code></a>; <a class="reference internal" href="../library/functions.html#bytes" title="bytes"><code class="xref py py-class docutils literal"><span class="pre">bytes</span></code></a> objects are output as-is.
+<em>result</em> must be a <a class="reference internal" href="bytes.html#c.PyBytesObject" title="PyBytesObject"><code class="xref c c-type docutils literal"><span class="pre">PyBytesObject*</span></code></a> which must be released when it is
+no longer used.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.1 で追加.</span></p>
+</div>
+</dd></dl>
+
+<p>To decode file names during argument parsing, the <code class="docutils literal"><span class="pre">&quot;O&amp;&quot;</span></code> converter should be
+used, passing <a class="reference internal" href="#c.PyUnicode_FSDecoder" title="PyUnicode_FSDecoder"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_FSDecoder()</span></code></a> as the conversion function:</p>
+<dl class="function">
+<dt id="c.PyUnicode_FSDecoder">
+int <code class="descname">PyUnicode_FSDecoder</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>*<em>&nbsp;obj</em>, void*<em>&nbsp;result</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_FSDecoder" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>ParseTuple converter: decode <a class="reference internal" href="../library/functions.html#bytes" title="bytes"><code class="xref py py-class docutils literal"><span class="pre">bytes</span></code></a> objects to <a class="reference internal" href="../library/stdtypes.html#str" title="str"><code class="xref py py-class docutils literal"><span class="pre">str</span></code></a> using
+<a class="reference internal" href="#c.PyUnicode_DecodeFSDefaultAndSize" title="PyUnicode_DecodeFSDefaultAndSize"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_DecodeFSDefaultAndSize()</span></code></a>; <a class="reference internal" href="../library/stdtypes.html#str" title="str"><code class="xref py py-class docutils literal"><span class="pre">str</span></code></a> objects are output
+as-is. <em>result</em> must be a <a class="reference internal" href="#c.PyUnicodeObject" title="PyUnicodeObject"><code class="xref c c-type docutils literal"><span class="pre">PyUnicodeObject*</span></code></a> which must be released
+when it is no longer used.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.2 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_DecodeFSDefaultAndSize">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_DecodeFSDefaultAndSize</code><span class="sig-paren">(</span>const char<em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_DecodeFSDefaultAndSize" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Decode a string using <code class="xref c c-data docutils literal"><span class="pre">Py_FileSystemDefaultEncoding</span></code> and the
+<code class="docutils literal"><span class="pre">&quot;surrogateescape&quot;</span></code> error handler, or <code class="docutils literal"><span class="pre">&quot;strict&quot;</span></code> on Windows.</p>
+<p>If <code class="xref c c-data docutils literal"><span class="pre">Py_FileSystemDefaultEncoding</span></code> is not set, fall back to the
+locale encoding.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<p class="last"><code class="xref c c-data docutils literal"><span class="pre">Py_FileSystemDefaultEncoding</span></code> is initialized at startup from the
+locale encoding and cannot be modified later. If you need to decode a
+string from the current locale encoding, use
+<a class="reference internal" href="#c.PyUnicode_DecodeLocaleAndSize" title="PyUnicode_DecodeLocaleAndSize"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_DecodeLocaleAndSize()</span></code></a>.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">バージョン 3.2 で変更: </span>Use <code class="docutils literal"><span class="pre">&quot;strict&quot;</span></code> error handler on Windows.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_DecodeFSDefault">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_DecodeFSDefault</code><span class="sig-paren">(</span>const char<em>&nbsp;*s</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_DecodeFSDefault" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Decode a null-terminated string using <code class="xref c c-data docutils literal"><span class="pre">Py_FileSystemDefaultEncoding</span></code>
+and the <code class="docutils literal"><span class="pre">&quot;surrogateescape&quot;</span></code> error handler, or <code class="docutils literal"><span class="pre">&quot;strict&quot;</span></code> on Windows.</p>
+<p>If <code class="xref c c-data docutils literal"><span class="pre">Py_FileSystemDefaultEncoding</span></code> is not set, fall back to the
+locale encoding.</p>
+<p>Use <a class="reference internal" href="#c.PyUnicode_DecodeFSDefaultAndSize" title="PyUnicode_DecodeFSDefaultAndSize"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_DecodeFSDefaultAndSize()</span></code></a> if you know the string length.</p>
+<div class="versionchanged">
+<p><span class="versionmodified">バージョン 3.2 で変更: </span>Use <code class="docutils literal"><span class="pre">&quot;strict&quot;</span></code> error handler on Windows.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_EncodeFSDefault">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_EncodeFSDefault</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_EncodeFSDefault" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Encode a Unicode object to <code class="xref c c-data docutils literal"><span class="pre">Py_FileSystemDefaultEncoding</span></code> with the
+<code class="docutils literal"><span class="pre">&quot;surrogateescape&quot;</span></code> error handler, or <code class="docutils literal"><span class="pre">&quot;strict&quot;</span></code> on Windows, and return
+<a class="reference internal" href="../library/functions.html#bytes" title="bytes"><code class="xref py py-class docutils literal"><span class="pre">bytes</span></code></a>. Note that the resulting <a class="reference internal" href="../library/functions.html#bytes" title="bytes"><code class="xref py py-class docutils literal"><span class="pre">bytes</span></code></a> object may contain
+null bytes.</p>
+<p>If <code class="xref c c-data docutils literal"><span class="pre">Py_FileSystemDefaultEncoding</span></code> is not set, fall back to the
+locale encoding.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<p class="last"><code class="xref c c-data docutils literal"><span class="pre">Py_FileSystemDefaultEncoding</span></code> is initialized at startup from the
+locale encoding and cannot be modified later. If you need to encode a
+string to the current locale encoding, use
+<a class="reference internal" href="#c.PyUnicode_EncodeLocale" title="PyUnicode_EncodeLocale"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_EncodeLocale()</span></code></a>.</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.2 で追加.</span></p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="wchar-t-support">
+<h3>wchar_t サポート<a class="headerlink" href="#wchar-t-support" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p><code class="xref c c-type docutils literal"><span class="pre">wchar_t</span></code> をサポートするプラットフォームでの wchar_t サポート:</p>
+<dl class="function">
+<dt id="c.PyUnicode_FromWideChar">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_FromWideChar</code><span class="sig-paren">(</span>const wchar_t<em>&nbsp;*w</em>, Py_ssize_t<em>&nbsp;size</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_FromWideChar" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Create a Unicode object from the <code class="xref c c-type docutils literal"><span class="pre">wchar_t</span></code> buffer <em>w</em> of the given <em>size</em>.
+Passing -1 as the <em>size</em> indicates that the function must itself compute the length,
+using wcslen.
+Return <em>NULL</em> on failure.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_AsWideChar">
+Py_ssize_t <code class="descname">PyUnicode_AsWideChar</code><span class="sig-paren">(</span><a class="reference internal" href="#c.PyUnicodeObject" title="PyUnicodeObject">PyUnicodeObject</a><em>&nbsp;*unicode</em>, wchar_t<em>&nbsp;*w</em>, Py_ssize_t<em>&nbsp;size</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AsWideChar" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Copy the Unicode object contents into the <code class="xref c c-type docutils literal"><span class="pre">wchar_t</span></code> buffer <em>w</em>.  At most
+<em>size</em> <code class="xref c c-type docutils literal"><span class="pre">wchar_t</span></code> characters are copied (excluding a possibly trailing
+null termination character).  Return the number of <code class="xref c c-type docutils literal"><span class="pre">wchar_t</span></code> characters
+copied or -1 in case of an error.  Note that the resulting <code class="xref c c-type docutils literal"><span class="pre">wchar_t*</span></code>
+string may or may not be null-terminated.  It is the responsibility of the caller
+to make sure that the <code class="xref c c-type docutils literal"><span class="pre">wchar_t*</span></code> string is null-terminated in case this is
+required by the application. Also, note that the <code class="xref c c-type docutils literal"><span class="pre">wchar_t*</span></code> string
+might contain null characters, which would cause the string to be truncated
+when used with most C functions.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_AsWideCharString">
+wchar_t* <code class="descname">PyUnicode_AsWideCharString</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em>, Py_ssize_t<em>&nbsp;*size</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AsWideCharString" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Convert the Unicode object to a wide character string. The output string
+always ends with a null character. If <em>size</em> is not <em>NULL</em>, write the number
+of wide characters (excluding the trailing null termination character) into
+<em>*size</em>.</p>
+<p>Returns a buffer allocated by <code class="xref c c-func docutils literal"><span class="pre">PyMem_Alloc()</span></code> (use
+<a class="reference internal" href="memory.html#c.PyMem_Free" title="PyMem_Free"><code class="xref c c-func docutils literal"><span class="pre">PyMem_Free()</span></code></a> to free it) on success. On error, returns <em>NULL</em>,
+<em>*size</em> is undefined and raises a <a class="reference internal" href="../library/exceptions.html#MemoryError" title="MemoryError"><code class="xref py py-exc docutils literal"><span class="pre">MemoryError</span></code></a>. Note that the
+resulting <code class="xref c c-type docutils literal"><span class="pre">wchar_t</span></code> string might contain null characters, which
+would cause the string to be truncated when used with most C functions.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.2 で追加.</span></p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="ucs4-support">
+<h3>UCS4 Support<a class="headerlink" href="#ucs4-support" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+<dl class="function">
+<dt id="c.Py_UCS4_strlen">
+size_t <code class="descname">Py_UCS4_strlen</code><span class="sig-paren">(</span>const <a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;*u</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UCS4_strlen" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="c.Py_UCS4_strcpy">
+<a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a>* <code class="descname">Py_UCS4_strcpy</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;*s1</em>, const <a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;*s2</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UCS4_strcpy" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="c.Py_UCS4_strncpy">
+<a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a>* <code class="descname">Py_UCS4_strncpy</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;*s1</em>, const <a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;*s2</em>, size_t<em>&nbsp;n</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UCS4_strncpy" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="c.Py_UCS4_strcat">
+<a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a>* <code class="descname">Py_UCS4_strcat</code><span class="sig-paren">(</span><a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;*s1</em>, const <a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;*s2</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UCS4_strcat" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="c.Py_UCS4_strcmp">
+int <code class="descname">Py_UCS4_strcmp</code><span class="sig-paren">(</span>const <a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;*s1</em>, const <a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;*s2</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UCS4_strcmp" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="c.Py_UCS4_strncmp">
+int <code class="descname">Py_UCS4_strncmp</code><span class="sig-paren">(</span>const <a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;*s1</em>, const <a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;*s2</em>, size_t<em>&nbsp;n</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UCS4_strncmp" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="c.Py_UCS4_strchr">
+<a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a>* <code class="descname">Py_UCS4_strchr</code><span class="sig-paren">(</span>const <a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;*s</em>, <a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;c</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UCS4_strchr" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="c.Py_UCS4_strrchr">
+<a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a>* <code class="descname">Py_UCS4_strrchr</code><span class="sig-paren">(</span>const <a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;*s</em>, <a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;c</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Py_UCS4_strrchr" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>These utility functions work on strings of <a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4"><code class="xref c c-type docutils literal"><span class="pre">Py_UCS4</span></code></a> characters and
+otherwise behave like the C standard library functions with the same name.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="built-in-codecs">
+<span id="builtincodecs"></span><h2>組み込み codec (built-in codec)<a class="headerlink" href="#built-in-codecs" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Python には、処理速度を高めるために C で書かれた codec が揃えてあります。これら全ての codec は以下の関数を介して直接利用できます。</p>
+<p>以下の API の多くが、 <em>encoding</em> と <em>errors</em> という二つの引数をとります。これらのパラメータは、組み込みの文字列コンストラクタである <a class="reference internal" href="../library/stdtypes.html#str" title="str"><code class="xref py py-func docutils literal"><span class="pre">str()</span></code></a> における同名のパラメータと同じ意味を持ちます。</p>
+<p>Setting encoding to <em>NULL</em> causes the default encoding to be used
+which is ASCII.  The file system calls should use
+<a class="reference internal" href="#c.PyUnicode_FSConverter" title="PyUnicode_FSConverter"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_FSConverter()</span></code></a> for encoding file names. This uses the
+variable <code class="xref c c-data docutils literal"><span class="pre">Py_FileSystemDefaultEncoding</span></code> internally. This
+variable should be treated as read-only: on some systems, it will be a
+pointer to a static string, on others, it will change at run-time
+(such as when the application invokes setlocale).</p>
+<p><em>errors</em> で指定するエラー処理もまた、 <em>NULL</em> を指定できます。 <em>NULL</em> を指定すると、codec で定義されているデフォルト処理の使用を意味します。全ての組み込み codec で、デフォルトのエラー処理は &#8220;strict&#8221; (<a class="reference internal" href="../library/exceptions.html#ValueError" title="ValueError"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code></a> を送出する) になっています。</p>
+<p>個々の codec は全て同様のインタフェースを使っています。個別の codec の説明では、説明を簡単にするために以下の汎用のインタフェースとの違いだけを説明しています。</p>
+<div class="section" id="generic-codecs">
+<h3>汎用 codec<a class="headerlink" href="#generic-codecs" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>以下は汎用 codec の API です:</p>
+<dl class="function">
+<dt id="c.PyUnicode_Decode">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_Decode</code><span class="sig-paren">(</span>const char<em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*encoding</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_Decode" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Create a Unicode object by decoding <em>size</em> bytes of the encoded string <em>s</em>.
+<em>encoding</em> and <em>errors</em> have the same meaning as the parameters of the same name
+in the <a class="reference internal" href="../library/stdtypes.html#str" title="str"><code class="xref py py-func docutils literal"><span class="pre">str()</span></code></a> built-in function.  The codec to be used is looked up
+using the Python codec registry.  Return <em>NULL</em> if an exception was raised by
+the codec.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_AsEncodedString">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_AsEncodedString</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em>, const char<em>&nbsp;*encoding</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AsEncodedString" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Encode a Unicode object and return the result as Python bytes object.
+<em>encoding</em> and <em>errors</em> have the same meaning as the parameters of the same
+name in the Unicode <a class="reference internal" href="../library/stdtypes.html#str.encode" title="str.encode"><code class="xref py py-meth docutils literal"><span class="pre">encode()</span></code></a> method. The codec to be used is looked up
+using the Python codec registry. Return <em>NULL</em> if an exception was raised by
+the codec.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_Encode">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_Encode</code><span class="sig-paren">(</span>const <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*encoding</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_Encode" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Encode the <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> buffer <em>s</em> of the given <em>size</em> and return a Python
+bytes object.  <em>encoding</em> and <em>errors</em> have the same meaning as the
+parameters of the same name in the Unicode <a class="reference internal" href="../library/stdtypes.html#str.encode" title="str.encode"><code class="xref py py-meth docutils literal"><span class="pre">encode()</span></code></a> method.  The codec
+to be used is looked up using the Python codec registry.  Return <em>NULL</em> if an
+exception was raised by the codec.</p>
+<div class="deprecated-removed">
+<p><span class="versionmodified">Deprecated since version 3.3, will be removed in version 4.0: </span>Part of the old-style <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> API; please migrate to using
+<a class="reference internal" href="#c.PyUnicode_AsEncodedString" title="PyUnicode_AsEncodedString"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_AsEncodedString()</span></code></a>.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="utf-8-codecs">
+<h3>UTF-8 Codecs<a class="headerlink" href="#utf-8-codecs" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>以下は UTF-8 codec の APIです:</p>
+<dl class="function">
+<dt id="c.PyUnicode_DecodeUTF8">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_DecodeUTF8</code><span class="sig-paren">(</span>const char<em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_DecodeUTF8" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>UTF-8 でエンコードされた <em>size</em> バイトの文字列 <em>s</em> から Unicode オブジェクトを生成します。codec が例外を送出した場合には <em>NULL</em> を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_DecodeUTF8Stateful">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_DecodeUTF8Stateful</code><span class="sig-paren">(</span>const char<em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em>, Py_ssize_t<em>&nbsp;*consumed</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_DecodeUTF8Stateful" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p><em>consumed</em> が <em>NULL</em> の場合、 <a class="reference internal" href="#c.PyUnicode_DecodeUTF8" title="PyUnicode_DecodeUTF8"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_DecodeUTF8()</span></code></a> と同じように動作します。 <em>consumed</em> が <em>NULL</em> でない場合、 <a class="reference internal" href="#c.PyUnicode_DecodeUTF8Stateful" title="PyUnicode_DecodeUTF8Stateful"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_DecodeUTF8Stateful()</span></code></a> は末尾の不完全な UTF-8 バイト列をエラーとみなしません。これらのバイト列はデコードされず、デコードされたバイト数を <em>consumed</em> に返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_AsUTF8String">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_AsUTF8String</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AsUTF8String" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>UTF-8 で Unicode オブジェクトをエンコードし、結果を Python バイト列オブジェクトとして返します。エラー処理は &#8220;strict&#8221; です。 codec が例外を送出した場合には <em>NULL</em> を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_AsUTF8AndSize">
+char* <code class="descname">PyUnicode_AsUTF8AndSize</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em>, Py_ssize_t<em>&nbsp;*size</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AsUTF8AndSize" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a pointer to the UTF-8 encoding of the Unicode object, and
+store the size of the encoded representation (in bytes) in <em>size</em>.  The
+<em>size</em> argument can be <em>NULL</em>; in this case no size will be stored.  The
+returned buffer always has an extra null byte appended (not included in
+<em>size</em>), regardless of whether there are any other null code points.</p>
+<p>In the case of an error, <em>NULL</em> is returned with an exception set and no
+<em>size</em> is stored.</p>
+<p>This caches the UTF-8 representation of the string in the Unicode object, and
+subsequent calls will return a pointer to the same buffer.  The caller is not
+responsible for deallocating the buffer.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_AsUTF8">
+char* <code class="descname">PyUnicode_AsUTF8</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AsUTF8" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>As <a class="reference internal" href="#c.PyUnicode_AsUTF8AndSize" title="PyUnicode_AsUTF8AndSize"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_AsUTF8AndSize()</span></code></a>, but does not store the size.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_EncodeUTF8">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_EncodeUTF8</code><span class="sig-paren">(</span>const <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_EncodeUTF8" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Encode the <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> buffer <em>s</em> of the given <em>size</em> using UTF-8 and
+return a Python bytes object.  Return <em>NULL</em> if an exception was raised by
+the codec.</p>
+<div class="deprecated-removed">
+<p><span class="versionmodified">Deprecated since version 3.3, will be removed in version 4.0: </span>Part of the old-style <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> API; please migrate to using
+<a class="reference internal" href="#c.PyUnicode_AsUTF8String" title="PyUnicode_AsUTF8String"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_AsUTF8String()</span></code></a> or <a class="reference internal" href="#c.PyUnicode_AsUTF8AndSize" title="PyUnicode_AsUTF8AndSize"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_AsUTF8AndSize()</span></code></a>.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="utf-32-codecs">
+<h3>UTF-32 Codecs<a class="headerlink" href="#utf-32-codecs" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>以下は UTF-32 codec API です:</p>
+<dl class="function">
+<dt id="c.PyUnicode_DecodeUTF32">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_DecodeUTF32</code><span class="sig-paren">(</span>const char<em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em>, int<em>&nbsp;*byteorder</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_DecodeUTF32" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>UTF-32 でエンコードされたバッファ文字列から <em>size</em> バイトをデコードし、 Unicodeオブジェクトとして返します。 <em>errors</em> は (<em>NULL</em> でないなら) エラーハンドラを指定します。デフォルトは &#8220;strict&#8221; です。</p>
+<p><em>byteorder</em> が <em>NULL</em> でない時、デコーダは与えられたバイトオーダーでデコードを開始します。</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="o">*</span><span class="n">byteorder</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="o">:</span> <span class="n">little</span> <span class="n">endian</span>
+<span class="o">*</span><span class="n">byteorder</span> <span class="o">==</span> <span class="mi">0</span><span class="o">:</span>  <span class="n">native</span> <span class="n">order</span>
+<span class="o">*</span><span class="n">byteorder</span> <span class="o">==</span> <span class="mi">1</span><span class="o">:</span>  <span class="n">big</span> <span class="n">endian</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">*byteorder*</span></code> が 0 で、入力データの最初の 4 バイトが byte order mark (BOM) ならば、デコーダはこのバイトオーダーに切り替え、BOM は結果の Unicode 文字列にコピーされません。 <code class="docutils literal"><span class="pre">*byteorder*</span></code> が <code class="docutils literal"><span class="pre">-1</span></code> または <code class="docutils literal"><span class="pre">1</span></code> ならば、全ての byte order mark は出力にコピーされます。</p>
+<p>デコードを完了した後、入力データの終端に来た時点でのバイトオーダーを <em>*byteorder</em> にセットします。</p>
+<p><em>byteorder</em> が <em>NULL</em> のとき、 codec は native order モードで開始します。</p>
+<p>codec が例外を発生させたときは <em>NULL</em> を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_DecodeUTF32Stateful">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_DecodeUTF32Stateful</code><span class="sig-paren">(</span>const char<em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em>, int<em>&nbsp;*byteorder</em>, Py_ssize_t<em>&nbsp;*consumed</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_DecodeUTF32Stateful" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>consumed</em> が <em>NULL</em> のとき、 <a class="reference internal" href="#c.PyUnicode_DecodeUTF32" title="PyUnicode_DecodeUTF32"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_DecodeUTF32()</span></code></a> と同じように振る舞います。 <em>consumed</em> が <em>NULL</em> でないとき、 <a class="reference internal" href="#c.PyUnicode_DecodeUTF32Stateful" title="PyUnicode_DecodeUTF32Stateful"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_DecodeUTF32Stateful()</span></code></a> は末尾の不完全な (4 で割り切れない長さのバイト列などの) UTF-32 バイト列をエラーとして扱いません。末尾の不完全なバイト列はデコードされず、デコードされたバイト数が <em>consumed</em> に格納されます。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_AsUTF32String">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_AsUTF32String</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AsUTF32String" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a Python byte string using the UTF-32 encoding in native byte
+order. The string always starts with a BOM mark.  Error handling is &#8220;strict&#8221;.
+Return <em>NULL</em> if an exception was raised by the codec.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_EncodeUTF32">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_EncodeUTF32</code><span class="sig-paren">(</span>const <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em>, int<em>&nbsp;byteorder</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_EncodeUTF32" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>s</em> の Unicode データを UTF-32 にエンコードし、その値を Python の bytes オブジェクトに格納して返します。出力は以下のバイトオーダーで従って書かれます。</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">byteorder</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="o">:</span> <span class="n">little</span> <span class="n">endian</span>
+<span class="n">byteorder</span> <span class="o">==</span> <span class="mi">0</span><span class="o">:</span>  <span class="n">native</span> <span class="n">byte</span> <span class="n">order</span> <span class="p">(</span><span class="n">writes</span> <span class="n">a</span> <span class="n">BOM</span> <span class="n">mark</span><span class="p">)</span>
+<span class="n">byteorder</span> <span class="o">==</span> <span class="mi">1</span><span class="o">:</span>  <span class="n">big</span> <span class="n">endian</span>
+</pre></div>
+</div>
+<p>byteorder が <code class="docutils literal"><span class="pre">0</span></code> のとき、出力文字列は常に Unicode BOM マーク (U+FEFF) で始まります。それ以外の2つのモードでは、先頭に BOM マークは出力されません。</p>
+<p>If <em>Py_UNICODE_WIDE</em> is not defined, surrogate pairs will be output
+as a single code point.</p>
+<p>codec が例外を発生させたときは <em>NULL</em> を返します。</p>
+<div class="deprecated-removed">
+<p><span class="versionmodified">Deprecated since version 3.3, will be removed in version 4.0: </span>Part of the old-style <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> API; please migrate to using
+<a class="reference internal" href="#c.PyUnicode_AsUTF32String" title="PyUnicode_AsUTF32String"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_AsUTF32String()</span></code></a>.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="utf-16-codecs">
+<h3>UTF-16 Codecs<a class="headerlink" href="#utf-16-codecs" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>以下は UTF-16 codec の APIです:</p>
+<dl class="function">
+<dt id="c.PyUnicode_DecodeUTF16">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_DecodeUTF16</code><span class="sig-paren">(</span>const char<em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em>, int<em>&nbsp;*byteorder</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_DecodeUTF16" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>UTF-16 でエンコードされたバッファ <em>s</em> から <em>size</em> バイトだけデコードして、結果を Unicode オブジェクトで返します。 <em>errors</em> は (<em>NULL</em> でない場合) エラー処理方法を定義します。デフォルト値は &#8220;strict&#8221; です。</p>
+<p><em>byteorder</em> が <em>NULL</em> でない時、デコーダは与えられたバイトオーダーでデコードを開始します。</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="o">*</span><span class="n">byteorder</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="o">:</span> <span class="n">little</span> <span class="n">endian</span>
+<span class="o">*</span><span class="n">byteorder</span> <span class="o">==</span> <span class="mi">0</span><span class="o">:</span>  <span class="n">native</span> <span class="n">order</span>
+<span class="o">*</span><span class="n">byteorder</span> <span class="o">==</span> <span class="mi">1</span><span class="o">:</span>  <span class="n">big</span> <span class="n">endian</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">*byteorder</span></code> が 0 で、入力データの先頭2バイトがバイトオーダーマーク (BOM) だった場合、デコーダは BOM が示すバイトオーダーに切り替え、そのBOMを結果の Unicode 文字列にコピーしません。 <code class="docutils literal"><span class="pre">*byteorder</span></code> が <code class="docutils literal"><span class="pre">-1</span></code> か <code class="docutils literal"><span class="pre">1</span></code> だった場合、すべてのBOMは出力へコピーされます (出力では <code class="docutils literal"><span class="pre">\ufeff</span></code> か <code class="docutils literal"><span class="pre">\ufffe</span></code> のどちらかになるでしょう)。</p>
+<p>デコードを完了した後、入力データの終端に来た時点でのバイトオーダーを <em>*byteorder</em> にセットします。</p>
+<p><em>byteorder</em> が <em>NULL</em> のとき、 codec は native order モードで開始します。</p>
+<p>codec が例外を発生させたときは <em>NULL</em> を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_DecodeUTF16Stateful">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_DecodeUTF16Stateful</code><span class="sig-paren">(</span>const char<em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em>, int<em>&nbsp;*byteorder</em>, Py_ssize_t<em>&nbsp;*consumed</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_DecodeUTF16Stateful" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p><em>consumed</em> が <em>NULL</em> の場合、 <a class="reference internal" href="#c.PyUnicode_DecodeUTF16" title="PyUnicode_DecodeUTF16"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_DecodeUTF16()</span></code></a> と同じように動作します。 <em>consumed</em> が <em>NULL</em> でない場合、 <a class="reference internal" href="#c.PyUnicode_DecodeUTF16Stateful" title="PyUnicode_DecodeUTF16Stateful"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_DecodeUTF16Stateful()</span></code></a> は末尾の不完全な UTF-16 バイト列 (奇数長のバイト列や分割されたサロゲートペア) をエラーとみなしません。これらのバイト列はデコードされず、デコードされたバイト数を <em>consumed</em> に返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_AsUTF16String">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_AsUTF16String</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AsUTF16String" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Return a Python byte string using the UTF-16 encoding in native byte
+order. The string always starts with a BOM mark.  Error handling is &#8220;strict&#8221;.
+Return <em>NULL</em> if an exception was raised by the codec.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_EncodeUTF16">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_EncodeUTF16</code><span class="sig-paren">(</span>const <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em>, int<em>&nbsp;byteorder</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_EncodeUTF16" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Return a Python bytes object holding the UTF-16 encoded value of the Unicode
+data in <em>s</em>.  Output is written according to the following byte order:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">byteorder</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="o">:</span> <span class="n">little</span> <span class="n">endian</span>
+<span class="n">byteorder</span> <span class="o">==</span> <span class="mi">0</span><span class="o">:</span>  <span class="n">native</span> <span class="n">byte</span> <span class="n">order</span> <span class="p">(</span><span class="n">writes</span> <span class="n">a</span> <span class="n">BOM</span> <span class="n">mark</span><span class="p">)</span>
+<span class="n">byteorder</span> <span class="o">==</span> <span class="mi">1</span><span class="o">:</span>  <span class="n">big</span> <span class="n">endian</span>
+</pre></div>
+</div>
+<p>byteorder が <code class="docutils literal"><span class="pre">0</span></code> のとき、出力文字列は常に Unicode BOM マーク (U+FEFF) で始まります。それ以外の2つのモードでは、先頭に BOM マークは出力されません。</p>
+<p>If <em>Py_UNICODE_WIDE</em> is defined, a single <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> value may get
+represented as a surrogate pair. If it is not defined, each <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a>
+values is interpreted as an UCS-2 character.</p>
+<p>codec が例外を発生させたときは <em>NULL</em> を返します。</p>
+<div class="deprecated-removed">
+<p><span class="versionmodified">Deprecated since version 3.3, will be removed in version 4.0: </span>Part of the old-style <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> API; please migrate to using
+<a class="reference internal" href="#c.PyUnicode_AsUTF16String" title="PyUnicode_AsUTF16String"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_AsUTF16String()</span></code></a>.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="utf-7-codecs">
+<h3>UTF-7 Codecs<a class="headerlink" href="#utf-7-codecs" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>以下は UTF-7 codec の API です:</p>
+<dl class="function">
+<dt id="c.PyUnicode_DecodeUTF7">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_DecodeUTF7</code><span class="sig-paren">(</span>const char<em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_DecodeUTF7" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>UTF-7 でエンコードされた <em>size</em> バイトの文字列 <em>s</em> をデコードして Unicode オブジェクトを作成します。 codec が例外を発生させたときは <em>NULL</em> を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_DecodeUTF7Stateful">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_DecodeUTF7Stateful</code><span class="sig-paren">(</span>const char<em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em>, Py_ssize_t<em>&nbsp;*consumed</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_DecodeUTF7Stateful" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>consumed</em> が <em>NULL</em> のとき、 <a class="reference internal" href="#c.PyUnicode_DecodeUTF7" title="PyUnicode_DecodeUTF7"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_DecodeUTF7()</span></code></a> と同じように動作します。 <em>consumed</em> が <em>NULL</em> でないとき、末尾の不完全な UTF-7 base-64 部分をエラーとしません。不完全な部分のバイト列はデコードせずに、デコードしたバイト数を <em>consumed</em> に格納します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_EncodeUTF7">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_EncodeUTF7</code><span class="sig-paren">(</span>const <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, int<em>&nbsp;base64SetO</em>, int<em>&nbsp;base64WhiteSpace</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_EncodeUTF7" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>与えられたサイズの <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> バッファを UTF-7 でエンコードして、 Python の bytes オブジェクトとして返します。 codec が例外を発生させたときは <em>NULL</em> を返します。</p>
+<p><em>base64SetO</em> がゼロでないとき、 &#8220;Set O&#8221; 文字 (他の場合には何も特別な意味を持たない句読点) を base-64 エンコードします。 <em>base64WhiteSpace</em> がゼロでないとき、空白文字を base-64 エンコードします。 Python の &#8220;utf-7&#8221; codec では、両方ともゼロに設定されています。</p>
+<div class="deprecated-removed">
+<p><span class="versionmodified">Deprecated since version 3.3, will be removed in version 4.0: </span>Part of the old-style <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> API.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="unicode-escape-codecs">
+<h3>Unicode-Escape Codecs<a class="headerlink" href="#unicode-escape-codecs" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>以下は &#8220;Unicode Escape&#8221; codec の API です:</p>
+<dl class="function">
+<dt id="c.PyUnicode_DecodeUnicodeEscape">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_DecodeUnicodeEscape</code><span class="sig-paren">(</span>const char<em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_DecodeUnicodeEscape" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Unicode-Escape でエンコードされた <em>size</em> バイトの文字列 <em>s</em> から Unicode オブジェクトを生成します。codec が例外を送出した場合には <em>NULL</em> を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_AsUnicodeEscapeString">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_AsUnicodeEscapeString</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AsUnicodeEscapeString" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Unicode-Escape で Unicode オブジェクトをエンコードし、結果を  Python 文字列オブジェクトとして返します。エラー処理は &#8220;strict&#8221; です。 codec が例外を送出した場合には <em>NULL</em> を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_EncodeUnicodeEscape">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_EncodeUnicodeEscape</code><span class="sig-paren">(</span>const <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_EncodeUnicodeEscape" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Encode the <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> buffer of the given <em>size</em> using Unicode-Escape and
+return a Python string object.  Return <em>NULL</em> if an exception was raised by the
+codec.</p>
+<div class="deprecated-removed">
+<p><span class="versionmodified">Deprecated since version 3.3, will be removed in version 4.0: </span>Part of the old-style <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> API; please migrate to using
+<a class="reference internal" href="#c.PyUnicode_AsUnicodeEscapeString" title="PyUnicode_AsUnicodeEscapeString"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_AsUnicodeEscapeString()</span></code></a>.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="raw-unicode-escape-codecs">
+<h3>Raw-Unicode-Escape Codecs<a class="headerlink" href="#raw-unicode-escape-codecs" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>以下は &#8220;Raw Unicode Escape&#8221; codec の APIです:</p>
+<dl class="function">
+<dt id="c.PyUnicode_DecodeRawUnicodeEscape">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_DecodeRawUnicodeEscape</code><span class="sig-paren">(</span>const char<em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_DecodeRawUnicodeEscape" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Raw-Unicode-Escape でエンコードされた <em>size</em> バイトの文字列 <em>s</em> から Unicode オブジェクトを生成します。codec が例外を送出した場合には <em>NULL</em> を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_AsRawUnicodeEscapeString">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_AsRawUnicodeEscapeString</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AsRawUnicodeEscapeString" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Raw-Unicode-Escape で Unicode オブジェクトをエンコードし、結果を Python 文字列オブジェクトとして返します。エラー処理は &#8220;strict&#8221; です。 codec が例外を送出した場合には <em>NULL</em> を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_EncodeRawUnicodeEscape">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_EncodeRawUnicodeEscape</code><span class="sig-paren">(</span>const <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_EncodeRawUnicodeEscape" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Encode the <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> buffer of the given <em>size</em> using Raw-Unicode-Escape
+and return a Python string object.  Return <em>NULL</em> if an exception was raised by
+the codec.</p>
+<div class="deprecated-removed">
+<p><span class="versionmodified">Deprecated since version 3.3, will be removed in version 4.0: </span>Part of the old-style <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> API; please migrate to using
+<a class="reference internal" href="#c.PyUnicode_AsRawUnicodeEscapeString" title="PyUnicode_AsRawUnicodeEscapeString"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_AsRawUnicodeEscapeString()</span></code></a>.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="latin-1-codecs">
+<h3>Latin-1 Codecs<a class="headerlink" href="#latin-1-codecs" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>以下は Latin-1 codec の APIです: Latin-1 は、 Unicode 序数の最初の 256 個に対応し、エンコード時にはこの 256 個だけを受理します。</p>
+<dl class="function">
+<dt id="c.PyUnicode_DecodeLatin1">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_DecodeLatin1</code><span class="sig-paren">(</span>const char<em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_DecodeLatin1" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Latin-1 でエンコードされた <em>size</em> バイトの文字列 <em>s</em> から Unicode オブジェクトを生成します。codec が例外を送出した場合には <em>NULL</em> を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_AsLatin1String">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_AsLatin1String</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AsLatin1String" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Encode a Unicode object using Latin-1 and return the result as Python bytes
+object.  Error handling is &#8220;strict&#8221;.  Return <em>NULL</em> if an exception was
+raised by the codec.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_EncodeLatin1">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_EncodeLatin1</code><span class="sig-paren">(</span>const <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_EncodeLatin1" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Encode the <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> buffer of the given <em>size</em> using Latin-1 and
+return a Python bytes object.  Return <em>NULL</em> if an exception was raised by
+the codec.</p>
+<div class="deprecated-removed">
+<p><span class="versionmodified">Deprecated since version 3.3, will be removed in version 4.0: </span>Part of the old-style <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> API; please migrate to using
+<a class="reference internal" href="#c.PyUnicode_AsLatin1String" title="PyUnicode_AsLatin1String"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_AsLatin1String()</span></code></a>.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="ascii-codecs">
+<h3>ASCII Codecs<a class="headerlink" href="#ascii-codecs" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>以下は ASCII codec の APIです。 7 ビットの ASCII データだけを受理します。その他のコードはエラーになります。</p>
+<dl class="function">
+<dt id="c.PyUnicode_DecodeASCII">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_DecodeASCII</code><span class="sig-paren">(</span>const char<em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_DecodeASCII" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>ASCII でエンコードされた <em>size</em> バイトの文字列 <em>s</em> から Unicode オブジェクトを生成します。codec が例外を送出した場合には <em>NULL</em> を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_AsASCIIString">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_AsASCIIString</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AsASCIIString" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Encode a Unicode object using ASCII and return the result as Python bytes
+object.  Error handling is &#8220;strict&#8221;.  Return <em>NULL</em> if an exception was
+raised by the codec.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_EncodeASCII">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_EncodeASCII</code><span class="sig-paren">(</span>const <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_EncodeASCII" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Encode the <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> buffer of the given <em>size</em> using ASCII and
+return a Python bytes object.  Return <em>NULL</em> if an exception was raised by
+the codec.</p>
+<div class="deprecated-removed">
+<p><span class="versionmodified">Deprecated since version 3.3, will be removed in version 4.0: </span>Part of the old-style <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> API; please migrate to using
+<a class="reference internal" href="#c.PyUnicode_AsASCIIString" title="PyUnicode_AsASCIIString"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_AsASCIIString()</span></code></a>.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="character-map-codecs">
+<h3>Character Map Codecs<a class="headerlink" href="#character-map-codecs" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>この codec は、多くの様々な codec を実装する際に使われるという点で特殊な codec です (実際、 <code class="xref py py-mod docutils literal"><span class="pre">encodings</span></code> パッケージに入っている標準 codecs のほとんどは、この codec を使っています)。この codec は、文字のエンコードやデコードにマップ型 (mapping) を使います。</p>
+<p>デコード用のマップ型は、文字列型の字列一組みを、 Unicode 型の字列一組、整数 (Unicode 序数として解釈されます) または <code class="docutils literal"><span class="pre">None</span></code> (&#8220;定義されていない対応付け (undefined mapping)&#8221; を意味し、エラーを引き起こします) のいずれかに対応付けなければなりません。</p>
+<p>エンコード用のマップ型は、Unicode 型の字列一組みを、 string 型の字列一組、整数 (Latin-1 序数として解釈されます) または <code class="docutils literal"><span class="pre">None</span></code> (&#8220;定義されていない対応付け (undefined mapping)&#8221; を意味し、エラーを引き起こします) のいずれかに対応付けなければなりません。</p>
+<p>マップ型オブジェクトは、 <a class="reference internal" href="../reference/datamodel.html#object.__getitem__" title="object.__getitem__"><code class="xref py py-meth docutils literal"><span class="pre">__getitem__()</span></code></a> マップ型インタフェースをサポートしなければなりません。</p>
+<p>ある文字の検索が LookupError によって失敗すると、その文字はそのままコピーされます。すなわち、その文字の序数値がそれぞれ Unicode または Latin-1 として解釈されます。このため、codec を実現するマップ型に入れる必要がある対応付け関係は、ある文字を別のコード点に対応付けるものだけです。</p>
+<p>以下は mapping codec の APIです:</p>
+<dl class="function">
+<dt id="c.PyUnicode_DecodeCharmap">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_DecodeCharmap</code><span class="sig-paren">(</span>const char<em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*mapping</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_DecodeCharmap" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>エンコードされた <em>size</em> バイトの文字列 <em>s</em> から  <em>mapping</em> に指定されたオブジェクトを使って Unicode オブジェクトを生成します。codec が例外を送出した場合には <em>NULL</em> を返します。もし、 <em>mapping</em> が <em>NULL</em> だった場合、latin-1 でデコードされます。それ以外の場合では、 <em>mapping</em> は byte に対する辞書マップ (訳注: s に含まれる文字の unsigned な値を int 型でキーとして、値として変換対象の Unicode 文字を表す Unicode 文字列になっているような辞書) か、ルックアップテーブルとして扱われる Unicode 文字列です。文字列 (訳注: mapping が Unicode 文字列として渡された場合) の長さより大きい byte 値や、(訳注: mappingにしたがって変換した結果が) U+FFFE &#8220;characters&#8221; になる Byte値は、&#8221;定義されていない対応付け (undefined mapping)&#8221; として扱われます。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_AsCharmapString">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_AsCharmapString</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*mapping</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AsCharmapString" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Unicode オブジェクトを <em>mapping</em> に指定されたオブジェクトを使ってエンコードし、結果を Python 文字列オブジェクトとして返します。エラー処理は &#8220;strict&#8221; です。 codec が例外を送出した場合には <em>NULL</em> を返します。</p>
+</dd></dl>
+
+<p>以下の codec API は Unicode から Unicode への対応付けを行う特殊なものです。</p>
+<dl class="function">
+<dt id="c.PyUnicode_TranslateCharmap">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_TranslateCharmap</code><span class="sig-paren">(</span>const <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*table</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_TranslateCharmap" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p><em>size</em> で指定された長さを持つ <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> バッファを、文字変換マップ <em>table</em> を適用して変換し、変換結果を Unicode オブジェクトで返します。 codec が例外を発行した場合には <em>NULL</em> を返します。</p>
+<p><em>mapping</em> テーブルは、Unicode 序数を表す整数を Unicode 序数を表す整数または None (その文字を削除する) に対応付けなければなりません。</p>
+<p>対応付けテーブルが提供する必要があるメソッドは <a class="reference internal" href="../reference/datamodel.html#object.__getitem__" title="object.__getitem__"><code class="xref py py-meth docutils literal"><span class="pre">__getitem__()</span></code></a> インタフェースだけです; 従って、辞書やシーケンス型を使ってもうまく動作します。対応付けを行っていない (<a class="reference internal" href="../library/exceptions.html#LookupError" title="LookupError"><code class="xref py py-exc docutils literal"><span class="pre">LookupError</span></code></a> を起こすような) 文字序数に対しては、変換は行わず、そのままコピーします。</p>
+<div class="deprecated-removed">
+<p><span class="versionmodified">Deprecated since version 3.3, will be removed in version 4.0: </span>Part of the old-style <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> API.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_EncodeCharmap">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_EncodeCharmap</code><span class="sig-paren">(</span>const <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*mapping</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_EncodeCharmap" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Encode the <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> buffer of the given <em>size</em> using the given
+<em>mapping</em> object and return a Python string object. Return <em>NULL</em> if an
+exception was raised by the codec.</p>
+<div class="deprecated-removed">
+<p><span class="versionmodified">Deprecated since version 3.3, will be removed in version 4.0: </span>Part of the old-style <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> API; please migrate to using
+<a class="reference internal" href="#c.PyUnicode_AsCharmapString" title="PyUnicode_AsCharmapString"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_AsCharmapString()</span></code></a>.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="mbcs-codecs-for-windows">
+<h3>Windows 用の MBCS codec<a class="headerlink" href="#mbcs-codecs-for-windows" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>以下は MBCS codec の API です。この codec は現在のところ、 Windows 上だけで利用でき、変換の実装には Win32 MBCS 変換機構 (Win32 MBCS converter) を使っています。 MBCS (または DBCS) はエンコード方式の種類 (class) を表す言葉で、単一のエンコード方式を表すわけでなないので注意してください。利用されるエンコード方式 (target encoding) は、 codec を動作させているマシン上のユーザ設定で定義されています。</p>
+<dl class="function">
+<dt id="c.PyUnicode_DecodeMBCS">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_DecodeMBCS</code><span class="sig-paren">(</span>const char<em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_DecodeMBCS" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>MBCS でエンコードされた <em>size</em> バイトの文字列 <em>s</em> から Unicode オブジェクトを生成します。codec が例外を送出した場合には <em>NULL</em> を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_DecodeMBCSStateful">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_DecodeMBCSStateful</code><span class="sig-paren">(</span>const char<em>&nbsp;*s</em>, int<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em>, int<em>&nbsp;*consumed</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_DecodeMBCSStateful" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>consumed</em> が <em>NULL</em> のとき、 <a class="reference internal" href="#c.PyUnicode_DecodeMBCS" title="PyUnicode_DecodeMBCS"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_DecodeMBCS()</span></code></a> と同じ動作をします。 <em>consumed</em> が <em>NULL</em> でないとき、 <a class="reference internal" href="#c.PyUnicode_DecodeMBCSStateful" title="PyUnicode_DecodeMBCSStateful"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_DecodeMBCSStateful()</span></code></a> は文字列の最後にあるマルチバイト文字の前半バイトをデコードせず、 <em>consumed</em> にデコードしたバイト数を格納します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_AsMBCSString">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_AsMBCSString</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_AsMBCSString" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>MBCS で Unicode オブジェクトをエンコードし、結果を Python バイト列オブジェクトとして返します。エラー処理は &#8220;strict&#8221; です。 codec が例外を送出した場合には <em>NULL</em> を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_EncodeCodePage">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_EncodeCodePage</code><span class="sig-paren">(</span>int<em>&nbsp;code_page</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*unicode</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_EncodeCodePage" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Encode the Unicode object using the specified code page and return a Python
+bytes object.  Return <em>NULL</em> if an exception was raised by the codec. Use
+<code class="xref c c-data docutils literal"><span class="pre">CP_ACP</span></code> code page to get the MBCS encoder.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_EncodeMBCS">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_EncodeMBCS</code><span class="sig-paren">(</span>const <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE">Py_UNICODE</a><em>&nbsp;*s</em>, Py_ssize_t<em>&nbsp;size</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_EncodeMBCS" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Encode the <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> buffer of the given <em>size</em> using MBCS and return
+a Python bytes object.  Return <em>NULL</em> if an exception was raised by the
+codec.</p>
+<div class="deprecated-removed">
+<p><span class="versionmodified">Deprecated since version 3.3, will be removed in version 4.0: </span>Part of the old-style <a class="reference internal" href="#c.Py_UNICODE" title="Py_UNICODE"><code class="xref c c-type docutils literal"><span class="pre">Py_UNICODE</span></code></a> API; please migrate to using
+<a class="reference internal" href="#c.PyUnicode_AsMBCSString" title="PyUnicode_AsMBCSString"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_AsMBCSString()</span></code></a> or <a class="reference internal" href="#c.PyUnicode_EncodeCodePage" title="PyUnicode_EncodeCodePage"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_EncodeCodePage()</span></code></a>.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="methods-slots">
+<h3>メソッドとスロット<a class="headerlink" href="#methods-slots" title="このヘッドラインへのパーマリンク">¶</a></h3>
+</div>
+</div>
+<div class="section" id="methods-and-slot-functions">
+<span id="unicodemethodsandslots"></span><h2>メソッドおよびスロット関数 (slot function)<a class="headerlink" href="#methods-and-slot-functions" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>以下の API は Unicode オブジェクトおよび文字列を入力に取り (説明では、どちらも文字列と表記しています)、場合に応じて Unicode オブジェクトか整数を返す機能を持っています。</p>
+<p>これらの関数は全て、例外が発生した場合には <em>NULL</em> または <code class="docutils literal"><span class="pre">-1</span></code> を返します。</p>
+<dl class="function">
+<dt id="c.PyUnicode_Concat">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_Concat</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*left</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*right</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_Concat" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>二つの文字列を結合して、新たな Unicode 文字列を生成します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_Split">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_Split</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*s</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*sep</em>, Py_ssize_t<em>&nbsp;maxsplit</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_Split" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Unicode 文字列のリストを分割して、 Unicode 文字列からなるリストを返します。 <em>sep</em> が <em>NULL</em> の場合、全ての空白文字を使って分割を行います。それ以外の場合、指定された文字を使って分割を行います。最大で <em>maxsplit</em> 個までの分割を行います。 <em>maxsplit</em> が負ならば分割数に制限を設けません。分割結果のリスト内には分割文字は含みません。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_Splitlines">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_Splitlines</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*s</em>, int<em>&nbsp;keepend</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_Splitlines" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Unicode 文字列を改行文字で区切り、Unicode 文字列からなるリストを返します。CRLF は一個の改行文字とみなします。 <em>keepend</em> が 0 の場合、分割結果のリスト内に改行文字を含めません。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_Translate">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_Translate</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*str</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*table</em>, const char<em>&nbsp;*errors</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_Translate" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>文字列に文字変換マップ <em>table</em> を適用して変換し、変換結果を Unicode オブジェクトで返します。</p>
+<p>The mapping table must map Unicode ordinal integers to Unicode ordinal integers
+or None (causing deletion of the character).</p>
+<p>対応付けテーブルが提供する必要があるメソッドは <a class="reference internal" href="../reference/datamodel.html#object.__getitem__" title="object.__getitem__"><code class="xref py py-meth docutils literal"><span class="pre">__getitem__()</span></code></a> インタフェースだけです; 従って、辞書やシーケンス型を使ってもうまく動作します。対応付けを行っていない (<a class="reference internal" href="../library/exceptions.html#LookupError" title="LookupError"><code class="xref py py-exc docutils literal"><span class="pre">LookupError</span></code></a> を起こすような) 文字序数に対しては、変換は行わず、そのままコピーします。</p>
+<p><em>errors</em> は codecs で通常使われるのと同じ意味を持ちます。 <em>errors</em> は <em>NULL</em> にしてもよく、デフォルトエラー処理の使用を意味します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_Join">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_Join</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*separator</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*seq</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_Join" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>指定した <em>separator</em> で文字列からなるシーケンスを連結 (join) し、連結結果を Unicode 文字列で返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_Tailmatch">
+Py_ssize_t <code class="descname">PyUnicode_Tailmatch</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*str</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*substr</em>, Py_ssize_t<em>&nbsp;start</em>, Py_ssize_t<em>&nbsp;end</em>, int<em>&nbsp;direction</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_Tailmatch" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>substr</em> が <code class="docutils literal"><span class="pre">str[start:end]</span></code> の末端 (<em>direction</em> == -1 は先頭一致、 <em>direction</em> == 1 は末尾一致) でとマッチする場合に 1 を返し、それ以外の場合には 0 を返します。エラーが発生した時は <code class="docutils literal"><span class="pre">-1</span></code> を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_Find">
+Py_ssize_t <code class="descname">PyUnicode_Find</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*str</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*substr</em>, Py_ssize_t<em>&nbsp;start</em>, Py_ssize_t<em>&nbsp;end</em>, int<em>&nbsp;direction</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_Find" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><code class="docutils literal"><span class="pre">str[start:end]</span></code> 中に <em>substr</em> が最初に出現する場所を返します。このとき指定された検索方向 <em>direction</em> (<em>direction</em> == 1 は順方向検索、 <em>direction</em> == -1 は逆方向検索) で検索します。戻り値は最初にマッチが見つかった場所のインデクスです; 戻り値 <code class="docutils literal"><span class="pre">-1</span></code> はマッチが見つからなかったことを表し、 <code class="docutils literal"><span class="pre">-2</span></code> はエラーが発生して例外情報が設定されていることを表します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_FindChar">
+Py_ssize_t <code class="descname">PyUnicode_FindChar</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*str</em>, <a class="reference internal" href="#c.Py_UCS4" title="Py_UCS4">Py_UCS4</a><em>&nbsp;ch</em>, Py_ssize_t<em>&nbsp;start</em>, Py_ssize_t<em>&nbsp;end</em>, int<em>&nbsp;direction</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_FindChar" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the first position of the character <em>ch</em> in <code class="docutils literal"><span class="pre">str[start:end]</span></code> using
+the given <em>direction</em> (<em>direction</em> == 1 means to do a forward search,
+<em>direction</em> == -1 a backward search).  The return value is the index of the
+first match; a value of <code class="docutils literal"><span class="pre">-1</span></code> indicates that no match was found, and <code class="docutils literal"><span class="pre">-2</span></code>
+indicates that an error occurred and an exception has been set.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_Count">
+Py_ssize_t <code class="descname">PyUnicode_Count</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*str</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*substr</em>, Py_ssize_t<em>&nbsp;start</em>, Py_ssize_t<em>&nbsp;end</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_Count" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><code class="docutils literal"><span class="pre">str[start:end]</span></code> に <em>substr</em> が重複することなく出現する回数を返します。エラーが発生した場合には <code class="docutils literal"><span class="pre">-1</span></code> を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_Replace">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_Replace</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*str</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*substr</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*replstr</em>, Py_ssize_t<em>&nbsp;maxcount</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_Replace" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p><em>str</em> 中に出現する <em>substr</em> を最大で <em>maxcount</em> 個 <em>replstr</em> に置換し、置換結果を Unicode オブジェクトにして返します。 <em>maxcount</em> == -1 にすると、全ての <em>substr</em> を置換します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_Compare">
+int <code class="descname">PyUnicode_Compare</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*left</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*right</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_Compare" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>二つの文字列を比較して、左引数が右引数より小さい場合、左右引数が等価の場合、左引数が右引数より大きい場合に対して、それぞれ -1, 0, 1 を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_CompareWithASCIIString">
+int <code class="descname">PyUnicode_CompareWithASCIIString</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*uni</em>, const char<em>&nbsp;*string</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_CompareWithASCIIString" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Compare a unicode object, <em>uni</em>, with <em>string</em> and return -1, 0, 1 for less
+than, equal, and greater than, respectively. It is best to pass only
+ASCII-encoded strings, but the function interprets the input string as
+ISO-8859-1 if it contains non-ASCII characters.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_RichCompare">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_RichCompare</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*left</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*right</em>, int<em>&nbsp;op</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_RichCompare" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>二つのunicode文字列を比較して、下のうちの一つを返します:</p>
+<ul class="simple">
+<li><p class="first"><code class="docutils literal"><span class="pre">NULL</span></code> を、例外が発生したときに返します。</p>
+</li>
+<li><p class="first"><code class="xref py py-const docutils literal"><span class="pre">Py_True</span></code> もしくは <code class="xref py py-const docutils literal"><span class="pre">Py_False</span></code> を、正しく比較できた時に返します。</p>
+</li>
+<li><p class="first"><code class="xref py py-const docutils literal"><span class="pre">Py_NotImplemented</span></code> を、 <em>left</em> と <em>right</em> のどちらかに対する <a class="reference internal" href="#c.PyUnicode_FromObject" title="PyUnicode_FromObject"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_FromObject()</span></code></a> が失敗したときに返します。(原文: in case the type combination is unknown)</p>
+</li>
+</ul>
+<p><code class="xref py py-const docutils literal"><span class="pre">Py_EQ</span></code> と <code class="xref py py-const docutils literal"><span class="pre">Py_NE</span></code> の比較は、引数からUnicodeへの変換が <a class="reference internal" href="../library/exceptions.html#UnicodeDecodeError" title="UnicodeDecodeError"><code class="xref py py-exc docutils literal"><span class="pre">UnicodeDecodeError</span></code></a> で失敗した時に、 <a class="reference internal" href="../library/exceptions.html#UnicodeWarning" title="UnicodeWarning"><code class="xref py py-exc docutils literal"><span class="pre">UnicodeWarning</span></code></a> を発生する可能性があることに注意してください。</p>
+<p><em>op</em> に入れられる値は、 <code class="xref py py-const docutils literal"><span class="pre">Py_GT</span></code>, <code class="xref py py-const docutils literal"><span class="pre">Py_GE</span></code>, <code class="xref py py-const docutils literal"><span class="pre">Py_EQ</span></code>, <code class="xref py py-const docutils literal"><span class="pre">Py_NE</span></code>, <code class="xref py py-const docutils literal"><span class="pre">Py_LT</span></code>, and <code class="xref py py-const docutils literal"><span class="pre">Py_LE</span></code> のどれかです。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_Format">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_Format</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*format</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*args</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_Format" title="この定義へのパーマリンク">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Return a new string object from <em>format</em> and <em>args</em>; this is analogous to
+<code class="docutils literal"><span class="pre">format</span> <span class="pre">%</span> <span class="pre">args</span></code>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_Contains">
+int <code class="descname">PyUnicode_Contains</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*container</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*element</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_Contains" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>element</em> が <em>container</em> 内にあるか調べ、その結果に応じて真または偽を返します。</p>
+<p><em>element</em> は単要素の Unicode 文字に型強制できなければなりません。エラーが生じた場合には <code class="docutils literal"><span class="pre">-1</span></code> を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_InternInPlace">
+void <code class="descname">PyUnicode_InternInPlace</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;**string</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_InternInPlace" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Intern the argument <em>*string</em> in place.  The argument must be the address of a
+pointer variable pointing to a Python unicode string object.  If there is an
+existing interned string that is the same as <em>*string</em>, it sets <em>*string</em> to
+it (decrementing the reference count of the old string object and incrementing
+the reference count of the interned string object), otherwise it leaves
+<em>*string</em> alone and interns it (incrementing its reference count).
+(Clarification: even though there is a lot of talk about reference counts, think
+of this function as reference-count-neutral; you own the object after the call
+if and only if you owned it before the call.)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyUnicode_InternFromString">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyUnicode_InternFromString</code><span class="sig-paren">(</span>const char<em>&nbsp;*v</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyUnicode_InternFromString" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>A combination of <a class="reference internal" href="#c.PyUnicode_FromString" title="PyUnicode_FromString"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_FromString()</span></code></a> and
+<a class="reference internal" href="#c.PyUnicode_InternInPlace" title="PyUnicode_InternInPlace"><code class="xref c c-func docutils literal"><span class="pre">PyUnicode_InternInPlace()</span></code></a>, returning either a new unicode string
+object that has been interned, or a new (&#8220;owned&#8221;) reference to an earlier
+interned string object with the same value.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Unicode オブジェクトと codec</a><ul>
+<li><a class="reference internal" href="#unicode-objects">Unicode オブジェクト</a><ul>
+<li><a class="reference internal" href="#unicode-type">Unicode 型</a></li>
+<li><a class="reference internal" href="#unicode-character-properties">Unicode 文字プロパティ</a></li>
+<li><a class="reference internal" href="#creating-and-accessing-unicode-strings">Creating and accessing Unicode strings</a></li>
+<li><a class="reference internal" href="#deprecated-py-unicode-apis">廃止予定の Py_UNICODE API群</a></li>
+<li><a class="reference internal" href="#locale-encoding">Locale Encoding</a></li>
+<li><a class="reference internal" href="#file-system-encoding">File System Encoding</a></li>
+<li><a class="reference internal" href="#wchar-t-support">wchar_t サポート</a></li>
+<li><a class="reference internal" href="#ucs4-support">UCS4 Support</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#built-in-codecs">組み込み codec (built-in codec)</a><ul>
+<li><a class="reference internal" href="#generic-codecs">汎用 codec</a></li>
+<li><a class="reference internal" href="#utf-8-codecs">UTF-8 Codecs</a></li>
+<li><a class="reference internal" href="#utf-32-codecs">UTF-32 Codecs</a></li>
+<li><a class="reference internal" href="#utf-16-codecs">UTF-16 Codecs</a></li>
+<li><a class="reference internal" href="#utf-7-codecs">UTF-7 Codecs</a></li>
+<li><a class="reference internal" href="#unicode-escape-codecs">Unicode-Escape Codecs</a></li>
+<li><a class="reference internal" href="#raw-unicode-escape-codecs">Raw-Unicode-Escape Codecs</a></li>
+<li><a class="reference internal" href="#latin-1-codecs">Latin-1 Codecs</a></li>
+<li><a class="reference internal" href="#ascii-codecs">ASCII Codecs</a></li>
+<li><a class="reference internal" href="#character-map-codecs">Character Map Codecs</a></li>
+<li><a class="reference internal" href="#mbcs-codecs-for-windows">Windows 用の MBCS codec</a></li>
+<li><a class="reference internal" href="#methods-slots">メソッドとスロット</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#methods-and-slot-functions">メソッドおよびスロット関数 (slot function)</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="bytearray.html"
+                        title="前の章へ">bytearray オブジェクト</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="tuple.html"
+                        title="次の章へ">タプルオブジェクト (tuple object)</a></p>
+<h3>このページ</h3>
+<ul class="this-page-menu">
+  <li><a href="../bugs.html">Report a Bug</a></li>
+  <li><a href="../_sources/c-api/unicode.txt"
+         rel="nofollow">Show Source</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="tuple.html" title="タプルオブジェクト (tuple object)"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="bytearray.html" title="bytearray オブジェクト"
+             >前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="https://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.4.3</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Python/C API リファレンスマニュアル</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="concrete.html" >具象オブジェクト (concrete object) レイヤ</a> &raquo;</li> 
+      </ul>
+    </div>  
+    <div class="footer">
+    &copy; <a href="../copyright.html">Copyright</a> 1990-2015, Python Software Foundation.
+    <br />
+    The Python Software Foundation is a non-profit corporation.
+    <a href="https://www.python.org/psf/donations/">Please donate.</a>
+    <br />
+    Last updated on Dec 28, 2015.
+    <a href="../bugs.html">Found a bug</a>?
+    <br />
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1.
+    <br />
+    <a href="https://github.com/python-doc-ja/python-doc-ja">Pythonドキュメント日本語翻訳プロジェクト</a>
+    によって翻訳されました。
+    <a href="https://github.com/python-doc-ja/python-doc-ja/issues">誤訳を報告する。</a>
+    </div>
+
+  </body>
+</html>

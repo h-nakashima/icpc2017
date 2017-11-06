@@ -1,0 +1,968 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>What’s New in Python 2.2 &mdash; Python 3.4.3 ドキュメント</title>
+    
+    <link rel="stylesheet" href="../_static/pydoctheme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.4.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Python 3.4.3 ドキュメント 内を検索"
+          href="../_static/opensearch.xml"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="Python 3.4.3 ドキュメント" href="../contents.html" />
+    <link rel="up" title="What’s New in Python" href="index.html" />
+    <link rel="next" title="What’s New in Python 2.1" href="2.1.html" />
+    <link rel="prev" title="What’s New in Python 2.3" href="2.3.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/py.png" />
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/_jp.js"></script>
+    <script type="text/javascript" src="../_static/version_switch.js"></script>
+    
+ 
+
+  <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-34175846-1', 'python.jp');
+        ga('send', 'pageview');
+
+      </script>
+  <body role="document">  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="2.1.html" title="What’s New in Python 2.1"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="2.3.html" title="What’s New in Python 2.3"
+             accesskey="P">前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="https://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.4.3</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">What&#8217;s New in Python</a> &raquo;</li> 
+      </ul>
+    </div>    
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="what-s-new-in-python-2-2">
+<h1>What&#8217;s New in Python 2.2<a class="headerlink" href="#what-s-new-in-python-2-2" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">A.M. Kuchling</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="introduction">
+<h2>はじめに<a class="headerlink" href="#introduction" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>この文書は 2002 年 10 月 14 日にリリースされた Python 2.2.2 の新機能について解説します。Python 2.2.2 は 2001 年 12 月 21 日にリリースされた Python 2.2 のバグフィックスリリースです。</p>
+<p>Python 2.2 は「クリーンアップリリース」と考えることが出来ます。ジェネレータやイテレータのように、完全に書き直されたいくつかの機能があります。ほとんどのその変更は著しくて以前とはかけ離れたものとなりましたが、これは言語設計の不品行と暗黒面を綺麗に掃除することを目的としています。</p>
+<p>このドキュメントは個々の新機能の完全な詳細を提供するのではなくて、簡易な概要を提供することを目的にしています。完全な詳細が知りたければ、<a class="reference external" href="https://www.python.org/doc/2.2/lib/lib.html">Python ライブラリリファレンス</a> 、<a class="reference external" href="https://www.python.org/doc/2.2/ref/ref.html">Python リファレンスマニュアル</a> のような Python 2.2 のドキュメントを参照すべきです。設計と実装の根拠を理解したい場合は、新機能に関する PEP を参照してください。</p>
+</div>
+<div class="section" id="peps-252-and-253-type-and-class-changes">
+<h2>PEP 252 と PEP 253: 型とクラスについての変更<a class="headerlink" href="#peps-252-and-253-type-and-class-changes" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>最大にして広範に影響が及ぶ Python 2.2 の変更は、 オブジェクトとクラスの Python モデルについてのものです。変更は後方互換であるはずなので、あなたのコードは変更なしで動きそうです。ですがその変更は、いくつかの素晴らしい能力を発揮させます。この、本記事中において最も長くて複雑なセクションについて始める前に、変更の概要を提供し、いくつかの所感を提示しておこうと思います。</p>
+<p>昔々、あるところにいた私は、Python 設計の欠点を列挙するウェブページを書きました。その中でも最も重大な欠陥と思われたのが、C で実装された Python 型をサブクラス化出来ないことでした。特に、組み込み型をサブクラス化できません。ですからあなたは、そう、一つの便利メソッドを追加したくてリストをサブクラス化することも出来ないのです。 <code class="xref py py-mod docutils literal"><span class="pre">UserList</span></code> モジュールがリストの全てのメソッドをサポートし、さらにサブクラス化も出来ますが、大量の通常 Python リストを期待する C コードがあり、それらは <code class="xref py py-class docutils literal"><span class="pre">UserList</span></code> のインスタンスを受け付けないでしょう。</p>
+<p>Python 2.2 はこれを修正し、また、その過程においていくつかの心躍る新機能を追加しました。簡単に要約します:</p>
+<ul class="simple">
+<li><p class="first">あなたはリストのような組み込み型をサブクラス化出来ます。整数でさえ出来ます。そしてあなたのサブクラスは、元の型を要求している全ての場所で動作します。</p>
+</li>
+<li><p class="first">以前より使えたインスタンスメソッド加え、静的メソッド、クラスメソッドを今や定義出来ます。</p>
+</li>
+<li><p class="first"><em class="dfn">properties</em> と名付けられた新しい機構を使うと、インスタンスの属性への参照または設定時に自動的にメソッドを呼び出すようにも出来ます。従来の <a class="reference internal" href="../reference/datamodel.html#object.__getattr__" title="object.__getattr__"><code class="xref py py-meth docutils literal"><span class="pre">__getattr__()</span></code></a> の多くの用法は properties を使って書き換えることが出来、それはまたコードを単純にし、高速化もします。小さなオマケとして、属性にも docstring を持てるようになりました。</p>
+</li>
+<li><p class="first"><em class="dfn">slots</em> を使って、インスタンスの適正な属性を特定の集合に制限できます。これはタイプミスに対する安全装置にも出来ますし、将来のバージョンの Python では今よりも最適化される可能性があります。</p>
+</li>
+</ul>
+<p>一部のユーザはこれら全ての変更に懸念を表明しました。そうだね、彼らは言います、新しい機能はかっこいいし昔の Python では出来なかった全ての芸当の役に立つさ、だけどさ、それって言語をより複雑にするよなぁ。一部の人々はずっと常に、Python が単純さを保つことを提言してきました。そして彼らはその単純さが失われると感じたのです。</p>
+<p>個人的に私は、それらは心配には及ばない、と思っています。多くのそれら新機能は随分と秘伝的で、あなたはそれらに気付く必要もないままたくさんの Python コードを書けます。単純なクラスを書くことはかつてよりも難しいということはなく、実際にそれを必要としない限りは、秘伝をわざわざ学習することも教育することも必要ありません。以前ならば C 言語からでしか可能でなかったようなある種の複雑なタスクは、いまやピュアな python から出来て、私には何もかもが良い方向に思えます。</p>
+<p>この記事では全てのショーケースの品を陳列しようとはしませんし、将来の拡張のために必要な小さな変更は説明しません。代わりにこのセクションではおおまかなアウトラインを描きます。Python 2.2 の新しいオブジェクトモデルの追加的な情報源については、 <a class="reference internal" href="#sect-rellinks"><span>関連リンク</span></a> を参照してください。</p>
+<div class="section" id="old-and-new-classes">
+<h3>旧と新クラス<a class="headerlink" href="#old-and-new-classes" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>まず、 Python 2.2 は本当に 2 種類のクラスを持っているのだ、ということを知る必要があります: クラシック、あるいは旧スタイルクラス、と、新スタイルクラスです。旧スタイルクラスのモデルは、以前のバージョンのクラスモデルと完全に同じものです。このセクションに記述する全ての新機能は、全て新スタイルクラスだけに適用されるものです。この逸脱が未来永劫続くことは望まれていません; 最終的には旧スタイルクラスは撤廃されます。たぶん Python 3.0 で。</p>
+<p>では、新スタイルクラスは、どうやって定義すればいいのでしょう? 答えは、既存の新スタイルクラスをサブクラス化することです。たとえば整数、リスト、辞書やファイルでさえも、ほとんどの Python 組み込み型は今では新スタイルクラスです。 <a class="reference internal" href="../library/functions.html#object" title="object"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a> という名の新スタイルクラスは全ての組み込み型の基底クラスとして既に追加されていて、相応しい組み込み型がなければ単に <a class="reference internal" href="../library/functions.html#object" title="object"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a> をサブクラス化すれば良いです:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="o">...</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>これは、Python 2.2 では、基底クラスを持たない <a class="reference internal" href="../reference/compound_stmts.html#class"><code class="xref std std-keyword docutils literal"><span class="pre">class</span></code></a> 文はいつでも旧スタイルクラスになることを意味します。(実際には、モジュールレベルの変数 <code class="xref py py-attr docutils literal"><span class="pre">__metaclass__</span></code> をセットすることでこれは変更出来ます &#8212; 詳細は <span class="target" id="index-39"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0253"><strong>PEP 253</strong></a> 参照 &#8212; ですが <a class="reference internal" href="../c-api/object.html#object"><code class="xref std std-keyword docutils literal"><span class="pre">object</span></code></a> をサブクラス化する方が簡単です。)</p>
+<p>組み込み型(ビルトイン型)のための型オブジェクトは、クレバーなトリックを使って名付けられた組み込み(ビルトイン)として利用可能です。Python は既に組み込み関数 <a class="reference internal" href="../library/functions.html#int" title="int"><code class="xref py py-func docutils literal"><span class="pre">int()</span></code></a>, <a class="reference internal" href="../library/functions.html#float" title="float"><code class="xref py py-func docutils literal"><span class="pre">float()</span></code></a>, <a class="reference internal" href="../library/stdtypes.html#str" title="str"><code class="xref py py-func docutils literal"><span class="pre">str()</span></code></a> を持っていました。2.2 にはその関数はなくなり、型オブジェクトは呼び出されるとファクトリとして振舞います:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">int</span>
+<span class="go">&lt;type &#39;int&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">int</span><span class="p">(</span><span class="s">&#39;123&#39;</span><span class="p">)</span>
+<span class="go">123</span>
+</pre></div>
+</div>
+<p>型の集合を完全にするために、 <a class="reference internal" href="../library/stdtypes.html#dict" title="dict"><code class="xref py py-func docutils literal"><span class="pre">dict()</span></code></a> や <code class="xref py py-func docutils literal"><span class="pre">file()</span></code> のような新しい型オブジェクトが追加されました。もっと面白い例を挙げておきましょう。以下はファイルオブジェクトに <code class="xref py py-meth docutils literal"><span class="pre">lock()</span></code> メソッドを追加します:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="k">class</span> <span class="nc">LockableFile</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">lock</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">whence</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">fcntl</span>
+        <span class="k">return</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">lockf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fileno</span><span class="p">(),</span> <span class="n">operation</span><span class="p">,</span>
+                           <span class="n">length</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">whence</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>今は撤廃された <code class="xref py py-mod docutils literal"><span class="pre">posixfile</span></code> モジュールにはファイルオブジェクトのメソッドを全てエミュレートしつつ <code class="xref py py-meth docutils literal"><span class="pre">lock()</span></code> を追加しているクラスが含まれていますが、このクラスは組み込み型のファイルオブジェクトを期待する内部関数に渡すことが出来ません。私たちの新しい <code class="xref py py-class docutils literal"><span class="pre">LockableFile</span></code> ではそれが出来ます。</p>
+</div>
+<div class="section" id="descriptors">
+<h3>デスクリプタ<a class="headerlink" href="#descriptors" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>以前のバージョンの Python には、オブジェクトによってサポートされている属性とメソッドがなんなのかを見つけ出すための一貫した方法はありませんでした。 <code class="xref py py-attr docutils literal"><span class="pre">__members__</span></code> と <code class="xref py py-attr docutils literal"><span class="pre">__methods__</span></code> で名前のリストを公開するといった非公式な慣習は存在してはいましたが、拡張型やクラスの作者はわざわざそれらを定義しないということは、ままありました。一歩後退してオブジェクトの <code class="xref py py-attr docutils literal"><span class="pre">__dict__</span></code> を調べられたとしても、クラスが継承や任意の <a class="reference internal" href="../reference/datamodel.html#object.__getattr__" title="object.__getattr__"><code class="xref py py-meth docutils literal"><span class="pre">__getattr__()</span></code></a> フックを使っていたりすれば、これはなお不正確になりえました。</p>
+<p>その新しいクラスモデルの根底にあったひとつの大きな着想は、 <em class="dfn">descriptors</em> を使ったオブジェクトの属性を記述する API を正式なものにしてしまうことです。デスクリプタは属性の値を記述し、それがメソッドなのかフィールドなのかを伝えます。デスククリプタ API によって、静的メソッドとクラスメソッドが、より風変わりなコンストラクタとともに可能となりました。</p>
+<p>属性デスクリプタはクラスオブジェクト内部に棲息するオブジェクトで、それ自身のいくつかの属性を持っています:</p>
+<ul class="simple">
+<li><p class="first"><a class="reference internal" href="../reference/import.html#__name__" title="__name__"><code class="xref py py-attr docutils literal"><span class="pre">__name__</span></code></a> は属性の名前です。</p>
+</li>
+<li><p class="first"><code class="xref py py-attr docutils literal"><span class="pre">__doc__</span></code> は属性の docstring です。</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">__get__(object)</span></code> は <em>object</em> から属性値を取り出すメソッドです。</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">__set__(object,</span> <span class="pre">value)</span></code> は <em>object</em> の属性に  <em>value</em> をセットするメソッドです。</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">__delete__(object,</span> <span class="pre">value)</span></code> は <em>object</em> の <em>value</em>  属性を削除します。</p>
+</li>
+</ul>
+<p>例えば、あなたが <code class="docutils literal"><span class="pre">obj.x</span></code> と書いたときに Python が実際に行うことは以下です:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="n">descriptor</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">x</span>
+<span class="n">descriptor</span><span class="o">.</span><span class="n">__get__</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>メソッドに対しては、 <code class="xref py py-meth docutils literal"><span class="pre">descriptor.__get__()</span></code> は、そのインスタンスとその上で呼び出されるメソッドをまとめた、呼び出し可能な一時オブジェクトを返します,これはどうして静的メソッドとクラスメソッドが今や可能となったのか、の理由でもあります; それらは各々、メソッドだけ、メソッドとクラスをまとめる、とするデスクリプタを持っているのです。これら新種のメソッドの簡単な説明としては、静的メソッドはインスタンスを渡さないので、普通の関数に似ていて、クラスメソッドはオブジェクトそのものではなくクラスを渡します。静的メソッドとクラスメソッドはこのように定義します:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">):</span>
+        <span class="o">...</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">):</span>
+        <span class="o">...</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="nb">classmethod</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="../library/functions.html#staticmethod" title="staticmethod"><code class="xref py py-func docutils literal"><span class="pre">staticmethod()</span></code></a> 関数は関数 <code class="xref py py-func docutils literal"><span class="pre">f()</span></code> を引数に取り、デスクリプタにまとめあげて返しますので、クラスオブジェクト内に格納出来ます。きっとあなたがそのようなメソッドを作る何か特別な文法を期待するでしょう(<code class="docutils literal"><span class="pre">def</span> <span class="pre">static</span> <span class="pre">f</span></code>, <code class="docutils literal"><span class="pre">defstatic</span> <span class="pre">f()</span></code> みたいな、あるいはそんななにか)が、まだありません; 将来バージョンの Python に期待、です(訳注: Python 2.4 で PEP 318 として実現)。</p>
+<p>スロットとプロパティのような新機能がさらに新種のデスクリプタとして実装され、また、何か奇抜なデスクリプタクラスを書くことは難しくはありません。例えば、Eiffel 言語スタイルのメソッドに対する事前条件・事後条件を書くことを可能とするデスクリプタクラスを書けるかもしれません。それを使ったクラスはきっとこう定義出来るでしょう:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">eiffel</span> <span class="k">import</span> <span class="n">eiffelmethod</span>
+
+<span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">):</span>
+        <span class="c"># The actual function</span>
+        <span class="o">...</span>
+    <span class="k">def</span> <span class="nf">pre_f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># Check preconditions</span>
+        <span class="o">...</span>
+    <span class="k">def</span> <span class="nf">post_f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># Check postconditions</span>
+        <span class="o">...</span>
+
+    <span class="n">f</span> <span class="o">=</span> <span class="n">eiffelmethod</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">pre_f</span><span class="p">,</span> <span class="n">post_f</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>新しい <code class="xref py py-func docutils literal"><span class="pre">eiffelmethod()</span></code> を使う人にとっては、デスクリプタについての何らかも理解する必要がないことに注目してください。これが私が新機能が言語の基本的な複雑さを増さないのだと考える理由です。例えば <code class="xref py py-func docutils literal"><span class="pre">eiffelmethod()</span></code> やら ZODB やらなんやらを書くためにそれを知る必要がある、限られた陰陽道使いがいるということです。そして大半のユーザは出来上がったライブラリの頂上部を使ってコードを書くだけのことで、実装の詳細なんかは気にしません。</p>
+</div>
+<div class="section" id="multiple-inheritance-the-diamond-rule">
+<h3>多重継承: ダイヤモンドルール<a class="headerlink" href="#multiple-inheritance-the-diamond-rule" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>多重継承は名前解決のルールの変更を経てより有用なものになっています。クラスのこのようなセットを考えてみましょう (ダイアグラムは Guido van Rossum による <span class="target" id="index-40"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0253"><strong>PEP 253</strong></a> より):</p>
+<div class="highlight-python3"><div class="highlight"><pre>      <span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+        <span class="o">^</span> <span class="o">^</span>  <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+       <span class="o">/</span>   \
+      <span class="o">/</span>     \
+     <span class="o">/</span>       \
+    <span class="o">/</span>         \
+<span class="k">class</span> <span class="nc">B</span>     <span class="k">class</span> <span class="nc">C</span><span class="p">:</span>
+    <span class="o">^</span>         <span class="o">^</span>  <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+     \       <span class="o">/</span>
+      \     <span class="o">/</span>
+       \   <span class="o">/</span>
+        \ <span class="o">/</span>
+      <span class="k">class</span> <span class="nc">D</span>
+</pre></div>
+</div>
+<p>クラシッククラスでの探索ルールは単純ですがあまりスマートではありません; 基底クラスは深さ優先で左から右へ検索されます。 <code class="xref py py-meth docutils literal"><span class="pre">D.save()</span></code> への参照は <code class="xref py py-class docutils literal"><span class="pre">D</span></code>, <code class="xref py py-class docutils literal"><span class="pre">B</span></code>, <code class="xref py py-class docutils literal"><span class="pre">A</span></code> と辿って <code class="xref py py-meth docutils literal"><span class="pre">save()</span></code> が見つかるのでこれが返ります。 <code class="xref py py-meth docutils literal"><span class="pre">C.save()</span></code> はまったく見つけられることはありません。これはよくありません。<code class="xref py py-class docutils literal"><span class="pre">C</span></code> の <code class="xref py py-meth docutils literal"><span class="pre">save()</span></code> が仮に何か <code class="xref py py-class docutils literal"><span class="pre">C</span></code> に固有な状態を保存するのだとしたら、これを呼ばないことはその状態が決して保存されないことに繋がります。</p>
+<p>新スタイルクラスはちょっと説明するのに複雑な違ったアルゴリズムを使い、この状況では正しいことをします(Python 2.3 ではこのアルゴリズムはさらに変更されて、ほとんどのケースで同じ結果となり、本当に複雑な継承グラフの場合にもっと有用な結果となりました)。</p>
+<ol class="arabic simple">
+<li><p class="first">基底クラス全てを、クラシックな検索ルールに従って検索し、繰り返し訪れるなら複数回含めます。上の例の場合は訪問クラスのリストは [<code class="xref py py-class docutils literal"><span class="pre">D</span></code>, <code class="xref py py-class docutils literal"><span class="pre">B</span></code>, <code class="xref py py-class docutils literal"><span class="pre">A</span></code>, <code class="xref py py-class docutils literal"><span class="pre">C</span></code>, <code class="xref py py-class docutils literal"><span class="pre">A</span></code>] となります。</p>
+</li>
+<li><p class="first">リストから重複クラスを探します。もしあれば、 <em>最後</em> に現れる一つだけ残して全て削除します。上の例の場合、リストは重複削除後 [<code class="xref py py-class docutils literal"><span class="pre">D</span></code>, <code class="xref py py-class docutils literal"><span class="pre">B</span></code>, <code class="xref py py-class docutils literal"><span class="pre">C</span></code>, <code class="xref py py-class docutils literal"><span class="pre">A</span></code>] になります。</p>
+</li>
+</ol>
+<p>このルールに従うと <code class="xref py py-meth docutils literal"><span class="pre">D.save()</span></code> 参照は <code class="xref py py-meth docutils literal"><span class="pre">C.save()</span></code> を返します。これが我々が望んだ振る舞いです。この探索ルールは Common Lisp に倣ったものです。新しい組み込み関数 <a class="reference internal" href="../library/functions.html#super" title="super"><code class="xref py py-func docutils literal"><span class="pre">super()</span></code></a> は Python のアルゴリズムを再実装する必要なくクラスのスーパークラスを得る手段を提供します。その最も一般的な用法は <code class="docutils literal"><span class="pre">super(class,</span> <span class="pre">obj)</span></code> とすることで束縛されたスーパークラスのオブジェクト(実際のクラスオブジェクトではなく)を取得することです。この形式はスーパークラス内のメソッドを呼び出すメソッドで使われるでしょう。例えば <code class="xref py py-class docutils literal"><span class="pre">D</span></code> の <code class="xref py py-meth docutils literal"><span class="pre">save()</span></code> メソッドはこのように呼び出すことが出来ます:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="k">class</span> <span class="nc">D</span> <span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">save</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># Call superclass .save()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="c"># Save D&#39;s private information here</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="../library/functions.html#super" title="super"><code class="xref py py-func docutils literal"><span class="pre">super()</span></code></a> は <code class="docutils literal"><span class="pre">super(class)</span></code> や <code class="docutils literal"><span class="pre">super(class1,</span> <span class="pre">class2)</span></code> のように呼ばれれば非束縛のスーパークラスオブジェクトも返せますが、これはあまり役には立たないでしょう。</p>
+</div>
+<div class="section" id="attribute-access">
+<h3>属性アクセス<a class="headerlink" href="#attribute-access" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>かなりの数の洗練された Python クラスが、 <a class="reference internal" href="../reference/datamodel.html#object.__getattr__" title="object.__getattr__"><code class="xref py py-meth docutils literal"><span class="pre">__getattr__()</span></code></a> を使って属性アクセスのフックを定義しています; もっとも一般的なのは、 <code class="docutils literal"><span class="pre">obj.parent</span></code> のような属性アクセスを <code class="docutils literal"><span class="pre">obj.get_parent</span></code> のようなメソッド呼び出しに自動的にマッピングすることによって、コードを読みやすくするための便宜としてです。Python 2.2 は属性アクセスをコントロールする新しい方法を追加しました。</p>
+<p>まず、 <code class="docutils literal"><span class="pre">__getattr__(attr_name)</span></code> は新スタイルクラスにおいてもなおサポートされ、変更はありません。これまで同様に、 <code class="docutils literal"><span class="pre">obj.foo</span></code> アクセスが試みられて、インスタンスの辞書に <code class="docutils literal"><span class="pre">foo</span></code> 名の属性が見つからなければ呼び出されます。</p>
+<p>新スタイルクラスでは新しいメソッド <code class="docutils literal"><span class="pre">__getattribute__(attr_name)</span></code> もサポートされます。 2 つのメソッドの違いは、古いほうの <a class="reference internal" href="../reference/datamodel.html#object.__getattr__" title="object.__getattr__"><code class="xref py py-meth docutils literal"><span class="pre">__getattr__()</span></code></a> が <code class="docutils literal"><span class="pre">foo</span></code> がインスタンスの辞書に見つからなかった場合のみ呼ばれる一方で、 <a class="reference internal" href="../reference/datamodel.html#object.__getattribute__" title="object.__getattribute__"><code class="xref py py-meth docutils literal"><span class="pre">__getattribute__()</span></code></a> は任意の属性アクセスがあればいつでも <em>常に</em> 呼び出されることです。</p>
+<p>しかしながら、Python 2.2 の <em class="dfn">properties</em> サポートは、しばしば属性参照をトラップするより簡単な方法になります。 <a class="reference internal" href="../reference/datamodel.html#object.__getattr__" title="object.__getattr__"><code class="xref py py-meth docutils literal"><span class="pre">__getattr__()</span></code></a> メソッドの記述が複雑になるのは、再帰を避けるために内部では普通の属性アクセスが出来ず、代わりに <code class="xref py py-attr docutils literal"><span class="pre">__dict__</span></code> の中身をもてあそぶ必要があるからです。 <a class="reference internal" href="../reference/datamodel.html#object.__getattr__" title="object.__getattr__"><code class="xref py py-meth docutils literal"><span class="pre">__getattr__()</span></code></a> メソッド は、 <a class="reference internal" href="../reference/datamodel.html#object.__repr__" title="object.__repr__"><code class="xref py py-meth docutils literal"><span class="pre">__repr__()</span></code></a> や <code class="xref py py-meth docutils literal"><span class="pre">__coerce__()</span></code> のようなほかのメソッドのためにチェックするのにも結局 Python によって呼び出されるので、これを念頭に置いて書かなければなりません。挙句、属性アクセスのたびに毎回関数を呼び出すことは、かなり大きなパフォーマンスロスに繋がります。</p>
+<p><a class="reference internal" href="../library/functions.html#property" title="property"><code class="xref py py-class docutils literal"><span class="pre">property</span></code></a> は新しい組み込み型で、属性の get, set, delete の 3 つの関数と docstring を梱包したものです。例えば、計算で求まるけれども設定も出来る <code class="xref py py-attr docutils literal"><span class="pre">size</span></code> 属性を定義したいとすると、このように書けます:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_size</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="o">...</span> <span class="n">computation</span> <span class="o">...</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">def</span> <span class="nf">set_size</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="o">...</span> <span class="n">compute</span> <span class="n">something</span> <span class="n">based</span> <span class="n">on</span> <span class="n">the</span> <span class="n">size</span>
+        <span class="ow">and</span> <span class="nb">set</span> <span class="n">internal</span> <span class="n">state</span> <span class="n">appropriately</span> <span class="o">...</span>
+
+    <span class="c"># Define a property.  The &#39;delete this attribute&#39;</span>
+    <span class="c"># method is defined as None, so the attribute</span>
+    <span class="c"># can&#39;t be deleted.</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_size</span><span class="p">,</span> <span class="n">set_size</span><span class="p">,</span>
+                    <span class="k">None</span><span class="p">,</span>
+                    <span class="s">&quot;Storage size of this instance&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>これは確実に、より明快であり書くのが容易です。 <a class="reference internal" href="../reference/datamodel.html#object.__getattr__" title="object.__getattr__"><code class="xref py py-meth docutils literal"><span class="pre">__getattr__()</span></code></a>/<a class="reference internal" href="../reference/datamodel.html#object.__setattr__" title="object.__setattr__"><code class="xref py py-meth docutils literal"><span class="pre">__setattr__()</span></code></a> メソッドのペアでは、全てのほかの属性をインスタンスの <code class="xref py py-attr docutils literal"><span class="pre">__dict__</span></code> から抽出しながら <code class="xref py py-attr docutils literal"><span class="pre">size</span></code> 属性を特別に処理しなければならないところでした。<code class="xref py py-attr docutils literal"><span class="pre">size</span></code> へのアクセス時に行われるのは仕掛けた関数を呼び出すことだけなので、ほかの属性への参照が速度を落とすことはありません。</p>
+<p>もう一つ最後、新しいクラス属性 <code class="xref py py-attr docutils literal"><span class="pre">__slots__</span></code> を使うと、オブジェクトで参照出来る属性リストを制約することが出来ます。Python オブジェクトは普通非常に動的で、どんなときにもインスタンスに対して単に <code class="docutils literal"><span class="pre">obj.new_attr=1</span></code> とするだけで新しい属性を定義出来ます。新スタイルクラスは <code class="xref py py-attr docutils literal"><span class="pre">__slots__</span></code> という名前のクラス属性を定義出来、これにより適正な属性名集合を特定の集合に制限出来ます。実例をみるのが早いです:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;template&#39;</span><span class="p">,</span> <span class="s">&#39;name&#39;</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">obj</span><span class="o">.</span><span class="n">template</span>
+<span class="go">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="s">&#39;Test&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">obj</span><span class="o">.</span><span class="n">template</span>
+<span class="go">Test</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">newattr</span> <span class="o">=</span> <span class="k">None</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">?</span>
+<span class="gr">AttributeError</span>: <span class="n">&#39;C&#39; object has no attribute &#39;newattr&#39;</span>
+</pre></div>
+</div>
+<p><code class="xref py py-attr docutils literal"><span class="pre">__slots__</span></code> リストに含めなかった属性への代入を試みて <a class="reference internal" href="../library/exceptions.html#AttributeError" title="AttributeError"><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code></a> になっていることに注目してください。</p>
+</div>
+<div class="section" id="related-links">
+<span id="sect-rellinks"></span><h3>関連リンク<a class="headerlink" href="#related-links" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>このセクションは新機能について、あなたがプログラミングを始める説明としては十分な簡単な概要だけ示しました。ですが、多くの詳細は、単純化したり無視しています。もっと完全な光景を眺めたければ、どこに行けば良いでしょうか?</p>
+<p><a class="reference external" href="https://www.python.org/2.2/descrintro.html">https://www.python.org/2.2/descrintro.html</a> はデスクリプタ機能のイントロダクションのために書かれた、Guido van Rossum による大作チュートリアルです。もしも私のこの記事があなたの食欲を刺激したのであれば、次はこのチュートリアルです。新機能について遥かに細かく書かれているのに、大変読みやすく書かれています。</p>
+<p>次です。2 つの関連する PEP、 <span class="target" id="index-41"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0252"><strong>PEP 252</strong></a>, <span class="target" id="index-42"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0253"><strong>PEP 253</strong></a> があります。 <span class="target" id="index-43"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0252"><strong>PEP 252</strong></a> は &#8220;型をもっとクラスに似せる(Making Types Look More Like Classes)&#8221; というタイトルで、デスクリプタ API についてカバーしています。 <span class="target" id="index-44"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0253"><strong>PEP 253</strong></a> は &#8220;組み込み型のサブタイプ化(Subtyping Built-in Types)&#8221; というタイトルで、組み込み型のサブタイプを可能とするための型オブジェクトの変更について記述しています。 <span class="target" id="index-45"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0253"><strong>PEP 253</strong></a> は 252 よりも複雑な PEP で、型とメタ型で必要な説明のいくつかのポイントでは、あなたの脳味噌は爆発するかもしれないです。どちらの PEP も、著・実装ともに、Zope Corp. チームの残りのメンバーからのかなりの支援を受けて、Guido van Rossum によって書かれました。</p>
+<p>最後ですが、究極の権威があります: ソースコードです。型ハンドリングのほとんどの機構は <code class="file docutils literal"><span class="pre">Objects/typeobject.c</span></code> 内にあります。ただしこれに頼るのは、python-list や python-dev へ質問を投稿することを含むほかの全ての手段を使い果たしたのちの最後の手段にしてください。</p>
+</div>
+</div>
+<div class="section" id="pep-234-iterators">
+<h2>PEP 234: イテレータ<a class="headerlink" href="#pep-234-iterators" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>2.2 でのもう一つの重要な追加は、C と Python レベル両方に対するイテレーションインターフェイスです。オブジェクトが呼び出し元からどのように反復されるのか定義出来ます。</p>
+<p>2.1 までの Python では <code class="docutils literal"><span class="pre">for</span> <span class="pre">item</span> <span class="pre">in</span> <span class="pre">obj</span></code> が動作するようにするための手段は普通、 <a class="reference internal" href="../reference/datamodel.html#object.__getitem__" title="object.__getitem__"><code class="xref py py-meth docutils literal"><span class="pre">__getitem__()</span></code></a> メソッドをおよそこのような具合に定義することです:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+    <span class="k">return</span> <span class="o">&lt;</span><span class="nb">next</span> <span class="n">item</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="../reference/datamodel.html#object.__getitem__" title="object.__getitem__"><code class="xref py py-meth docutils literal"><span class="pre">__getitem__()</span></code></a> はもっと相応しい用途、つまり 6 番目の要素を取り出すために <code class="docutils literal"><span class="pre">obj[5]</span></code> と書くことが出来るようにオブジェクトへの添え字操作を定義するのに使うものです。 <a class="reference internal" href="../reference/compound_stmts.html#for"><code class="xref std std-keyword docutils literal"><span class="pre">for</span></code></a> ループをサポートするためだけにこれを使うことは、少しばかり人を欺いてしまいます。なにかファイルのように振舞うオブジェクトを巡回出来るようにしたいとしましょう; <em>index</em> パラメータは本質的に無意味です。そのクラスはおそらく <a class="reference internal" href="../reference/datamodel.html#object.__getitem__" title="object.__getitem__"><code class="xref py py-meth docutils literal"><span class="pre">__getitem__()</span></code></a> 呼び出しの連続で呼ばれるたびに <em>index</em> を加算して然るべきだと考えるでしょう。言い換えれば、 <a class="reference internal" href="../reference/datamodel.html#object.__getitem__" title="object.__getitem__"><code class="xref py py-meth docutils literal"><span class="pre">__getitem__()</span></code></a> の存在はランダムに <code class="docutils literal"><span class="pre">file[5]</span></code> を使って 6 番目の要素にアクセス出来ることを意味しません、本来そうであるべきなのに。</p>
+<p>Python 2.2 においては、イテレーションは分けて定義出来ます。 <a class="reference internal" href="../reference/datamodel.html#object.__getitem__" title="object.__getitem__"><code class="xref py py-meth docutils literal"><span class="pre">__getitem__()</span></code></a> メソッドは本当にランダムアクセスをサポートしたいクラスだけが使えば良いです。イテレータの基礎的なアイディアは単純です。新しいビルトイン関数 <code class="docutils literal"><span class="pre">iter(obj)</span></code> または <code class="docutils literal"><span class="pre">iter(C,</span> <span class="pre">sentinel)</span></code> は、イテレータを取り出すのに使います。 <code class="docutils literal"><span class="pre">iter(obj)</span></code> はオブジェクト  <em>obj</em> についてのイテレータを返し、 <code class="docutils literal"><span class="pre">iter(C,</span> <span class="pre">sentinel)</span></code> は、そのイテレータが完了を表明する <em>sentinel</em> を返すまで呼び出し可能オブジェクト <em>C</em> を呼び続けるイテレータを返します。</p>
+<p>Python クラスはオブジェクトの新しいイテレータを構築して返す <a class="reference internal" href="../reference/datamodel.html#object.__iter__" title="object.__iter__"><code class="xref py py-meth docutils literal"><span class="pre">__iter__()</span></code></a> メソッドを定義出来ます; そのオブジェクト自身が自身のイテレータであれば、このメソッドは単に <code class="docutils literal"><span class="pre">self</span></code> を返すだけで良いです。特に、イテレータは普通自身へのイテレータです。C で実装される拡張型はイテレータを返すために <a class="reference internal" href="../c-api/typeobj.html#c.PyTypeObject.tp_iter" title="PyTypeObject.tp_iter"><code class="xref c c-member docutils literal"><span class="pre">tp_iter</span></code></a> 関数を実装出来、イテレータとして振舞いたい拡張型は、 <a class="reference internal" href="../c-api/typeobj.html#c.PyTypeObject.tp_iternext" title="PyTypeObject.tp_iternext"><code class="xref c c-member docutils literal"><span class="pre">tp_iternext</span></code></a> 関数を実装出来ます。</p>
+<p>それでは、結局のところイテレータは実際どんなでしょうか? これに必要なメソッドは一つ、 <a class="reference internal" href="../library/functions.html#next" title="next"><code class="xref py py-meth docutils literal"><span class="pre">next()</span></code></a> です (&#8212;訳注: Python 3 で <code class="docutils literal"><span class="pre">__next__</span></code> に変更されています&#8212;)。これは引数を取らず、次の値を返します。返すべき値がなくなったら、 <a class="reference internal" href="../library/functions.html#next" title="next"><code class="xref py py-meth docutils literal"><span class="pre">next()</span></code></a> 呼び出しは <a class="reference internal" href="../library/exceptions.html#StopIteration" title="StopIteration"><code class="xref py py-exc docutils literal"><span class="pre">StopIteration</span></code></a> 例外を送出しなければなりません:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">L</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">i</span>
+<span class="go">&lt;iterator object at 0x8116870&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">?</span>
+<span class="gr">StopIteration</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>2.2 では、Python の <a class="reference internal" href="../reference/compound_stmts.html#for"><code class="xref std std-keyword docutils literal"><span class="pre">for</span></code></a> ステートメントはもはやシーケンスであることを要求しません; それは <a class="reference internal" href="../library/functions.html#iter" title="iter"><code class="xref py py-func docutils literal"><span class="pre">iter()</span></code></a> がイテレータを返す何かであれば良いです。後方互換と便宜のために、 <a class="reference internal" href="../reference/datamodel.html#object.__iter__" title="object.__iter__"><code class="xref py py-meth docutils literal"><span class="pre">__iter__()</span></code></a> や <a class="reference internal" href="../c-api/typeobj.html#c.PyTypeObject.tp_iter" title="PyTypeObject.tp_iter"><code class="xref c c-member docutils literal"><span class="pre">tp_iter</span></code></a> スロットを実装しないシーケンスについては、自動的にイテレータが構築されるので、 <code class="docutils literal"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">in</span> <span class="pre">[1,2,3]</span></code> はそのまま動きます (&#8212;訳注: 2.2 時点では list に <code class="docutils literal"><span class="pre">__iter__</span></code> が実装されていなかったのかもしれませんが、以降の What&#8217;s New に明示はないものの、少なくとも 2.7 の list はイテレータプロトコルを実装しています。&#8212;)。Python インタプリタがシーケンスを反復する場合にはいつでも、それはイテレータプロトコルの使用に変換されます。つまりこんなことが出来るということです:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">L</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span> <span class="o">=</span> <span class="n">i</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span>
+<span class="go">(1, 2, 3)</span>
+</pre></div>
+</div>
+<p>いくつかの Python の基礎型には既にイテレータのサポートが追加されています。辞書に対して <a class="reference internal" href="../library/functions.html#iter" title="iter"><code class="xref py py-func docutils literal"><span class="pre">iter()</span></code></a> を呼び出すと、キーの反復をするイテレータが返ります:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;Jan&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;Feb&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;Mar&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s">&#39;Apr&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;May&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s">&#39;Jun&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+<span class="gp">... </span>     <span class="s">&#39;Jul&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s">&#39;Aug&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;Sep&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span> <span class="s">&#39;Oct&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s">&#39;Nov&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s">&#39;Dec&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">m</span><span class="p">:</span> <span class="nb">print</span> <span class="n">key</span><span class="p">,</span> <span class="n">m</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+<span class="gp">...</span>
+<span class="go">Mar 3</span>
+<span class="go">Feb 2</span>
+<span class="go">Aug 8</span>
+<span class="go">Sep 9</span>
+<span class="go">May 5</span>
+<span class="go">Jun 6</span>
+<span class="go">Jul 7</span>
+<span class="go">Jan 1</span>
+<span class="go">Apr 4</span>
+<span class="go">Nov 11</span>
+<span class="go">Dec 12</span>
+<span class="go">Oct 10</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="../library/functions.html#iter" title="iter"><code class="xref py py-func docutils literal"><span class="pre">iter()</span></code></a> がキーでの反復イテレータを返すのはただのデフォルトの振る舞いです。キーで、値で、キーと値のペアで反復したければ、 <code class="xref py py-meth docutils literal"><span class="pre">iterkeys()</span></code>, <code class="xref py py-meth docutils literal"><span class="pre">itervalues()</span></code>, <code class="xref py py-meth docutils literal"><span class="pre">iteritems()</span></code> で適切なイテレータを取れます (&#8212;訳注: Python 3 では対応するメソッド名が <code class="docutils literal"><span class="pre">keys</span></code>, <code class="docutils literal"><span class="pre">values</span></code>, <code class="docutils literal"><span class="pre">items</span></code> に変わっただけでなく、これらは「ビュー」オブジェクトを返すように変更されています。&#8212;) ほかに小さな変更点としては、 <a class="reference internal" href="../reference/expressions.html#in"><code class="xref std std-keyword docutils literal"><span class="pre">in</span></code></a> 演算子は今では辞書に対して動作し、 <code class="docutils literal"><span class="pre">key</span> <span class="pre">in</span> <span class="pre">dict</span></code> は <code class="docutils literal"><span class="pre">dict.has_key(key)</span></code> と等価です (&#8212;訳注: Python 3 では辞書オブジェクトのメソッド <code class="docutils literal"><span class="pre">has_key</span></code> はなくなり、 <code class="docutils literal"><span class="pre">key</span> <span class="pre">in</span> <span class="pre">dict</span></code> がキー有無を直接問い合わせる唯一の方法です&#8212;)。</p>
+<p>ファイルもイテレータを提供しています。これはファイルに読むべき行がなくなるまで <a class="reference internal" href="../library/readline.html#module-readline" title="readline: GNU readline support for Python. (Unix)"><code class="xref py py-meth docutils literal"><span class="pre">readline()</span></code></a> を呼び出すもので、つまりファイルを行ごとに読み出すのにこのように書けるわけです:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+    <span class="c"># do something for each line</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>イテレータは前進しか出来ないことに注意してください; 前の要素を取り出す手段もなければ、イテレータをリセットしたりコピーしたりといったことも出来ません。イテレータオブジェクトにそのような追加の能力を持たせることは出来ますが、イテレータプロトコルが規定するのは <a class="reference internal" href="../library/functions.html#next" title="next"><code class="xref py py-meth docutils literal"><span class="pre">next()</span></code></a> メソッドのみです。</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<dl class="last docutils">
+<dt><span class="target" id="index-46"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0234"><strong>PEP 234</strong></a>: イテレータ</dt>
+<dd><p class="first last">著: Ka-Ping Yee と GvR (Guido van Rossum); 実装: Python Labs クルー, 主に GvR と Tim Peters.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="pep-255-simple-generators">
+<h2>PEP 255: 単純なジェネレータ<a class="headerlink" href="#pep-255-simple-generators" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>ジェネレータはもう一つの新機能で、これはイテレータの導入と連携するものです。</p>
+<p>Python や C の標準的な関数コールについては、よくご存じに違いありません。関数を呼ぶと、ローカル変数を作るプライベートな名前空間ができますね。その関数が <code class="docutils literal"><span class="pre">return</span></code> 文まで来ると、ローカル変数が破壊されてから、返り値が呼び出し元に返ります。次に同じ関数をもう一度呼ぶと、新しいプライベート名前空間に新規のローカル変数が作られるのです。しかし、関数を出るときにローカル変数を捨てなければどうなるでしょうか。その出ていったところから関数を続行できたとしたら、どうでしょう。これこそジェネレータが提供する機能です; すなわち、ジェネレータは続行できる関数と考えることができます。</p>
+<p>ジェネレータ関数の最も単純な例です:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="k">def</span> <span class="nf">generate_ints</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="n">i</span>
+</pre></div>
+</div>
+<p>新しいキーワード <a class="reference internal" href="../reference/simple_stmts.html#yield"><code class="xref std std-keyword docutils literal"><span class="pre">yield</span></code></a> がジェネレータのために導入されました。 <a class="reference internal" href="../reference/simple_stmts.html#yield"><code class="xref std std-keyword docutils literal"><span class="pre">yield</span></code></a> ステートメントを含むどんな関数もジェネレータ関数です; Python バイトコードコンパイラはこれを検知し、関数が特別に扱われるように翻訳します。新たなキーワードの導入なので、ジェネレータを使えるようにするには <code class="docutils literal"><span class="pre">from</span> <span class="pre">__future__</span> <span class="pre">import</span> <span class="pre">generators</span></code> ステートメントをモジュールソースコードの先頭付近に含めなければなりません。Python 2.3 ではこのステートメントは不要になります。(&#8212;訳注: Python 2.5 の PEP 342 も参照して下さい。この 2.2 で導入時点の <code class="docutils literal"><span class="pre">yield</span></code> はステートメントではなく式に変更されています。&#8212;)</p>
+<p>ジェネレータ関数を呼び出すと、単一の値の代わりにイテレータプロトコルに対応したオブジェクトを返します。上の例で <code class="docutils literal"><span class="pre">yield</span></code> を実行したとき、ジェネレータは <code class="docutils literal"><span class="pre">return</span></code> 文のようにして <code class="docutils literal"><span class="pre">i</span></code> の値を生成します。 <code class="docutils literal"><span class="pre">yield</span></code> と <code class="docutils literal"><span class="pre">return</span></code> 文の大きな違いは、 <code class="docutils literal"><span class="pre">yield</span></code> に到達した段階でジェネレータの実行状態が一時停止になって、ローカル変数が保存される点です。次回そのジェネレータの <code class="docutils literal"><span class="pre">.next()</span></code> メソッドを呼ぶと、 <a class="reference internal" href="../reference/simple_stmts.html#yield"><code class="xref std std-keyword docutils literal"><span class="pre">yield</span></code></a> の直後から関数が実行を再開します。(複雑な理由により、 <a class="reference internal" href="../reference/simple_stmts.html#yield"><code class="xref std std-keyword docutils literal"><span class="pre">yield</span></code></a> は <a class="reference internal" href="../reference/compound_stmts.html#try"><code class="xref std std-keyword docutils literal"><span class="pre">try</span></code></a>...<a class="reference internal" href="../reference/compound_stmts.html#finally"><code class="xref std std-keyword docutils literal"><span class="pre">finally</span></code></a> の <a class="reference internal" href="../reference/compound_stmts.html#try"><code class="xref std std-keyword docutils literal"><span class="pre">try</span></code></a> ブロック内に含めることは許されていません; <span class="target" id="index-47"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0255"><strong>PEP 255</strong></a> に <a class="reference internal" href="../reference/simple_stmts.html#yield"><code class="xref std std-keyword docutils literal"><span class="pre">yield</span></code></a> と例外の相互作用についての詳細説明がありますので参照して下さい。) &#8212; (&#8212;訳注: Python 2.5 の PEP 342 で <a class="reference internal" href="../reference/compound_stmts.html#try"><code class="xref std std-keyword docutils literal"><span class="pre">try</span></code></a>...<a class="reference internal" href="../reference/compound_stmts.html#finally"><code class="xref std std-keyword docutils literal"><span class="pre">finally</span></code></a> 内に置けないという制約はなくなりました。また、 <a class="reference internal" href="../reference/compound_stmts.html#try"><code class="xref std std-keyword docutils literal"><span class="pre">try</span></code></a>...<a class="reference internal" href="../reference/compound_stmts.html#finally"><code class="xref std std-keyword docutils literal"><span class="pre">finally</span></code></a> の <a class="reference internal" href="../reference/compound_stmts.html#try"><code class="xref std std-keyword docutils literal"><span class="pre">try</span></code></a> 、とここであえて特定しているのは、同じく 2.5 の PEP 341 によって try/except/finally の一体化されるまでは、 <code class="docutils literal"><span class="pre">finally</span></code> の <code class="docutils literal"><span class="pre">try</span></code> と <code class="docutils literal"><span class="pre">except</span></code> の <code class="docutils literal"><span class="pre">try</span></code> が別物だったからです。&#8212;)</p>
+<p>上記 <code class="docutils literal"><span class="pre">generate_ints()</span></code> ジェネレータはこんな具合に使います:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">gen</span> <span class="o">=</span> <span class="n">generate_ints</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gen</span>
+<span class="go">&lt;generator object at 0x8117f90&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gen</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gen</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gen</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gen</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">?</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">2</span>, in <span class="n">generate_ints</span>
+<span class="gr">StopIteration</span>
+</pre></div>
+</div>
+<p>同じく <code class="docutils literal"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">in</span> <span class="pre">generate_ints(5)</span></code> や <code class="docutils literal"><span class="pre">a,b,c</span> <span class="pre">=</span> <span class="pre">generate_ints(3)</span></code> といった書き方もできます。</p>
+<p>ジェネレータ関数内で <code class="docutils literal"><span class="pre">return</span></code> 文は、引数を付けずに、処理の終わりを知らせるためにだけ使うことができます; <code class="docutils literal"><span class="pre">return</span></code> を実行したあとは、もうそのジェネレータが値を返すことはできません。ジェネレータ関数の中では、 <code class="docutils literal"><span class="pre">return</span> <span class="pre">5</span></code> などと値を付けた <code class="docutils literal"><span class="pre">return</span></code> は構文エラーです。ジェネレータの出力が終わったことを示すには、ほかにも、手動で <a class="reference internal" href="../library/exceptions.html#StopIteration" title="StopIteration"><code class="xref py py-exc docutils literal"><span class="pre">StopIteration</span></code></a>  を投げてもいいですし、関数の最後まで実行するだけでも同じことになります。(&#8212;訳注: Python 2.7 まではジェネレータ内での戻り値のある <code class="docutils literal"><span class="pre">return</span> <span class="pre">5</span></code> は構文エラーになりますが、少なくとも Python 3.4 で構文エラーとはなりません。単に無視されます。リファレンスに言及されていない振舞いなので、何かの事故かもしれません。いずれにせよジェネレータ内では Python 3 でも <code class="docutils literal"><span class="pre">return</span></code> で値は戻せません。&#8212;)</p>
+<p>自分でクラスを書いて、ジェネレータで言うところのローカル変数をインスタンス変数として全部保管しておけば、同じ効果を得ることは可能です。たとえば整数のリストを返すのは、 <code class="docutils literal"><span class="pre">self.count</span></code> を 0 にして、 <code class="docutils literal"><span class="pre">next()</span></code> メソッドが <code class="docutils literal"><span class="pre">self.count</span></code> をインクリメントして返すようにすればできます。しかしながら、ある程度複雑なジェネレータになってくると、同じことをするクラスを書くのは格段にややこしいことになります。 <code class="file docutils literal"><span class="pre">Lib/test/test_generators.py</span></code> にはもっと面白い例がたくさん含まれています。一番単純な一つは、ジェネレータを再帰的に使ってツリーを順繰りに横断する実装をするこれです (&#8212;訳注: ジェネレータは現在の最新 3.5 までの間に 2 度大きな機能強化が行われているのですが、一つが 2.5 での PEP 342 でこれは yield 「に」値を戻せるようにするものです。もう一つが 3.3 での PEP 380 で、これはサブジェネレータへの委譲 <code class="docutils literal"><span class="pre">yield</span> <span class="pre">from</span> <span class="pre">&lt;subgen&gt;</span></code> の追加でした。ですのでこの 3.3 からの <code class="docutils literal"><span class="pre">yield</span> <span class="pre">from</span></code> を使うと下記例はもっとスッキリ書けます。&#8212;):</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="c"># A recursive generator that generates Tree leaves in in-order.</span>
+<span class="k">def</span> <span class="nf">inorder</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">t</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">inorder</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">left</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">x</span>
+        <span class="k">yield</span> <span class="n">t</span><span class="o">.</span><span class="n">label</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">inorder</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">right</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">x</span>
+</pre></div>
+</div>
+<p>ほかにも:file:<cite>Lib/test/test_generators.py</cite> には、N-Queens 問題 (N×N コマのチェス盤に、互いに攻撃できないような配置で N 個のクイーンを置く) やナイト・ツアー (N×N 盤の全コマをナイトが一度ずつ通るような経路を探す) の解を出す例が入っています。</p>
+<p>ジェネレータの発想はほかのプログラミング言語、特に Icon (<a class="reference external" href="http://www.cs.arizona.edu/icon/">http://www.cs.arizona.edu/icon/</a>) から着想しています。Icon ではジェネレータが言語の中枢になっています。Icon では、あらゆる式と関数がジェネレータのように振舞います。 <a class="reference external" href="http://www.cs.arizona.edu/icon/docs/ipd266.htm">http://www.cs.arizona.edu/icon/docs/ipd266.htm</a> の &#8220;Icon プログラミング言語の概要&#8221; の一つの例が、これがどのようなものであるのかを教えてくれます:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="n">sentence</span> <span class="p">:</span><span class="o">=</span> <span class="s">&quot;Store it in the neighboring harbor&quot;</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="p">:</span><span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="s">&quot;or&quot;</span><span class="p">,</span> <span class="n">sentence</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">5</span> <span class="n">then</span> <span class="n">write</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Icon では <code class="xref py py-func docutils literal"><span class="pre">find()</span></code> 関数は部分文字列 &#8220;or&#8221; が見つかる位置 3, 23, 33 を返します。 <a class="reference internal" href="../reference/compound_stmts.html#if"><code class="xref std std-keyword docutils literal"><span class="pre">if</span></code></a> 文内では <code class="docutils literal"><span class="pre">i</span></code> には最初 3 が代入されますが、これは 3 より小さいので比較は失敗し、Icon は次の値 23 を取り出します。 23 は 5 より大きいので比較は成功し、コードは 23 をスクリーンに表示します。</p>
+<p>Python では Icon がそうするほどにはジェネレータを中心的概念に置きません。ジェネレータは Python 言語中核の新たな一面ではありますが、それらを学ぶのも使うのも誰しも行うべきだというものでもなく、そしてこれで解決できない何か問題があれば、忘れてしまっても良いものです。Icon と比較した特筆すべき Python インターフェイスの機能はジェネレータの状態が具象オブジェクト (イテレータ) で表現されることであり、それは他の関数に渡せますし、データ構造に記憶しておくことも出来ます。(&#8212;訳注: ジェネレータについてかなり控えめなのは、この時点で著者は将来の拡張を既に見据えていたから? かもしれませんね。PEP 342 と PEP 380 により今やジェネレータはこの頃より遥かに高機能になっており、今ではきっと「こんなものなくても困らない」なんて Python 使いはいないでしょう。&#8212;)</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<dl class="last docutils">
+<dt><span class="target" id="index-48"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0255"><strong>PEP 255</strong></a> - 単純なジェネレータ</dt>
+<dd><p class="first last">Neil Schemenauer, Tim Peters, Magnus Lie Hetland により著されました。実装のほとんどは Neil Schemenauer と Tim Peters により行われ、 Python Labs クルーにより他の修正が行われました。</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="pep-237-unifying-long-integers-and-integers">
+<h2>PEP 237: 長整数と整数を一体化していく<a class="headerlink" href="#pep-237-unifying-long-integers-and-integers" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>最近のバージョンでは、普通の整数、これはほとんどの機器で 32 ビットの値ですが、これと長整数、こちらは任意サイズになりえます、この 2 つの区別が、苛立ちの種になってきています。たとえば <code class="docutils literal"><span class="pre">2**32</span></code> より大きなファイルをサポートするプラットフォームでは、ファイルオブジェクトの <code class="xref py py-meth docutils literal"><span class="pre">tell()</span></code> メソッドは長整数で値を返さなければなりません。しかしながら Python の様々な場所では無印の整数を期待していて、長整数を渡すと例外を引き起こすのでした。例えば Python 1.5 ではスライスのインデクスとして普通の整数しか使えず、 <code class="docutils literal"><span class="pre">'abc'[1L:]</span></code> は &#8216;slice index must be int&#8217; というメッセージとともに <a class="reference internal" href="../library/exceptions.html#TypeError" title="TypeError"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code></a> を引き起こしました。</p>
+<p>Python 2.2 は必要に応じて short 整数を長整数に値をシフトします。 &#8216;L&#8217; サフィックスは長整数リテラルを示すのにはもはや不要です。今ではコンパイラは相応しい型を選べます。(&#8216;L&#8217; サフィックスは将来の Python 2.x では非推奨となり、Python 2.4 では警告となり、おそらく Python 3.0 では削除されます。 &#8212; 訳注: Python 3 で &#8216;L&#8217; が廃止されて、付けると構文エラーになるようになったのは事実です。ですが少なくとも Python 2.7 では <code class="xref std std-option docutils literal"><span class="pre">-3</span></code> でも <code class="xref std std-option docutils literal"><span class="pre">-Qwarnall</span></code> でも警告とならないので注意してください。Python 2 系を使っていて Python 3 との互換性を持ちたいならば、 2.2 以降では &#8216;L&#8217; は付けるべきではありません。 &#8212; ) かつて <a class="reference internal" href="../library/exceptions.html#OverflowError" title="OverflowError"><code class="xref py py-exc docutils literal"><span class="pre">OverflowError</span></code></a> となっていたような多くの演算が、今ではその結果として長整数を返します。例えば:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mi">1234567890123</span>
+<span class="go">1234567890123L</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">2</span> <span class="o">**</span> <span class="mi">64</span>
+<span class="go">18446744073709551616L</span>
+</pre></div>
+</div>
+<p>ほとんどのケースで、今や整数と長整数は同じものとして扱われるでしょう。 <a class="reference internal" href="../library/functions.html#type" title="type"><code class="xref py py-func docutils literal"><span class="pre">type()</span></code></a> ビルトインで今でも区別出来ますが、ほとんど必要ないでしょう (&#8212; 訳注: Python 3 では本当にこの2つの区別がなくなったので、当然区別出来ません。Python 3 系への移行を考えている Python 2 コードは、両者の区別に頼らないようにするべきです。 &#8212;)。</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<dl class="last docutils">
+<dt><span class="target" id="index-49"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0237"><strong>PEP 237</strong></a> - 長整数と整数を一体化していく</dt>
+<dd><p class="first last">Moshe Zadka と Guido van Rossum 著、実装 (ほぼ) Guido van Rossum.。</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="pep-238-changing-the-division-operator">
+<h2>PEP 238: 除算演算子を変更していく<a class="headerlink" href="#pep-238-changing-the-division-operator" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Python 2.2 の変更で最も物議を醸すものが、Python 誕生時からずっとそうであり続けた古い設計の欠陥、これを修正するための取り組み開始の予兆です。現在の Python の除算演算子 <code class="docutils literal"><span class="pre">/</span></code> は 2 つの整数引数に対して C 言語の除算演算子のように振舞います: 端数部があれば切り捨てて整数を結果として返します。例えば <code class="docutils literal"><span class="pre">3/2</span></code> は 1.5 ではなく 1 で、 <code class="docutils literal"><span class="pre">(-1)/2</span></code> は -0.5 ではなく -1 です。Python の動的型付けにより演算対象の型がなんなのかを容易には決定できないくせに 2 つの演算対象の型に依存するので、除算の結果は予想に反したものとなりうるのです。</p>
+<p>(議論の的となるのはこれが <em>本当の</em> 設計の欠陥なのかどうかと、果たしてこれを修正することで既存のコードを破壊する価値はあるのかどうかです。それは python-dev での終わりのない議論を巻き起こし、2001 年 7 月には <em class="newsgroup">comp.lang.python</em> への辛辣な投稿の嵐に突入しました。私はここではどちらかの側に立って説きつけるつもりはなく、Python 2.2 で何が実現したのかを記述することだけに専念します。<span class="target" id="index-50"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0238"><strong>PEP 238</strong></a> にはその主張と反対意見の要約が書かれていますので、そちらをお読みください。)</p>
+<p>この変更がコードを破壊しうるために、導入は大変ゆっくり少しずつ進められていきます。Python 2.2 が移行を始めますが、切り替えは Python 3.0 になるまで達成させられることはありません。</p>
+<p>まず最初に、いくつか <span class="target" id="index-51"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0238"><strong>PEP 238</strong></a> から用語を借りることにします。 &#8220;True division (本物の除算)&#8221; とは、プログラマでない人々が一番馴染みのある除算です: 3/2 は 1.5、1/4 は 0.25、などなど。 &#8220;Floor division (床除算)&#8221; は Python の <code class="docutils literal"><span class="pre">/</span></code> 演算子が現在やっていること、すなわち整数の演算対象に対して; 結果は true division の結果の値の floor である、というものです。 &#8220;Classic division (クラシック除算)&#8221; は現在の <code class="docutils literal"><span class="pre">/</span></code> の混合した振る舞いを指します; 演算対象が整数同士であれば floor division の結果となり、一方が不動小数点数であれば true division の結果となる振る舞いです。</p>
+<p>以下が 2.2 で導入される変更です:</p>
+<ul>
+<li><p class="first">新しい演算子 <code class="docutils literal"><span class="pre">//</span></code> が floor division の演算子です。(いえーい、これって C++ コメントのシンボルに似てるね、なんてことは私たちは知っています。) <code class="docutils literal"><span class="pre">//</span></code> は演算対象の型がなんであれ <em>いつでも</em> floor division を実行しますので、 <code class="docutils literal"><span class="pre">1</span> <span class="pre">//</span> <span class="pre">2</span></code> は 0、 <code class="docutils literal"><span class="pre">1.0</span> <span class="pre">//</span> <span class="pre">2.0</span></code> も 0.0 です。</p>
+<p><code class="docutils literal"><span class="pre">//</span></code> は Python 2.2 でいつでも使えます; <code class="docutils literal"><span class="pre">__future__</span></code> を使って有効化するなんてことは必要ないです。</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">from</span> <span class="pre">__future__</span> <span class="pre">import</span> <span class="pre">division</span></code> をモジュールに含めることで、 <code class="docutils literal"><span class="pre">/</span></code> 演算子が true division の結果を返すように変更されますので、 <code class="docutils literal"><span class="pre">1/2</span></code> は 0.5 です。 <code class="docutils literal"><span class="pre">__future__</span></code> 文なしでは <code class="docutils literal"><span class="pre">/</span></code> は classic division のままです。 <code class="docutils literal"><span class="pre">/</span></code> が持つデフォルトの意味は Python 3.0 になるまで変更されません。</p>
+</li>
+<li><p class="first">クラスでは <a class="reference internal" href="../reference/datamodel.html#object.__truediv__" title="object.__truediv__"><code class="xref py py-meth docutils literal"><span class="pre">__truediv__()</span></code></a> と <a class="reference internal" href="../reference/datamodel.html#object.__floordiv__" title="object.__floordiv__"><code class="xref py py-meth docutils literal"><span class="pre">__floordiv__()</span></code></a> メソッドを、2つの除算演算子をオーバロードするために定義出来ます。C のレベルにも <a class="reference internal" href="../c-api/typeobj.html#c.PyNumberMethods" title="PyNumberMethods"><code class="xref c c-type docutils literal"><span class="pre">PyNumberMethods</span></code></a> 構造体内にスロットがあり、拡張型もその 2 つの演算子を定義出来ます。</p>
+</li>
+<li><p class="first">Python 2.2 は、コードが変更後の除算セマンティクスで動作するかどうかをテストするコマンドライン引数をサポートします。 <code class="xref std std-option docutils literal"><span class="pre">-Q</span> <span class="pre">warn</span></code> で python を実行すると、除算が二つの整数に適用されている箇所全てで警告します。除算の意味変更の影響を受ける箇所の特定と修正に使えるでしょう。デフォルトでは、Python 2.2 は警告なしで単純に classic division を実行します; その警告がデフォルトになるのは Python 2.3 からです。</p>
+</li>
+</ul>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<dl class="last docutils">
+<dt><span class="target" id="index-52"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0238"><strong>PEP 238</strong></a> - 除算演算子を変更していく</dt>
+<dd><p class="first last">Moshe Zadka と Guido van Rossum 著、実装 Guido van Rossum.。</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="unicode-changes">
+<h2>Unicode Changes<a class="headerlink" href="#unicode-changes" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Python&#8217;s Unicode support has been enhanced a bit in 2.2.  Unicode strings are
+usually stored as UCS-2, as 16-bit unsigned integers. Python 2.2 can also be
+compiled to use UCS-4, 32-bit unsigned integers, as its internal encoding by
+supplying <code class="xref std std-option docutils literal"><span class="pre">--enable-unicode=ucs4</span></code> to the configure script.   (It&#8217;s also
+possible to specify <code class="xref std std-option docutils literal"><span class="pre">--disable-unicode</span></code> to completely disable Unicode
+support.)</p>
+<p>When built to use UCS-4 (a &#8220;wide Python&#8221;), the interpreter can natively handle
+Unicode characters from U+000000 to U+110000, so the range of legal values for
+the <code class="xref py py-func docutils literal"><span class="pre">unichr()</span></code> function is expanded accordingly.  Using an interpreter
+compiled to use UCS-2 (a &#8220;narrow Python&#8221;), values greater than 65535 will still
+cause <code class="xref py py-func docutils literal"><span class="pre">unichr()</span></code> to raise a <a class="reference internal" href="../library/exceptions.html#ValueError" title="ValueError"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code></a> exception. This is all
+described in <span class="target" id="index-14"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0261"><strong>PEP 261</strong></a>, &#8220;Support for &#8216;wide&#8217; Unicode characters&#8221;; consult it for
+further details.</p>
+<p>Another change is simpler to explain. Since their introduction, Unicode strings
+have supported an <code class="xref py py-meth docutils literal"><span class="pre">encode()</span></code> method to convert the string to a selected
+encoding such as UTF-8 or Latin-1.  A symmetric <code class="docutils literal"><span class="pre">decode([*encoding*])</span></code>
+method has been added to 8-bit strings (though not to Unicode strings) in 2.2.
+<code class="xref py py-meth docutils literal"><span class="pre">decode()</span></code> assumes that the string is in the specified encoding and decodes
+it, returning whatever is returned by the codec.</p>
+<p>Using this new feature, codecs have been added for tasks not directly related to
+Unicode.  For example, codecs have been added for uu-encoding, MIME&#8217;s base64
+encoding, and compression with the <a class="reference internal" href="../library/zlib.html#module-zlib" title="zlib: Low-level interface to compression and decompression routines compatible with gzip."><code class="xref py py-mod docutils literal"><span class="pre">zlib</span></code></a> module:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;Here is a lengthy piece of redundant, overly verbose,</span>
+<span class="gp">... </span><span class="s">and repetitive text.</span>
+<span class="gp">... </span><span class="s">&quot;&quot;&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;zlib&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span>
+<span class="go">&#39;x\x9c\r\xc9\xc1\r\x80 \x10\x04\xc0?Ul...&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;zlib&#39;</span><span class="p">)</span>
+<span class="go">&#39;Here is a lengthy piece of redundant, overly verbose,\nand repetitive text.\n&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;uu&#39;</span><span class="p">)</span>
+<span class="go">begin 666 &lt;data&gt;</span>
+<span class="go">M2&amp;5R92!I&lt;R!A(&amp;QE;F=T:&#39;D@&lt;&amp;EE8V4@;V8@&lt;F5D=6YD86YT+&quot;!O=F5R;&#39;D@</span>
+<span class="go">&gt;=F5R8F]S92P*86YD(&#39;)E&lt;&amp;5T:71I=F4@=&amp;5X=&quot;X*</span>
+
+<span class="go">end</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;sheesh&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;rot-13&#39;</span><span class="p">)</span>
+<span class="go">&#39;furrfu&#39;</span>
+</pre></div>
+</div>
+<p>To convert a class instance to Unicode, a <code class="xref py py-meth docutils literal"><span class="pre">__unicode__()</span></code> method can be
+defined by a class, analogous to <a class="reference internal" href="../reference/datamodel.html#object.__str__" title="object.__str__"><code class="xref py py-meth docutils literal"><span class="pre">__str__()</span></code></a>.</p>
+<p><code class="xref py py-meth docutils literal"><span class="pre">encode()</span></code>, <code class="xref py py-meth docutils literal"><span class="pre">decode()</span></code>, and <code class="xref py py-meth docutils literal"><span class="pre">__unicode__()</span></code> were implemented by
+Marc-André Lemburg.  The changes to support using UCS-4 internally were
+implemented by Fredrik Lundh and Martin von Löwis.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<dl class="last docutils">
+<dt><span class="target" id="index-15"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0261"><strong>PEP 261</strong></a> - Support for &#8216;wide&#8217; Unicode characters</dt>
+<dd>Written by Paul Prescod.</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="pep-227-nested-scopes">
+<h2>PEP 227: 入れ子状のスコープ<a class="headerlink" href="#pep-227-nested-scopes" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Python 2.1 では、静的にネストされたスコープが <code class="docutils literal"><span class="pre">from</span> <span class="pre">__future__</span> <span class="pre">import</span> <span class="pre">nested_scopes</span></code> ディレクティブで有効に出来るオプションの機能として追加されました。2.2 では入れ子のスコープには特別に有効化する必要なく、もういつでもそこにあります。このセクションの残りの部分は &#8220;What&#8217;s New in Python 2.1&#8221; の入れ子のスコープの記述からの丸々コピーですので、2.1 のときに読んだなら読み飛ばしてもらって結構です。</p>
+<p>Python2.1 で導入され、2.2 で完成した最も大きな変更点は Python のスコープルールです。Python2.0では、ある指定された時点である変数の名前を検索するために多くても3つの名前空間、つまりローカル、モジュールレベル、ビルトイン名前空間しか使われませんでした。このことは直感的な期待と一致せずしばしば人々を驚かせました。例えば、入れ子になった再帰関数の定義は動きません:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="k">def</span> <span class="nf">f</span><span class="p">():</span>
+    <span class="o">...</span>
+    <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="o">...</span>
+        <span class="k">return</span> <span class="n">g</span><span class="p">(</span><span class="n">value</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>名前 <code class="docutils literal"><span class="pre">g</span></code> はローカルの名前空間にもモジュールレベルの名前空間にも紐付かないので、関数 <code class="xref py py-func docutils literal"><span class="pre">g()</span></code> は常に <a class="reference internal" href="../library/exceptions.html#NameError" title="NameError"><code class="xref py py-exc docutils literal"><span class="pre">NameError</span></code></a> 例外を上げます。これは実際には大した問題ではありません (このような内部関数を再帰的に定義する頻度はそう多くありません)が、 <a class="reference internal" href="../reference/expressions.html#lambda"><code class="xref std std-keyword docutils literal"><span class="pre">lambda</span></code></a> ステートメントをより使いにくくするのでこれについては問題です。 <a class="reference internal" href="../reference/expressions.html#lambda"><code class="xref std std-keyword docutils literal"><span class="pre">lambda</span></code></a> を使うコードにおいて、デフォルトの引数としてこれらを渡してコピーされるローカル変数を頻繁に見かけます。:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="s">&quot;Return list of any entries equal to &#39;name&#39;&quot;</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">:</span> <span class="n">x</span> <span class="o">==</span> <span class="n">name</span><span class="p">,</span>
+               <span class="bp">self</span><span class="o">.</span><span class="n">list_attribute</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">L</span>
+</pre></div>
+</div>
+<p>過度な関数型スタイルで書かれた Python コードの可読性は、結果的にはひどく苦痛を感じるものですね。</p>
+<p>Python 2.2 の最も重要な変更点は、この問題を解決するために静的なスコープが追加されたことです。最初の効果として、 <code class="docutils literal"><span class="pre">name=name</span></code> という例ではデフォルトの引数は必要ありません。簡単に言えば、指定された引数名が関数内の値に割り当てられない場合(<a class="reference internal" href="../reference/compound_stmts.html#def"><code class="xref std std-keyword docutils literal"><span class="pre">def</span></code></a> 、 <a class="reference internal" href="../reference/compound_stmts.html#class"><code class="xref std std-keyword docutils literal"><span class="pre">class</span></code></a> または <a class="reference internal" href="../reference/simple_stmts.html#import"><code class="xref std std-keyword docutils literal"><span class="pre">import</span></code></a> ステートメントの割り当てによって)、変数の参照は外側のスコープのローカル名前空間で検索されます。ルールや実装の詳細は PEP で参照できます。</p>
+<p>この変更は、同じ変数名がモジュールレベルと関数の定義が含まれている関数内のローカルの両方で変数名として使用されているコードで、互換性の問題を引き起こす可能性があります。ですがむしろ気にしなくてよいでしょう。そのようなコードはそもそも最初から相当こんがらかっているので。</p>
+<p>この変更の副作用の一つは、 <code class="docutils literal"><span class="pre">from</span> <span class="pre">module</span> <span class="pre">import</span> <span class="pre">*</span></code> と <code class="docutils literal"><span class="pre">exec</span></code> の両ステートメントが特定の条件下の関数スコープ内で不正となることです。 Python のリファレンスマニュアルははじめからずっと <code class="docutils literal"><span class="pre">from</span> <span class="pre">module</span> <span class="pre">import</span> <span class="pre">*</span></code> はトップレベルモジュールでのみ合法であると言ってきましたが、以前の CPython インタプリタはこれを一度も強制していませんでした。入れ子になったスコープ実装の一環として、Python のソースをバイトコードに変換するコンパイラは、内包されたスコープ内の変数にアクセスするために別のコードを生成する必要があります。 <code class="docutils literal"><span class="pre">from</span> <span class="pre">module</span> <span class="pre">import</span> <span class="pre">*</span></code>, <code class="xref std std-keyword docutils literal"><span class="pre">exec</span></code> はコンパイラにこれを理解することを不可能にしてしまいます。なぜならそれらはコンパイル時にはわからないローカル名前空間に名前を追加するからです。それゆえ、もし関数が関数定義を含んだり自由な変数に <a class="reference internal" href="../reference/expressions.html#lambda"><code class="xref std std-keyword docutils literal"><span class="pre">lambda</span></code></a> の語句を含んだりする場合、コンパイラは <a class="reference internal" href="../library/exceptions.html#SyntaxError" title="SyntaxError"><code class="xref py py-exc docutils literal"><span class="pre">SyntaxError</span></code></a> 例外を上げて知らせます。</p>
+<p>前述した説明を少し明確にするため、例を挙げます:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">():</span>
+    <span class="c"># The next line is a syntax error</span>
+    <span class="n">exec</span> <span class="s">&#39;x=2&#39;</span>
+    <span class="k">def</span> <span class="nf">g</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">x</span>
+</pre></div>
+</div>
+<p><code class="xref std std-keyword docutils literal"><span class="pre">exec</span></code> 文を含む 4 行目は文法エラーです。 <code class="xref std std-keyword docutils literal"><span class="pre">exec</span></code> としては新しいローカル変数 <code class="docutils literal"><span class="pre">x</span></code> を定義したいのですが、これは <code class="xref py py-func docutils literal"><span class="pre">g()</span></code> からアクセスされなければなりません。</p>
+<p>これは実際には大した制約でもないはずです。 <code class="xref std std-keyword docutils literal"><span class="pre">exec</span></code> が Python コードで使われるのは稀です(使われているとしたら大抵どこか貧弱な設計であることの証)。</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<dl class="last docutils">
+<dt><span class="target" id="index-53"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0227"><strong>PEP 227</strong></a> - 静的に入れ子になったスコープ</dt>
+<dd><p class="first last">Jeremy Hylton著、実装</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="new-and-improved-modules">
+<h2>新しいモジュールと改良されたモジュール<a class="headerlink" href="#new-and-improved-modules" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul>
+<li><p class="first">The <code class="xref py py-mod docutils literal"><span class="pre">xmlrpclib</span></code> module was contributed to the standard library by Fredrik
+Lundh, providing support for writing XML-RPC clients.  XML-RPC is a simple
+remote procedure call protocol built on top of HTTP and XML. For example, the
+following snippet retrieves a list of RSS channels from the O&#8217;Reilly Network,
+and then  lists the recent headlines for one channel:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">xmlrpclib</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">xmlrpclib</span><span class="o">.</span><span class="n">Server</span><span class="p">(</span>
+      <span class="s">&#39;http://www.oreillynet.com/meerkat/xml-rpc/server.php&#39;</span><span class="p">)</span>
+<span class="n">channels</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">meerkat</span><span class="o">.</span><span class="n">getChannels</span><span class="p">()</span>
+<span class="c"># channels is a list of dictionaries, like this:</span>
+<span class="c"># [{&#39;id&#39;: 4, &#39;title&#39;: &#39;Freshmeat Daily News&#39;}</span>
+<span class="c">#  {&#39;id&#39;: 190, &#39;title&#39;: &#39;32Bits Online&#39;},</span>
+<span class="c">#  {&#39;id&#39;: 4549, &#39;title&#39;: &#39;3DGamers&#39;}, ... ]</span>
+
+<span class="c"># Get the items for one channel</span>
+<span class="n">items</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">meerkat</span><span class="o">.</span><span class="n">getItems</span><span class="p">(</span> <span class="p">{</span><span class="s">&#39;channel&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span> <span class="p">)</span>
+
+<span class="c"># &#39;items&#39; is another list of dictionaries, like this:</span>
+<span class="c"># [{&#39;link&#39;: &#39;http://freshmeat.net/releases/52719/&#39;,</span>
+<span class="c">#   &#39;description&#39;: &#39;A utility which converts HTML to XSL FO.&#39;,</span>
+<span class="c">#   &#39;title&#39;: &#39;html2fo 0.3 (Default)&#39;}, ... ]</span>
+</pre></div>
+</div>
+<p><code class="xref py py-mod docutils literal"><span class="pre">SimpleXMLRPCServer</span></code> モジュールは、直裁的な XML-RPC サーバを書くのを容易にします。XML-RPC の詳細については  <a class="reference external" href="http://www.xmlrpc.com/">http://www.xmlrpc.com/</a> を参照して下さい。</p>
+</li>
+<li><p class="first">新しい <a class="reference internal" href="../library/hmac.html#module-hmac" title="hmac: Keyed-Hashing for Message Authentication (HMAC) implementation"><code class="xref py py-mod docutils literal"><span class="pre">hmac</span></code></a> モジュールは、 <span class="target" id="index-54"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc2104.html"><strong>RFC 2104</strong></a> で記述される HMAC アルゴリズムを実装します 。 (Contributed by Gerhard Häring.)</p>
+</li>
+<li><p class="first">Several functions that originally returned lengthy tuples now return pseudo-
+sequences that still behave like tuples but also have mnemonic attributes such
+as memberst_mtime or <code class="xref py py-attr docutils literal"><span class="pre">tm_year</span></code>. The enhanced functions include
+<a class="reference internal" href="../library/stat.html#module-stat" title="stat: Utilities for interpreting the results of os.stat(), os.lstat() and os.fstat()."><code class="xref py py-func docutils literal"><span class="pre">stat()</span></code></a>, <code class="xref py py-func docutils literal"><span class="pre">fstat()</span></code>, <code class="xref py py-func docutils literal"><span class="pre">statvfs()</span></code>, and <code class="xref py py-func docutils literal"><span class="pre">fstatvfs()</span></code> in the
+<a class="reference internal" href="../library/os.html#module-os" title="os: Miscellaneous operating system interfaces."><code class="xref py py-mod docutils literal"><span class="pre">os</span></code></a> module, and <code class="xref py py-func docutils literal"><span class="pre">localtime()</span></code>, <code class="xref py py-func docutils literal"><span class="pre">gmtime()</span></code>, and <code class="xref py py-func docutils literal"><span class="pre">strptime()</span></code> in
+the <a class="reference internal" href="../library/time.html#module-time" title="time: Time access and conversions."><code class="xref py py-mod docutils literal"><span class="pre">time</span></code></a> module.</p>
+<p>For example, to obtain a file&#8217;s size using the old tuples, you&#8217;d end up writing
+something like <code class="docutils literal"><span class="pre">file_size</span> <span class="pre">=</span> <span class="pre">os.stat(filename)[stat.ST_SIZE]</span></code>, but now this can
+be written more clearly as <code class="docutils literal"><span class="pre">file_size</span> <span class="pre">=</span> <span class="pre">os.stat(filename).st_size</span></code>.</p>
+<p>The original patch for this feature was contributed by Nick Mathewson.</p>
+</li>
+<li><p class="first">The Python profiler has been extensively reworked and various errors in its
+output have been corrected.  (Contributed by Fred L. Drake, Jr. and Tim Peters.)</p>
+</li>
+<li><p class="first">The <a class="reference internal" href="../library/socket.html#module-socket" title="socket: Low-level networking interface."><code class="xref py py-mod docutils literal"><span class="pre">socket</span></code></a> module can be compiled to support IPv6; specify the
+<code class="xref std std-option docutils literal"><span class="pre">--enable-ipv6</span></code> option to Python&#8217;s configure script.  (Contributed by
+Jun-ichiro &#8220;itojun&#8221; Hagino.)</p>
+</li>
+<li><p class="first">Two new format characters were added to the <a class="reference internal" href="../library/struct.html#module-struct" title="struct: Interpret bytes as packed binary data."><code class="xref py py-mod docutils literal"><span class="pre">struct</span></code></a> module for 64-bit
+integers on platforms that support the C <code class="xref c c-type docutils literal"><span class="pre">long</span> <span class="pre">long</span></code> type.  <code class="docutils literal"><span class="pre">q</span></code> is for
+a signed 64-bit integer, and <code class="docutils literal"><span class="pre">Q</span></code> is for an unsigned one.  The value is
+returned in Python&#8217;s long integer type.  (Contributed by Tim Peters.)</p>
+</li>
+<li><p class="first">In the interpreter&#8217;s interactive mode, there&#8217;s a new built-in function
+<a class="reference internal" href="../library/functions.html#help" title="help"><code class="xref py py-func docutils literal"><span class="pre">help()</span></code></a> that uses the <a class="reference internal" href="../library/pydoc.html#module-pydoc" title="pydoc: Documentation generator and online help system."><code class="xref py py-mod docutils literal"><span class="pre">pydoc</span></code></a> module introduced in Python 2.1 to
+provide interactive help. <code class="docutils literal"><span class="pre">help(object)</span></code> displays any available help text
+about <em>object</em>.  <a class="reference internal" href="../library/functions.html#help" title="help"><code class="xref py py-func docutils literal"><span class="pre">help()</span></code></a> with no argument puts you in an online help
+utility, where you can enter the names of functions, classes, or modules to read
+their help text. (Contributed by Guido van Rossum, using Ka-Ping Yee&#8217;s
+<a class="reference internal" href="../library/pydoc.html#module-pydoc" title="pydoc: Documentation generator and online help system."><code class="xref py py-mod docutils literal"><span class="pre">pydoc</span></code></a> module.)</p>
+</li>
+<li><p class="first">Various bugfixes and performance improvements have been made to the SRE engine
+underlying the <a class="reference internal" href="../library/re.html#module-re" title="re: Regular expression operations."><code class="xref py py-mod docutils literal"><span class="pre">re</span></code></a> module.  For example, the <a class="reference internal" href="../library/re.html#re.sub" title="re.sub"><code class="xref py py-func docutils literal"><span class="pre">re.sub()</span></code></a> and
+<a class="reference internal" href="../library/re.html#re.split" title="re.split"><code class="xref py py-func docutils literal"><span class="pre">re.split()</span></code></a> functions have been rewritten in C.  Another contributed patch
+speeds up certain Unicode character ranges by a factor of two, and a new
+<code class="xref py py-meth docutils literal"><span class="pre">finditer()</span></code>  method that returns an iterator over all the non-overlapping
+matches in  a given string.  (SRE is maintained by Fredrik Lundh.  The
+BIGCHARSET patch was contributed by Martin von Löwis.)</p>
+</li>
+<li><p class="first">The <a class="reference internal" href="../library/smtplib.html#module-smtplib" title="smtplib: SMTP protocol client (requires sockets)."><code class="xref py py-mod docutils literal"><span class="pre">smtplib</span></code></a> module now supports <span class="target" id="index-18"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc2487.html"><strong>RFC 2487</strong></a>, &#8220;Secure SMTP over TLS&#8221;, so
+it&#8217;s now possible to encrypt the SMTP traffic between a Python program and the
+mail transport agent being handed a message.  <a class="reference internal" href="../library/smtplib.html#module-smtplib" title="smtplib: SMTP protocol client (requires sockets)."><code class="xref py py-mod docutils literal"><span class="pre">smtplib</span></code></a> also supports SMTP
+authentication.  (Contributed by Gerhard Häring.)</p>
+</li>
+<li><p class="first">The <a class="reference internal" href="../library/imaplib.html#module-imaplib" title="imaplib: IMAP4 protocol client (requires sockets)."><code class="xref py py-mod docutils literal"><span class="pre">imaplib</span></code></a> module, maintained by Piers Lauder, has support for several
+new extensions: the NAMESPACE extension defined in <span class="target" id="index-19"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc2342.html"><strong>RFC 2342</strong></a>, SORT, GETACL and
+SETACL.  (Contributed by Anthony Baxter and Michel Pelletier.)</p>
+</li>
+<li><p class="first">The <code class="xref py py-mod docutils literal"><span class="pre">rfc822</span></code> module&#8217;s parsing of email addresses is now compliant with
+<span class="target" id="index-20"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc2822.html"><strong>RFC 2822</strong></a>, an update to <span class="target" id="index-21"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc822.html"><strong>RFC 822</strong></a>.  (The module&#8217;s name is <em>not</em> going to be
+changed to <code class="docutils literal"><span class="pre">rfc2822</span></code>.)  A new package, <a class="reference internal" href="../library/email.html#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a>, has also been added for
+parsing and generating e-mail messages.  (Contributed by Barry Warsaw, and
+arising out of his work on Mailman.)</p>
+</li>
+<li><p class="first">The <a class="reference internal" href="../library/difflib.html#module-difflib" title="difflib: Helpers for computing differences between objects."><code class="xref py py-mod docutils literal"><span class="pre">difflib</span></code></a> module now contains a new <code class="xref py py-class docutils literal"><span class="pre">Differ</span></code> class for
+producing human-readable lists of changes (a &#8220;delta&#8221;) between two sequences of
+lines of text.  There are also two generator functions, <code class="xref py py-func docutils literal"><span class="pre">ndiff()</span></code> and
+<code class="xref py py-func docutils literal"><span class="pre">restore()</span></code>, which respectively return a delta from two sequences, or one of
+the original sequences from a delta. (Grunt work contributed by David Goodger,
+from ndiff.py code by Tim Peters who then did the generatorization.)</p>
+</li>
+<li><p class="first">New constants <code class="xref py py-const docutils literal"><span class="pre">ascii_letters</span></code>, <code class="xref py py-const docutils literal"><span class="pre">ascii_lowercase</span></code>, and
+<code class="xref py py-const docutils literal"><span class="pre">ascii_uppercase</span></code> were added to the <a class="reference internal" href="../library/string.html#module-string" title="string: Common string operations."><code class="xref py py-mod docutils literal"><span class="pre">string</span></code></a> module.  There were
+several modules in the standard library that used <code class="xref py py-const docutils literal"><span class="pre">string.letters</span></code> to
+mean the ranges A-Za-z, but that assumption is incorrect when locales are in
+use, because <code class="xref py py-const docutils literal"><span class="pre">string.letters</span></code> varies depending on the set of legal
+characters defined by the current locale.  The buggy modules have all been fixed
+to use <code class="xref py py-const docutils literal"><span class="pre">ascii_letters</span></code> instead. (Reported by an unknown person; fixed by
+Fred L. Drake, Jr.)</p>
+</li>
+<li><p class="first">The <a class="reference internal" href="../library/mimetypes.html#module-mimetypes" title="mimetypes: Mapping of filename extensions to MIME types."><code class="xref py py-mod docutils literal"><span class="pre">mimetypes</span></code></a> module now makes it easier to use alternative MIME-type
+databases by the addition of a <code class="xref py py-class docutils literal"><span class="pre">MimeTypes</span></code> class, which takes a list of
+filenames to be parsed.  (Contributed by Fred L. Drake, Jr.)</p>
+</li>
+<li><p class="first">A <code class="xref py py-class docutils literal"><span class="pre">Timer</span></code> class was added to the <a class="reference internal" href="../library/threading.html#module-threading" title="threading: Thread-based parallelism."><code class="xref py py-mod docutils literal"><span class="pre">threading</span></code></a> module that allows
+scheduling an activity to happen at some future time.  (Contributed by Itamar
+Shtull-Trauring.)</p>
+</li>
+</ul>
+</div>
+<div class="section" id="interpreter-changes-and-fixes">
+<h2>インタプリタの変更と修正<a class="headerlink" href="#interpreter-changes-and-fixes" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Some of the changes only affect people who deal with the Python interpreter at
+the C level because they&#8217;re writing Python extension modules, embedding the
+interpreter, or just hacking on the interpreter itself. If you only write Python
+code, none of the changes described here will affect you very much.</p>
+<ul>
+<li><p class="first">Profiling and tracing functions can now be implemented in C, which can operate
+at much higher speeds than Python-based functions and should reduce the overhead
+of profiling and tracing.  This  will be of interest to authors of development
+environments for Python.  Two new C functions were added to Python&#8217;s API,
+<a class="reference internal" href="../c-api/init.html#c.PyEval_SetProfile" title="PyEval_SetProfile"><code class="xref c c-func docutils literal"><span class="pre">PyEval_SetProfile()</span></code></a> and <a class="reference internal" href="../c-api/init.html#c.PyEval_SetTrace" title="PyEval_SetTrace"><code class="xref c c-func docutils literal"><span class="pre">PyEval_SetTrace()</span></code></a>. The existing
+<a class="reference internal" href="../library/sys.html#sys.setprofile" title="sys.setprofile"><code class="xref py py-func docutils literal"><span class="pre">sys.setprofile()</span></code></a> and <a class="reference internal" href="../library/sys.html#sys.settrace" title="sys.settrace"><code class="xref py py-func docutils literal"><span class="pre">sys.settrace()</span></code></a> functions still exist, and have
+simply been changed to use the new C-level interface.  (Contributed by Fred L.
+Drake, Jr.)</p>
+</li>
+<li><p class="first">Another low-level API, primarily of interest to implementors of Python
+debuggers and development tools, was added. <a class="reference internal" href="../c-api/init.html#c.PyInterpreterState_Head" title="PyInterpreterState_Head"><code class="xref c c-func docutils literal"><span class="pre">PyInterpreterState_Head()</span></code></a> and
+<a class="reference internal" href="../c-api/init.html#c.PyInterpreterState_Next" title="PyInterpreterState_Next"><code class="xref c c-func docutils literal"><span class="pre">PyInterpreterState_Next()</span></code></a> let a caller walk through all the existing
+interpreter objects; <a class="reference internal" href="../c-api/init.html#c.PyInterpreterState_ThreadHead" title="PyInterpreterState_ThreadHead"><code class="xref c c-func docutils literal"><span class="pre">PyInterpreterState_ThreadHead()</span></code></a> and
+<a class="reference internal" href="../c-api/init.html#c.PyThreadState_Next" title="PyThreadState_Next"><code class="xref c c-func docutils literal"><span class="pre">PyThreadState_Next()</span></code></a> allow looping over all the thread states for a given
+interpreter.  (Contributed by David Beazley.)</p>
+</li>
+<li><p class="first">The C-level interface to the garbage collector has been changed to make it
+easier to write extension types that support garbage collection and to debug
+misuses of the functions. Various functions have slightly different semantics,
+so a bunch of functions had to be renamed.  Extensions that use the old API will
+still compile but will <em>not</em> participate in garbage collection, so updating them
+for 2.2 should be considered fairly high priority.</p>
+<p>To upgrade an extension module to the new API, perform the following steps:</p>
+</li>
+<li><p class="first">Rename <code class="xref c c-func docutils literal"><span class="pre">Py_TPFLAGS_GC()</span></code> to <code class="xref c c-func docutils literal"><span class="pre">PyTPFLAGS_HAVE_GC()</span></code>.</p>
+</li>
+<li><dl class="first docutils">
+<dt>Use <a class="reference internal" href="../c-api/gcsupport.html#c.PyObject_GC_New" title="PyObject_GC_New"><code class="xref c c-func docutils literal"><span class="pre">PyObject_GC_New()</span></code></a> or <a class="reference internal" href="../c-api/gcsupport.html#c.PyObject_GC_NewVar" title="PyObject_GC_NewVar"><code class="xref c c-func docutils literal"><span class="pre">PyObject_GC_NewVar()</span></code></a> to allocate</dt>
+<dd><p class="first last">objects, and <a class="reference internal" href="../c-api/gcsupport.html#c.PyObject_GC_Del" title="PyObject_GC_Del"><code class="xref c c-func docutils literal"><span class="pre">PyObject_GC_Del()</span></code></a> to deallocate them.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Rename <code class="xref c c-func docutils literal"><span class="pre">PyObject_GC_Init()</span></code> to <a class="reference internal" href="../c-api/gcsupport.html#c.PyObject_GC_Track" title="PyObject_GC_Track"><code class="xref c c-func docutils literal"><span class="pre">PyObject_GC_Track()</span></code></a> and</dt>
+<dd><p class="first last"><code class="xref c c-func docutils literal"><span class="pre">PyObject_GC_Fini()</span></code> to <a class="reference internal" href="../c-api/gcsupport.html#c.PyObject_GC_UnTrack" title="PyObject_GC_UnTrack"><code class="xref c c-func docutils literal"><span class="pre">PyObject_GC_UnTrack()</span></code></a>.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">Remove <code class="xref c c-func docutils literal"><span class="pre">PyGC_HEAD_SIZE()</span></code> from object size calculations.</p>
+</li>
+<li><p class="first">Remove calls to <code class="xref c c-func docutils literal"><span class="pre">PyObject_AS_GC()</span></code> and <code class="xref c c-func docutils literal"><span class="pre">PyObject_FROM_GC()</span></code>.</p>
+</li>
+<li><p class="first">A new <code class="docutils literal"><span class="pre">et</span></code> format sequence was added to <a class="reference internal" href="../c-api/arg.html#c.PyArg_ParseTuple" title="PyArg_ParseTuple"><code class="xref c c-func docutils literal"><span class="pre">PyArg_ParseTuple()</span></code></a>; <code class="docutils literal"><span class="pre">et</span></code>
+takes both a parameter and an encoding name, and converts the parameter to the
+given encoding if the parameter turns out to be a Unicode string, or leaves it
+alone if it&#8217;s an 8-bit string, assuming it to already be in the desired
+encoding.  This differs from the <code class="docutils literal"><span class="pre">es</span></code> format character, which assumes that
+8-bit strings are in Python&#8217;s default ASCII encoding and converts them to the
+specified new encoding. (Contributed by M.-A. Lemburg, and used for the MBCS
+support on Windows described in the following section.)</p>
+</li>
+<li><p class="first">A different argument parsing function, <a class="reference internal" href="../c-api/arg.html#c.PyArg_UnpackTuple" title="PyArg_UnpackTuple"><code class="xref c c-func docutils literal"><span class="pre">PyArg_UnpackTuple()</span></code></a>, has been
+added that&#8217;s simpler and presumably faster.  Instead of specifying a format
+string, the caller simply gives the minimum and maximum number of arguments
+expected, and a set of pointers to <a class="reference internal" href="../c-api/structures.html#c.PyObject" title="PyObject"><code class="xref c c-type docutils literal"><span class="pre">PyObject*</span></code></a> variables that will be
+filled in with argument values.</p>
+</li>
+<li><p class="first">Two new flags <a class="reference internal" href="../c-api/structures.html#METH_NOARGS" title="METH_NOARGS"><code class="xref py py-const docutils literal"><span class="pre">METH_NOARGS</span></code></a> and <a class="reference internal" href="../c-api/structures.html#METH_O" title="METH_O"><code class="xref py py-const docutils literal"><span class="pre">METH_O</span></code></a> are available in method
+definition tables to simplify implementation of methods with no arguments or a
+single untyped argument. Calling such methods is more efficient than calling a
+corresponding method that uses <a class="reference internal" href="../c-api/structures.html#METH_VARARGS" title="METH_VARARGS"><code class="xref py py-const docutils literal"><span class="pre">METH_VARARGS</span></code></a>.  Also, the old
+<code class="xref py py-const docutils literal"><span class="pre">METH_OLDARGS</span></code> style of writing C methods is  now officially deprecated.</p>
+</li>
+<li><p class="first">Two new wrapper functions, <a class="reference internal" href="../c-api/conversion.html#c.PyOS_snprintf" title="PyOS_snprintf"><code class="xref c c-func docutils literal"><span class="pre">PyOS_snprintf()</span></code></a> and <a class="reference internal" href="../c-api/conversion.html#c.PyOS_vsnprintf" title="PyOS_vsnprintf"><code class="xref c c-func docutils literal"><span class="pre">PyOS_vsnprintf()</span></code></a>
+were added to provide  cross-platform implementations for the relatively new
+<code class="xref c c-func docutils literal"><span class="pre">snprintf()</span></code> and <code class="xref c c-func docutils literal"><span class="pre">vsnprintf()</span></code> C lib APIs. In contrast to the standard
+<code class="xref c c-func docutils literal"><span class="pre">sprintf()</span></code> and <code class="xref c c-func docutils literal"><span class="pre">vsprintf()</span></code> functions, the Python versions check the
+bounds of the buffer used to protect against buffer overruns. (Contributed by
+M.-A. Lemburg.)</p>
+</li>
+<li><p class="first">The <a class="reference internal" href="../c-api/tuple.html#c._PyTuple_Resize" title="_PyTuple_Resize"><code class="xref c c-func docutils literal"><span class="pre">_PyTuple_Resize()</span></code></a> function has lost an unused parameter, so now it
+takes 2 parameters instead of 3.  The third argument was never used, and can
+simply be discarded when porting code from earlier versions to Python 2.2.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="other-changes-and-fixes">
+<h2>その他の変更と修正<a class="headerlink" href="#other-changes-and-fixes" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>いつものように、たくさんのほかの改善とバグフィックスがソースツリー全体に渡って散らばっています。CVS 変更ログを検索すると、Python 2.1 から 2.2 にかけて適用されたパッチは 527、バグ修正は 683、2.2.1 で適用されたパッチは 139、バグ修正は 143、2.2.2 で適用されたパッチは 106、バグ修正は 82。いずれも少なく見積もって、です。</p>
+<p>ほかの、さらに特筆すべき変更のいくつかを挙げます:</p>
+<ul>
+<li><p class="first">The code for the MacOS port for Python, maintained by Jack Jansen, is now kept
+in the main Python CVS tree, and many changes have been made to support MacOS X.</p>
+<p>The most significant change is the ability to build Python as a framework,
+enabled by supplying the <code class="xref std std-option docutils literal"><span class="pre">--enable-framework</span></code> option to the configure
+script when compiling Python.  According to Jack Jansen, &#8220;This installs a self-
+contained Python installation plus the OS X framework &#8220;glue&#8221; into
+<code class="file docutils literal"><span class="pre">/Library/Frameworks/Python.framework</span></code> (or another location of choice).
+For now there is little immediate added benefit to this (actually, there is the
+disadvantage that you have to change your PATH to be able to find Python), but
+it is the basis for creating a full-blown Python application, porting the
+MacPython IDE, possibly using Python as a standard OSA scripting language and
+much more.&#8221;</p>
+<p>Most of the MacPython toolbox modules, which interface to MacOS APIs such as
+windowing, QuickTime, scripting, etc. have been ported to OS X, but they&#8217;ve been
+left commented out in <code class="file docutils literal"><span class="pre">setup.py</span></code>.  People who want to experiment with
+these modules can uncomment them manually.</p>
+</li>
+<li><p class="first">Keyword arguments passed to built-in functions that don&#8217;t take them now cause a
+<a class="reference internal" href="../library/exceptions.html#TypeError" title="TypeError"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code></a> exception to be raised, with the message &#8220;<em>function</em> takes no
+keyword arguments&#8221;.</p>
+</li>
+<li><p class="first">Weak references, added in Python 2.1 as an extension module, are now part of
+the core because they&#8217;re used in the implementation of new-style classes.  The
+<a class="reference internal" href="../library/exceptions.html#ReferenceError" title="ReferenceError"><code class="xref py py-exc docutils literal"><span class="pre">ReferenceError</span></code></a> exception has therefore moved from the <a class="reference internal" href="../library/weakref.html#module-weakref" title="weakref: Support for weak references and weak dictionaries."><code class="xref py py-mod docutils literal"><span class="pre">weakref</span></code></a>
+module to become a built-in exception.</p>
+</li>
+<li><p class="first">Tim Peters による新しいスクリプト <code class="file docutils literal"><span class="pre">Tools/scripts/cleanfuture.py</span></code> は、Python ソースコードから自動的に廃止された <code class="docutils literal"><span class="pre">__future__</span></code> 文を削除します。</p>
+</li>
+<li><p class="first">An additional <em>flags</em> argument has been added to the built-in function
+<a class="reference internal" href="../library/functions.html#compile" title="compile"><code class="xref py py-func docutils literal"><span class="pre">compile()</span></code></a>, so the behaviour of <code class="docutils literal"><span class="pre">__future__</span></code> statements can now be
+correctly observed in simulated shells, such as those presented by IDLE and
+other development environments.  This is described in <span class="target" id="index-22"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0264"><strong>PEP 264</strong></a>. (Contributed
+by Michael Hudson.)</p>
+</li>
+<li><p class="first">The new license introduced with Python 1.6 wasn&#8217;t GPL-compatible.  This is
+fixed by some minor textual changes to the 2.2 license, so it&#8217;s now legal to
+embed Python inside a GPLed program again.  Note that Python itself is not
+GPLed, but instead is under a license that&#8217;s essentially equivalent to the BSD
+license, same as it always was.  The license changes were also applied to the
+Python 2.0.1 and 2.1.1 releases.</p>
+</li>
+<li><p class="first">When presented with a Unicode filename on Windows, Python will now convert it
+to an MBCS encoded string, as used by the Microsoft file APIs.  As MBCS is
+explicitly used by the file APIs, Python&#8217;s choice of ASCII as the default
+encoding turns out to be an annoyance.  On Unix, the locale&#8217;s character set is
+used if <code class="docutils literal"><span class="pre">locale.nl_langinfo(CODESET)</span></code> is available.  (Windows support was
+contributed by Mark Hammond with assistance from Marc-André Lemburg. Unix
+support was added by Martin von Löwis.)</p>
+</li>
+<li><p class="first">Windows でのラージファイルのサポートが有効になりました。  (Contributed by Tim Peters.)</p>
+</li>
+<li><p class="first"><code class="file docutils literal"><span class="pre">Tools/scripts/ftpmirror.py</span></code> スクリプトが、もしあれば、 <code class="file docutils literal"><span class="pre">.netrc</span></code> ファイルを読むようになりました。 (Contributed by Mike Romberg.)</p>
+</li>
+<li><p class="first">Some features of the object returned by the <code class="xref py py-func docutils literal"><span class="pre">xrange()</span></code> function are now
+deprecated, and trigger warnings when they&#8217;re accessed; they&#8217;ll disappear in
+Python 2.3. <code class="xref py py-class docutils literal"><span class="pre">xrange</span></code> objects tried to pretend they were full sequence
+types by supporting slicing, sequence multiplication, and the <a class="reference internal" href="../reference/expressions.html#in"><code class="xref std std-keyword docutils literal"><span class="pre">in</span></code></a>
+operator, but these features were rarely used and therefore buggy.  The
+<code class="xref py py-meth docutils literal"><span class="pre">tolist()</span></code> method and the <code class="xref py py-attr docutils literal"><span class="pre">start</span></code>, <code class="xref py py-attr docutils literal"><span class="pre">stop</span></code>, and <code class="xref py py-attr docutils literal"><span class="pre">step</span></code>
+attributes are also being deprecated.  At the C level, the fourth argument to
+the <code class="xref c c-func docutils literal"><span class="pre">PyRange_New()</span></code> function, <code class="docutils literal"><span class="pre">repeat</span></code>, has also been deprecated.</p>
+</li>
+<li><p class="first">There were a bunch of patches to the dictionary implementation, mostly to fix
+potential core dumps if a dictionary contains objects that sneakily changed
+their hash value, or mutated the dictionary they were contained in. For a while
+python-dev fell into a gentle rhythm of Michael Hudson finding a case that
+dumped core, Tim Peters fixing the bug, Michael finding another case, and round
+and round it went.</p>
+</li>
+<li><p class="first">On Windows, Python can now be compiled with Borland C thanks to a number of
+patches contributed by Stephen Hansen, though the result isn&#8217;t fully functional
+yet.  (But this <em>is</em> progress...)</p>
+</li>
+<li><p class="first">Another Windows enhancement: Wise Solutions generously offered PythonLabs use
+of their InstallerMaster 8.1 system.  Earlier PythonLabs Windows installers used
+Wise 5.0a, which was beginning to show its age.  (Packaged up by Tim Peters.)</p>
+</li>
+<li><p class="first">Files ending in <code class="docutils literal"><span class="pre">.pyw</span></code> can now be imported on Windows. <code class="docutils literal"><span class="pre">.pyw</span></code> is a
+Windows-only thing, used to indicate that a script needs to be run using
+PYTHONW.EXE instead of PYTHON.EXE in order to prevent a DOS console from popping
+up to display the output.  This patch makes it possible to import such scripts,
+in case they&#8217;re also usable as modules.  (Implemented by David Bolen.)</p>
+</li>
+<li><p class="first">On platforms where Python uses the C <code class="xref c c-func docutils literal"><span class="pre">dlopen()</span></code> function  to load
+extension modules, it&#8217;s now possible to set the flags used  by <code class="xref c c-func docutils literal"><span class="pre">dlopen()</span></code>
+using the <a class="reference internal" href="../library/sys.html#sys.getdlopenflags" title="sys.getdlopenflags"><code class="xref py py-func docutils literal"><span class="pre">sys.getdlopenflags()</span></code></a> and <a class="reference internal" href="../library/sys.html#sys.setdlopenflags" title="sys.setdlopenflags"><code class="xref py py-func docutils literal"><span class="pre">sys.setdlopenflags()</span></code></a> functions.
+(Contributed by Bram Stolk.)</p>
+</li>
+<li><p class="first">組み込み関数 <a class="reference internal" href="../library/functions.html#pow" title="pow"><code class="xref py py-func docutils literal"><span class="pre">pow()</span></code></a> はもはや浮動小数点数の際の 3 番目の引数をサポートしません。 <code class="docutils literal"><span class="pre">pow(x,</span> <span class="pre">y,</span> <span class="pre">z)</span></code> は <code class="docutils literal"><span class="pre">(x**y)</span> <span class="pre">%</span> <span class="pre">z</span></code> を返しますが、浮動小数点の場合はこれは決して役には立ちません。最終結果はプラットフォーム依存で予測不可能なものになります。 <code class="docutils literal"><span class="pre">pow(2.0,</span> <span class="pre">8.0,</span> <span class="pre">7.0)</span></code> のような呼び出しは、 <a class="reference internal" href="../library/exceptions.html#TypeError" title="TypeError"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code></a> 例外を発生させるようにしました。</p>
+</li>
+</ul>
+</div>
+<div class="section" id="acknowledgements">
+<h2>謝辞<a class="headerlink" href="#acknowledgements" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>著者は提案の申し出や修正、様々なこの記事の草稿の助けをしてくれた以下の人々に感謝します:  Fred Bremmer, Keith Briggs, Andrew Dalke, Fred L. Drake, Jr., Carel Fellinger, David Goodger, Mark Hammond, Stephen Hansen, Michael Hudson, Jack Jansen, Marc-André Lemburg, Martin von Löwis, Fredrik Lundh, Michael McLay, Nick Mathewson, Paul Moore, Gustavo Niemeyer, Don O&#8217;Donnell, Joonas Paalasma, Tim Peters, Jens Quade, Tom Reinhardt, Neil Schemenauer, Guido van Rossum, Greg Ward, Edward Welbourne.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">What&#8217;s New in Python 2.2</a><ul>
+<li><a class="reference internal" href="#introduction">はじめに</a></li>
+<li><a class="reference internal" href="#peps-252-and-253-type-and-class-changes">PEP 252 と PEP 253: 型とクラスについての変更</a><ul>
+<li><a class="reference internal" href="#old-and-new-classes">旧と新クラス</a></li>
+<li><a class="reference internal" href="#descriptors">デスクリプタ</a></li>
+<li><a class="reference internal" href="#multiple-inheritance-the-diamond-rule">多重継承: ダイヤモンドルール</a></li>
+<li><a class="reference internal" href="#attribute-access">属性アクセス</a></li>
+<li><a class="reference internal" href="#related-links">関連リンク</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pep-234-iterators">PEP 234: イテレータ</a></li>
+<li><a class="reference internal" href="#pep-255-simple-generators">PEP 255: 単純なジェネレータ</a></li>
+<li><a class="reference internal" href="#pep-237-unifying-long-integers-and-integers">PEP 237: 長整数と整数を一体化していく</a></li>
+<li><a class="reference internal" href="#pep-238-changing-the-division-operator">PEP 238: 除算演算子を変更していく</a></li>
+<li><a class="reference internal" href="#unicode-changes">Unicode Changes</a></li>
+<li><a class="reference internal" href="#pep-227-nested-scopes">PEP 227: 入れ子状のスコープ</a></li>
+<li><a class="reference internal" href="#new-and-improved-modules">新しいモジュールと改良されたモジュール</a></li>
+<li><a class="reference internal" href="#interpreter-changes-and-fixes">インタプリタの変更と修正</a></li>
+<li><a class="reference internal" href="#other-changes-and-fixes">その他の変更と修正</a></li>
+<li><a class="reference internal" href="#acknowledgements">謝辞</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="2.3.html"
+                        title="前の章へ">What&#8217;s New in Python 2.3</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="2.1.html"
+                        title="次の章へ">What&#8217;s New in Python 2.1</a></p>
+<h3>このページ</h3>
+<ul class="this-page-menu">
+  <li><a href="../bugs.html">Report a Bug</a></li>
+  <li><a href="../_sources/whatsnew/2.2.txt"
+         rel="nofollow">Show Source</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="2.1.html" title="What’s New in Python 2.1"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="2.3.html" title="What’s New in Python 2.3"
+             >前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="https://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.4.3</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >What&#8217;s New in Python</a> &raquo;</li> 
+      </ul>
+    </div>  
+    <div class="footer">
+    &copy; <a href="../copyright.html">Copyright</a> 1990-2015, Python Software Foundation.
+    <br />
+    The Python Software Foundation is a non-profit corporation.
+    <a href="https://www.python.org/psf/donations/">Please donate.</a>
+    <br />
+    Last updated on Dec 28, 2015.
+    <a href="../bugs.html">Found a bug</a>?
+    <br />
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1.
+    <br />
+    <a href="https://github.com/python-doc-ja/python-doc-ja">Pythonドキュメント日本語翻訳プロジェクト</a>
+    によって翻訳されました。
+    <a href="https://github.com/python-doc-ja/python-doc-ja/issues">誤訳を報告する。</a>
+    </div>
+
+  </body>
+</html>

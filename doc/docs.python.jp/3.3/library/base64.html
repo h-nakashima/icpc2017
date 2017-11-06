@@ -1,0 +1,325 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>19.6. base64 — RFC 3548: Base16, Base32, Base64 データの符号化 &mdash; Python 3.3.6 ドキュメント</title>
+    
+    <link rel="stylesheet" href="../_static/pydoctheme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.3.6',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Python 3.3.6 ドキュメント 内を検索"
+          href="../_static/opensearch.xml"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="Python 3.3.6 ドキュメント" href="../contents.html" />
+    <link rel="up" title="19. インターネット上のデータの操作" href="netdata.html" />
+    <link rel="next" title="19.7. binhex — binhex4 形式ファイルのエンコードおよびデコード" href="binhex.html" />
+    <link rel="prev" title="19.5. mimetypes — ファイル名を MIME 型へマップする" href="mimetypes.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/py.png" />
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/_jp.js"></script>
+    <script type="text/javascript" src="../_static/version_switch.js"></script>
+    
+ 
+
+  <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-34175846-1', 'python.jp');
+        ga('send', 'pageview');
+
+      </script>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="binhex.html" title="19.7. binhex — binhex4 形式ファイルのエンコードおよびデコード"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="mimetypes.html" title="19.5. mimetypes — ファイル名を MIME 型へマップする"
+             accesskey="P">前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="http://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.3.6</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Python 標準ライブラリ</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="netdata.html" accesskey="U">19. インターネット上のデータの操作</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-base64">
+<span id="base64-rfc-3548-base16-base32-base64-data-encodings"></span><h1>19.6. <a class="reference internal" href="#module-base64" title="base64: RFC 3548: Base16, Base32, Base64 Data Encodings"><code class="xref py py-mod docutils literal"><span class="pre">base64</span></code></a> &#8212; RFC 3548: Base16, Base32, Base64 データの符号化<a class="headerlink" href="#module-base64" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p id="index-0">このモジュールは、 <span class="target" id="index-6"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3548.html"><strong>RFC 3548</strong></a> で定められた仕様によるデータの符号化 (エンコード、encoding) および復元 (デコード、decoding) を提供します。この RFC 標準では Base16, Base32 および Base64 が定義されており、これはバイナリ文字列と ASCII-only バイト文字列とをエンコードあるいはデコードするためのアルゴリズムです。変換されたテキスト文字列は email で確実に送信したり、URL の一部として使用したり、HTTP POST リクエストの一部に含めることができます。これらの符号化アルゴリズムは <strong class="program">uuencode</strong> で使われているものとは別物です。</p>
+<p>There are two interfaces provided by this module.  The modern interface
+supports encoding and decoding ASCII byte string objects using all three
+alphabets. Additionally, the decoding functions of the modern interface also
+accept Unicode strings containing only ASCII characters. The legacy interface
+provides for encoding and decoding to and from file-like objects as well as
+byte strings, but only using the Base64 standard alphabet.</p>
+<div class="versionchanged">
+<p><span class="versionmodified">バージョン 3.3 で変更: </span>モダンなインターフェイスのデコード関数が ASCII のみの Unicode 文字列を受け付けるようになりました。</p>
+</div>
+<p>モダンなインターフェイスは以下のものを提供します:</p>
+<dl class="function">
+<dt id="base64.b64encode">
+<code class="descclassname">base64.</code><code class="descname">b64encode</code><span class="sig-paren">(</span><em>s</em>, <em>altchars=None</em><span class="sig-paren">)</span><a class="headerlink" href="#base64.b64encode" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>base64 をつかって、 byte 文字列をエンコードします。</p>
+<p><em>s</em> はエンコードする文字列です。オプション引数 <em>altchars</em> は最低でも 2 の長さをもつ文字列で (これ以降の文字は無視されます)、これは <code class="docutils literal"><span class="pre">+</span></code> と <code class="docutils literal"><span class="pre">/</span></code> の代わりに使われる代替アルファベットを指定します。これにより、アプリケーションはたとえば URL やファイルシステムの影響をうけない Base64 文字列を生成することができます。デフォルトの値は <code class="docutils literal"><span class="pre">None</span></code> で、これは標準の Base64 アルファベット集合が使われることを意味します。</p>
+<p>エンコードされたバイト文字列が返されます。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="base64.b64decode">
+<code class="descclassname">base64.</code><code class="descname">b64decode</code><span class="sig-paren">(</span><em>s</em>, <em>altchars=None</em>, <em>validate=False</em><span class="sig-paren">)</span><a class="headerlink" href="#base64.b64decode" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Base64 エンコードされたバイト文字列をデコード (復元) します。</p>
+<p><em>s</em> にはデコードするバイト文字列を渡します。オプション引数の <em>altchars</em> は最低でも 2 の長さをもつ文字列で (これ以降の文字は無視されます)、これは <code class="docutils literal"><span class="pre">+</span></code> と <code class="docutils literal"><span class="pre">/</span></code> の代わりに使われる代替アルファベットを指定します。</p>
+<p>デコードされた文字列が返されます。
+<em>s</em> が正しくパディングされていない場合は <a class="reference internal" href="binascii.html#binascii.Error" title="binascii.Error"><code class="xref py py-exc docutils literal"><span class="pre">binascii.Error</span></code></a> 例外を発生させます。</p>
+<p><em>validate</em> が <code class="docutils literal"><span class="pre">False</span></code> (デフォルト) の場合、 base64 アルファベット以外の文字はパディングチェックの前に無視されます。
+<em>validate</em> が <code class="docutils literal"><span class="pre">True</span></code> の場合、入力に base64 アルファベット以外の文字があると <a class="reference internal" href="binascii.html#binascii.Error" title="binascii.Error"><code class="xref py py-exc docutils literal"><span class="pre">binascii.Error</span></code></a> を発生させます。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="base64.standard_b64encode">
+<code class="descclassname">base64.</code><code class="descname">standard_b64encode</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#base64.standard_b64encode" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>標準の base64 アルファベットを利用してバイト文字列 <em>s</em> をエンコードします。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="base64.standard_b64decode">
+<code class="descclassname">base64.</code><code class="descname">standard_b64decode</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#base64.standard_b64decode" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>標準の base64 アルファベットを利用してバイト文字列 <em>s</em> をデコードします。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="base64.urlsafe_b64encode">
+<code class="descclassname">base64.</code><code class="descname">urlsafe_b64encode</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#base64.urlsafe_b64encode" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>バイト文字列 <em>s</em> を URL-safe アルファベットを利用してエンコードします。標準 base64 アルファベットに比べて、 <code class="docutils literal"><span class="pre">+</span></code> の替わりに <code class="docutils literal"><span class="pre">-</span></code> を、 <code class="docutils literal"><span class="pre">/</span></code> の替わりに <code class="docutils literal"><span class="pre">_</span></code> を利用します。結果は <code class="docutils literal"><span class="pre">=</span></code> を含みます。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="base64.urlsafe_b64decode">
+<code class="descclassname">base64.</code><code class="descname">urlsafe_b64decode</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#base64.urlsafe_b64decode" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>バイト文字列 <em>s</em> を URL-safe アルファベットを利用してデコードします。標準 base64 アルファベットに比べて、 <code class="docutils literal"><span class="pre">+</span></code> の替わりに <code class="docutils literal"><span class="pre">-</span></code> を、 <code class="docutils literal"><span class="pre">/</span></code> の替わりに <code class="docutils literal"><span class="pre">_</span></code> を置換します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="base64.b32encode">
+<code class="descclassname">base64.</code><code class="descname">b32encode</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#base64.b32encode" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>バイト文字列を base32 を使ってエンコードします。
+<em>s</em> はエンコードする文字列です。エンコードした文字列を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="base64.b32decode">
+<code class="descclassname">base64.</code><code class="descname">b32decode</code><span class="sig-paren">(</span><em>s</em>, <em>casefold=False</em>, <em>map01=None</em><span class="sig-paren">)</span><a class="headerlink" href="#base64.b32decode" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Base32 エンコードされたバイト文字列をデコードします。</p>
+<p><em>s</em> にはエンコードするバイト文字列を渡します。オプション引数 <em>casefold</em> は小文字のアルファベットを受けつけるかどうかを指定します。セキュリティ上の理由により、デフォルトではこれは <code class="docutils literal"><span class="pre">False</span></code> になっています。</p>
+<p><span class="target" id="index-7"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3548.html"><strong>RFC 3548</strong></a> は付加的なマッピングとして、数字の 0 (零) をアルファベットの O (オー) に、数字の 1 (壱) をアルファベットの I (アイ) または L (エル) に対応させることを許しています。オプション引数は <em>map01</em> は、 <code class="docutils literal"><span class="pre">None</span></code> でないときは、数字の 1 をどの文字に対応づけるかを指定します (<em>map01</em> が <code class="docutils literal"><span class="pre">None</span></code> でないとき、数字の 0 はつねにアルファベットの O (オー) に対応づけられます)。セキュリティ上の理由により、これはデフォルトでは <code class="docutils literal"><span class="pre">None</span></code> になっているため、 0 および 1 は入力として許可されていません。</p>
+<p>デコードしたバイト文字列を返します。
+<em>s</em> が正しくパディングされていない場合や、文字列にアルファベットでない文字が含まれていた場合に、 <a class="reference internal" href="binascii.html#binascii.Error" title="binascii.Error"><code class="xref py py-exc docutils literal"><span class="pre">binascii.Error</span></code></a> 例外を発生させます。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="base64.b16encode">
+<code class="descclassname">base64.</code><code class="descname">b16encode</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#base64.b16encode" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Base16 をつかって、文字列をエンコードします。</p>
+<p><em>s</em> はエンコードする文字列です。エンコードしたバイト文字列を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="base64.b16decode">
+<code class="descclassname">base64.</code><code class="descname">b16decode</code><span class="sig-paren">(</span><em>s</em>, <em>casefold=False</em><span class="sig-paren">)</span><a class="headerlink" href="#base64.b16decode" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Base16 エンコードされたバイト文字列をデコードします。</p>
+<p><em>s</em> にはエンコードする文字列を渡します。オプション引数 <em>casefold</em> は小文字のアルファベットを受けつけるかどうかを指定します。セキュリティ上の理由により、デフォルトではこれは <code class="docutils literal"><span class="pre">False</span></code> になっています。</p>
+<p>The decoded byte string is returned.  A <a class="reference internal" href="exceptions.html#TypeError" title="TypeError"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code></a> is raised if <em>s</em> were
+incorrectly padded or if there are non-alphabet characters present in the
+string.</p>
+</dd></dl>
+
+<p>レガシーなインターフェイスは以下のものを提供します:</p>
+<dl class="function">
+<dt id="base64.decode">
+<code class="descclassname">base64.</code><code class="descname">decode</code><span class="sig-paren">(</span><em>input</em>, <em>output</em><span class="sig-paren">)</span><a class="headerlink" href="#base64.decode" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Decode the contents of the binary <em>input</em> file and write the resulting binary
+data to the <em>output</em> file. <em>input</em> and <em>output</em> must be <a class="reference internal" href="../glossary.html#term-file-object"><span class="xref std std-term">file objects</span></a>. <em>input</em> will be read until <code class="docutils literal"><span class="pre">input.read()</span></code> returns an empty
+bytes object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="base64.decodebytes">
+<code class="descclassname">base64.</code><code class="descname">decodebytes</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#base64.decodebytes" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="base64.decodestring">
+<code class="descclassname">base64.</code><code class="descname">decodestring</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#base64.decodestring" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Decode the byte string <em>s</em>, which must contain one or more lines of base64
+encoded data, and return a byte string containing the resulting binary data.
+<code class="docutils literal"><span class="pre">decodestring</span></code> is a deprecated alias.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.1 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="base64.encode">
+<code class="descclassname">base64.</code><code class="descname">encode</code><span class="sig-paren">(</span><em>input</em>, <em>output</em><span class="sig-paren">)</span><a class="headerlink" href="#base64.encode" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Encode the contents of the binary <em>input</em> file and write the resulting base64
+encoded data to the <em>output</em> file. <em>input</em> and <em>output</em> must be <a class="reference internal" href="../glossary.html#term-file-object"><span class="xref std std-term">file
+objects</span></a>. <em>input</em> will be read until <code class="docutils literal"><span class="pre">input.read()</span></code> returns
+an empty bytes object. <a class="reference internal" href="#base64.encode" title="base64.encode"><code class="xref py py-func docutils literal"><span class="pre">encode()</span></code></a> returns the encoded data plus a trailing
+newline character (<code class="docutils literal"><span class="pre">b'\n'</span></code>).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="base64.encodebytes">
+<code class="descclassname">base64.</code><code class="descname">encodebytes</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#base64.encodebytes" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="base64.encodestring">
+<code class="descclassname">base64.</code><code class="descname">encodestring</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#base64.encodestring" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Encode the byte string <em>s</em>, which can contain arbitrary binary data, and
+return a byte string containing one or more lines of base64-encoded data.
+<a class="reference internal" href="#base64.encodebytes" title="base64.encodebytes"><code class="xref py py-func docutils literal"><span class="pre">encodebytes()</span></code></a> returns a string containing one or more lines of
+base64-encoded data always including an extra trailing newline (<code class="docutils literal"><span class="pre">b'\n'</span></code>).
+<code class="docutils literal"><span class="pre">encodestring</span></code> is a deprecated alias.</p>
+</dd></dl>
+
+<p>モジュールの使用例:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">base64</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encoded</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">b</span><span class="s">&#39;data to be encoded&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encoded</span>
+<span class="go">b&#39;ZGF0YSB0byBiZSBlbmNvZGVk&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span>
+<span class="go">b&#39;data to be encoded&#39;</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="binascii.html#module-binascii" title="binascii: Tools for converting between binary and various ASCII-encoded binary representations."><code class="xref py py-mod docutils literal"><span class="pre">binascii</span></code></a> モジュール</dt>
+<dd><p class="first last">ASCII からバイナリへ、バイナリからASCIIへの変換をサポートするモジュール。</p>
+</dd>
+<dt><span class="target" id="index-3"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc1521.html"><strong>RFC 1521</strong></a> - MIME (Multipurpose Internet Mail Extensions) Part One: Mechanisms for Specifying and Describing the Format of Internet Message Bodies</dt>
+<dd>Section 5.2, &#8220;Base64 Content-Transfer-Encoding,&#8221; provides the definition of the
+base64 encoding.</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="mimetypes.html"
+                        title="前の章へ">19.5. <code class="docutils literal"><span class="pre">mimetypes</span></code> &#8212; ファイル名を MIME 型へマップする</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="binhex.html"
+                        title="次の章へ">19.7. <code class="docutils literal"><span class="pre">binhex</span></code> &#8212; binhex4 形式ファイルのエンコードおよびデコード</a></p>
+<h3>このページ</h3>
+<ul class="this-page-menu">
+  <li><a href="../bugs.html">Report a Bug</a></li>
+  <li><a href="../_sources/library/base64.txt"
+         rel="nofollow">Show Source</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="binhex.html" title="19.7. binhex — binhex4 形式ファイルのエンコードおよびデコード"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="mimetypes.html" title="19.5. mimetypes — ファイル名を MIME 型へマップする"
+             >前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="http://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.3.6</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Python 標準ライブラリ</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="netdata.html" >19. インターネット上のデータの操作</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+    &copy; <a href="../copyright.html">Copyright</a> 1990-2015, Python Software Foundation.
+    <br />
+    The Python Software Foundation is a non-profit corporation.
+    <a href="http://www.python.org/psf/donations/">Please donate.</a>
+    <br />
+    Last updated on Dec 28, 2015.
+    <a href="../bugs.html">Found a bug</a>?
+    <br />
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1.
+    <br />
+    <a href="https://github.com/python-doc-ja/python-doc-ja">Pythonドキュメント日本語翻訳プロジェクト</a>
+    によって翻訳されました。
+    <a href="https://github.com/python-doc-ja/python-doc-ja/issues">誤訳を報告する。</a>
+    </div>
+
+  </body>
+</html>

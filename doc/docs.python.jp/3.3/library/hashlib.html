@@ -1,0 +1,329 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>15.1. hashlib — セキュアハッシュおよびメッセージダイジェスト &mdash; Python 3.3.6 ドキュメント</title>
+    
+    <link rel="stylesheet" href="../_static/pydoctheme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.3.6',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Python 3.3.6 ドキュメント 内を検索"
+          href="../_static/opensearch.xml"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="Python 3.3.6 ドキュメント" href="../contents.html" />
+    <link rel="up" title="15. 暗号関連のサービス" href="crypto.html" />
+    <link rel="next" title="15.2. hmac — メッセージ認証のための鍵付きハッシュ化" href="hmac.html" />
+    <link rel="prev" title="15. 暗号関連のサービス" href="crypto.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/py.png" />
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/_jp.js"></script>
+    <script type="text/javascript" src="../_static/version_switch.js"></script>
+    
+ 
+
+  <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-34175846-1', 'python.jp');
+        ga('send', 'pageview');
+
+      </script>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="hmac.html" title="15.2. hmac — メッセージ認証のための鍵付きハッシュ化"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="crypto.html" title="15. 暗号関連のサービス"
+             accesskey="P">前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="http://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.3.6</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Python 標準ライブラリ</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="crypto.html" accesskey="U">15. 暗号関連のサービス</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-hashlib">
+<span id="hashlib-secure-hashes-and-message-digests"></span><h1>15.1. <a class="reference internal" href="#module-hashlib" title="hashlib: Secure hash and message digest algorithms."><code class="xref py py-mod docutils literal"><span class="pre">hashlib</span></code></a> &#8212; セキュアハッシュおよびメッセージダイジェスト<a class="headerlink" href="#module-hashlib" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p id="index-0"><strong>ソースコード:</strong> <a class="reference external" href="http://hg.python.org/cpython/file/3.3/Lib/hashlib.py">Lib/hashlib.py</a></p>
+<hr class="docutils" />
+<p>このモジュールは、セキュアハッシュやメッセージダイジェスト用のさまざまなアルゴリズムを実装したものです。FIPSのセキュアなハッシュアルゴリズムである SHA1、SHA224、SHA256、SHA384およびSHA512 (FIPS 180-2 で定義されているもの) だけでなくRSAのMD5アルゴリズム (Internet <span class="target" id="index-4"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc1321.html"><strong>RFC 1321</strong></a> で定義されています)も実装しています。「セキュアなハッシュ」と「メッセージダイジェスト」はどちらも同じ意味です。古くからあるアルゴリズムは「メッセージダイジェスト」と呼ばれていますが、最近は「セキュアハッシュ」という用語が用いられています。</p>
+<div class="admonition note">
+<p class="first admonition-title">注釈</p>
+<p class="last">If you want the adler32 or crc32 hash functions, they are available in
+the <a class="reference internal" href="zlib.html#module-zlib" title="zlib: Low-level interface to compression and decompression routines compatible with gzip."><code class="xref py py-mod docutils literal"><span class="pre">zlib</span></code></a> module.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">Some algorithms have known hash collision weaknesses, refer to the &#8220;See
+also&#8221; section at the end.</p>
+</div>
+<p>There is one constructor method named for each type of <em class="dfn">hash</em>.  All return
+a hash object with the same simple interface. For example: use <code class="xref py py-func docutils literal"><span class="pre">sha1()</span></code> to
+create a SHA1 hash object. You can now feed this object with <a class="reference internal" href="../glossary.html#term-bytes-like-object"><span class="xref std std-term">bytes-like
+object</span></a>s (normally <a class="reference internal" href="functions.html#bytes" title="bytes"><code class="xref py py-class docutils literal"><span class="pre">bytes</span></code></a>) using the <code class="xref py py-meth docutils literal"><span class="pre">update()</span></code> method.
+At any point you can ask it for the <em class="dfn">digest</em> of the
+concatenation of the data fed to it so far using the <code class="xref py py-meth docutils literal"><span class="pre">digest()</span></code> or
+<code class="xref py py-meth docutils literal"><span class="pre">hexdigest()</span></code> methods.</p>
+<div class="admonition note">
+<p class="first admonition-title">注釈</p>
+<p class="last">For better multithreading performance, the Python <a class="reference internal" href="../glossary.html#term-gil"><span class="xref std std-term">GIL</span></a> is released for
+data larger than 2047 bytes at object creation or on update.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注釈</p>
+<p class="last">Feeding string objects into <code class="xref py py-meth docutils literal"><span class="pre">update()</span></code> is not supported, as hashes work
+on bytes, not on characters.</p>
+</div>
+<p id="index-2">このモジュールで常に使用できるハッシュアルゴリズムのコンストラクタは <code class="xref py py-func docutils literal"><span class="pre">md5()</span></code> 、 <code class="xref py py-func docutils literal"><span class="pre">sha1()</span></code> 、 <code class="xref py py-func docutils literal"><span class="pre">sha224()</span></code> 、 <code class="xref py py-func docutils literal"><span class="pre">sha256()</span></code> 、 <code class="xref py py-func docutils literal"><span class="pre">sha384()</span></code> および <code class="xref py py-func docutils literal"><span class="pre">sha512()</span></code> です。それ以外のアルゴリズムが使用できるかどうかは、Python が使用している OpenSSL ライブラリに依存します。</p>
+<p>たとえば、 <code class="docutils literal"><span class="pre">b'Nobody</span> <span class="pre">inspects</span> <span class="pre">the</span> <span class="pre">spammish</span> <span class="pre">repetition'</span></code> というバイト文字列のダイジェストを取得するには次のようにします:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">b</span><span class="s">&quot;Nobody inspects&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">b</span><span class="s">&quot; the spammish repetition&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+<span class="go">b&#39;\xbbd\x9c\x83\xdd\x1e\xa5\xc9\xd9\xde\xc9\xa1\x8d\xf0\xff\xe9&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">digest_size</span>
+<span class="go">16</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">block_size</span>
+<span class="go">64</span>
+</pre></div>
+</div>
+<p>もっと簡潔に書くと、このようになります。 :</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">hashlib</span><span class="o">.</span><span class="n">sha224</span><span class="p">(</span><span class="n">b</span><span class="s">&quot;Nobody inspects the spammish repetition&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+<span class="go">&#39;a4337bc45a8fc544c03f52dc550cd6e1e87021bc896588bd79e901e2&#39;</span>
+</pre></div>
+</div>
+<dl class="function">
+<dt id="hashlib.new">
+<code class="descclassname">hashlib.</code><code class="descname">new</code><span class="sig-paren">(</span><em>name</em><span class="optional">[</span>, <em>data</em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#hashlib.new" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Is a generic constructor that takes the string name of the desired
+algorithm as its first parameter.  It also exists to allow access to the
+above listed hashes as well as any other algorithms that your OpenSSL
+library may offer.  The named constructors are much faster than <a class="reference internal" href="#hashlib.new" title="hashlib.new"><code class="xref py py-func docutils literal"><span class="pre">new()</span></code></a>
+and should be preferred.</p>
+</dd></dl>
+
+<p><a class="reference internal" href="#hashlib.new" title="hashlib.new"><code class="xref py py-func docutils literal"><span class="pre">new()</span></code></a> にOpenSSLのアルゴリズムを指定する例です。 :</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&#39;ripemd160&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">b</span><span class="s">&quot;Nobody inspects the spammish repetition&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+<span class="go">&#39;cc4a5ce1b3df48aec5d22d1f16b894a0b894eccc&#39;</span>
+</pre></div>
+</div>
+<p>Hashlib は以下の定数属性を提供しています:</p>
+<dl class="data">
+<dt id="hashlib.algorithms_guaranteed">
+<code class="descclassname">hashlib.</code><code class="descname">algorithms_guaranteed</code><a class="headerlink" href="#hashlib.algorithms_guaranteed" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>A set containing the names of the hash algorithms guaranteed to be supported
+by this module on all platforms.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.2 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="data">
+<dt id="hashlib.algorithms_available">
+<code class="descclassname">hashlib.</code><code class="descname">algorithms_available</code><a class="headerlink" href="#hashlib.algorithms_available" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>A set containing the names of the hash algorithms that are available in the
+running Python interpreter.  These names will be recognized when passed to
+<a class="reference internal" href="#hashlib.new" title="hashlib.new"><code class="xref py py-func docutils literal"><span class="pre">new()</span></code></a>.  <a class="reference internal" href="#hashlib.algorithms_guaranteed" title="hashlib.algorithms_guaranteed"><code class="xref py py-attr docutils literal"><span class="pre">algorithms_guaranteed</span></code></a> will always be a subset.  The
+same algorithm may appear multiple times in this set under different names
+(thanks to OpenSSL).</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.2 で追加.</span></p>
+</div>
+</dd></dl>
+
+<p>コンストラクタが返すハッシュオブジェクトには、次のような定数属性が用意されています:</p>
+<dl class="data">
+<dt id="hashlib.hash.digest_size">
+<code class="descclassname">hash.</code><code class="descname">digest_size</code><a class="headerlink" href="#hashlib.hash.digest_size" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>生成されたハッシュのバイト数。</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="hashlib.hash.block_size">
+<code class="descclassname">hash.</code><code class="descname">block_size</code><a class="headerlink" href="#hashlib.hash.block_size" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>内部で使われるハッシュアルゴリズムのブロックのバイト数。</p>
+</dd></dl>
+
+<p>ハッシュオブジェクトには次のようなメソッドがあります:</p>
+<dl class="method">
+<dt id="hashlib.hash.update">
+<code class="descclassname">hash.</code><code class="descname">update</code><span class="sig-paren">(</span><em>arg</em><span class="sig-paren">)</span><a class="headerlink" href="#hashlib.hash.update" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Update the hash object with the object <em>arg</em>, which must be interpretable as
+a buffer of bytes.  Repeated calls are equivalent to a single call with the
+concatenation of all the arguments: <code class="docutils literal"><span class="pre">m.update(a);</span> <span class="pre">m.update(b)</span></code> is
+equivalent to <code class="docutils literal"><span class="pre">m.update(a+b)</span></code>.</p>
+<div class="versionchanged">
+<p><span class="versionmodified">バージョン 3.1 で変更: </span>The Python GIL is released to allow other threads to run while hash
+updates on data larger than 2047 bytes is taking place when using hash
+algorithms supplied by OpenSSL.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hashlib.hash.digest">
+<code class="descclassname">hash.</code><code class="descname">digest</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hashlib.hash.digest" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return the digest of the data passed to the <a class="reference internal" href="#hashlib.hash.update" title="hashlib.hash.update"><code class="xref py py-meth docutils literal"><span class="pre">update()</span></code></a> method so far.
+This is a bytes object of size <a class="reference internal" href="#hashlib.hash.digest_size" title="hashlib.hash.digest_size"><code class="xref py py-attr docutils literal"><span class="pre">digest_size</span></code></a> which may contain bytes in
+the whole range from 0 to 255.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hashlib.hash.hexdigest">
+<code class="descclassname">hash.</code><code class="descname">hexdigest</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hashlib.hash.hexdigest" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#hashlib.hash.digest" title="hashlib.hash.digest"><code class="xref py py-meth docutils literal"><span class="pre">digest()</span></code></a> except the digest is returned as a string object of
+double length, containing only hexadecimal digits.  This may be used to
+exchange the value safely in email or other non-binary environments.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hashlib.hash.copy">
+<code class="descclassname">hash.</code><code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hashlib.hash.copy" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>ハッシュオブジェクトのコピー (&#8220;クローン&#8221;) を返します。これは、最初の部分文字列が共通なデータのダイジェストを効率的に計算するために使用します。</p>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="hmac.html#module-hmac" title="hmac: Keyed-Hashing for Message Authentication (HMAC) implementation for Python."><code class="xref py py-mod docutils literal"><span class="pre">hmac</span></code></a> モジュール</dt>
+<dd><p class="first last">ハッシュを用いてメッセージ認証コードを生成するモジュールです。</p>
+</dd>
+<dt><a class="reference internal" href="base64.html#module-base64" title="base64: RFC 3548: Base16, Base32, Base64 Data Encodings"><code class="xref py py-mod docutils literal"><span class="pre">base64</span></code></a> モジュール</dt>
+<dd><p class="first last">バイナリハッシュを非バイナリ環境用にエンコードするもうひとつの方法です。</p>
+</dd>
+<dt><a class="reference external" href="http://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf">http://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf</a></dt>
+<dd><p class="first last">FIPS 180-2 のセキュアハッシュアルゴリズムについての説明。</p>
+</dd>
+<dt><a class="reference external" href="http://en.wikipedia.org/wiki/Cryptographic_hash_function#Cryptographic_hash_algorithms">http://en.wikipedia.org/wiki/Cryptographic_hash_function#Cryptographic_hash_algorithms</a></dt>
+<dd><p class="first last">どのアルゴリズムにどんな既知の問題があって、それが実際に利用する際にどう影響するかについての Wikipedia の記事。</p>
+</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="crypto.html"
+                        title="前の章へ">15. 暗号関連のサービス</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="hmac.html"
+                        title="次の章へ">15.2. <code class="docutils literal"><span class="pre">hmac</span></code> &#8212; メッセージ認証のための鍵付きハッシュ化</a></p>
+<h3>このページ</h3>
+<ul class="this-page-menu">
+  <li><a href="../bugs.html">Report a Bug</a></li>
+  <li><a href="../_sources/library/hashlib.txt"
+         rel="nofollow">Show Source</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="hmac.html" title="15.2. hmac — メッセージ認証のための鍵付きハッシュ化"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="crypto.html" title="15. 暗号関連のサービス"
+             >前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="http://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.3.6</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Python 標準ライブラリ</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="crypto.html" >15. 暗号関連のサービス</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+    &copy; <a href="../copyright.html">Copyright</a> 1990-2015, Python Software Foundation.
+    <br />
+    The Python Software Foundation is a non-profit corporation.
+    <a href="http://www.python.org/psf/donations/">Please donate.</a>
+    <br />
+    Last updated on Dec 28, 2015.
+    <a href="../bugs.html">Found a bug</a>?
+    <br />
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1.
+    <br />
+    <a href="https://github.com/python-doc-ja/python-doc-ja">Pythonドキュメント日本語翻訳プロジェクト</a>
+    によって翻訳されました。
+    <a href="https://github.com/python-doc-ja/python-doc-ja/issues">誤訳を報告する。</a>
+    </div>
+
+  </body>
+</html>

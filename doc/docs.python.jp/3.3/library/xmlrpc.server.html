@@ -1,0 +1,489 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>21.27. xmlrpc.server — 基本的なXML-RPCサーバー &mdash; Python 3.3.6 ドキュメント</title>
+    
+    <link rel="stylesheet" href="../_static/pydoctheme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.3.6',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Python 3.3.6 ドキュメント 内を検索"
+          href="../_static/opensearch.xml"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="Python 3.3.6 ドキュメント" href="../contents.html" />
+    <link rel="up" title="21. インターネットプロトコルとサポート" href="internet.html" />
+    <link rel="next" title="21.28. ipaddress — IPv4/IPv6 操作ライブラリ" href="ipaddress.html" />
+    <link rel="prev" title="21.26. xmlrpc.client — XML-RPC クライアントアクセス" href="xmlrpc.client.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/py.png" />
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/_jp.js"></script>
+    <script type="text/javascript" src="../_static/version_switch.js"></script>
+    
+ 
+
+  <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-34175846-1', 'python.jp');
+        ga('send', 'pageview');
+
+      </script>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="ipaddress.html" title="21.28. ipaddress — IPv4/IPv6 操作ライブラリ"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="xmlrpc.client.html" title="21.26. xmlrpc.client — XML-RPC クライアントアクセス"
+             accesskey="P">前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="http://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.3.6</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Python 標準ライブラリ</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="internet.html" accesskey="U">21. インターネットプロトコルとサポート</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-xmlrpc.server">
+<span id="xmlrpc-server-basic-xml-rpc-servers"></span><h1>21.27. <a class="reference internal" href="#module-xmlrpc.server" title="xmlrpc.server: Basic XML-RPC server implementations."><code class="xref py py-mod docutils literal"><span class="pre">xmlrpc.server</span></code></a> &#8212; 基本的なXML-RPCサーバー<a class="headerlink" href="#module-xmlrpc.server" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><strong>ソースコード:</strong> <a class="reference external" href="http://hg.python.org/cpython/file/3.3/Lib/xmlrpc/server.py">Lib/xmlrpc/server.py</a></p>
+<hr class="docutils" />
+<p><a class="reference internal" href="#module-xmlrpc.server" title="xmlrpc.server: Basic XML-RPC server implementations."><code class="xref py py-mod docutils literal"><span class="pre">xmlrpc.server</span></code></a> モジュールはPythonで記述された基本的なXML-RPC サーバーフレームワークを提供します。サーバーはスタンドアロンであるか、 <a class="reference internal" href="#xmlrpc.server.SimpleXMLRPCServer" title="xmlrpc.server.SimpleXMLRPCServer"><code class="xref py py-class docutils literal"><span class="pre">SimpleXMLRPCServer</span></code></a> を使うか、 <a class="reference internal" href="#xmlrpc.server.CGIXMLRPCRequestHandler" title="xmlrpc.server.CGIXMLRPCRequestHandler"><code class="xref py py-class docutils literal"><span class="pre">CGIXMLRPCRequestHandler</span></code></a> を使って CGI 環境に組み込まれるかの、いずれかです。</p>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">The <a class="reference internal" href="xmlrpc.client.html#module-xmlrpc.client" title="xmlrpc.client: XML-RPC client access."><code class="xref py py-mod docutils literal"><span class="pre">xmlrpc.client</span></code></a> module is not secure against maliciously
+constructed data.  If you need to parse untrusted or unauthenticated data see
+<a class="reference internal" href="xml.html#xml-vulnerabilities"><span>XML の脆弱性</span></a>.</p>
+</div>
+<dl class="class">
+<dt id="xmlrpc.server.SimpleXMLRPCServer">
+<em class="property">class </em><code class="descclassname">xmlrpc.server.</code><code class="descname">SimpleXMLRPCServer</code><span class="sig-paren">(</span><em>addr</em>, <em>requestHandler=SimpleXMLRPCRequestHandler</em>, <em>logRequests=True</em>, <em>allow_none=False</em>, <em>encoding=None</em>, <em>bind_and_activate=True</em>, <em>use_builtin_types=False</em><span class="sig-paren">)</span><a class="headerlink" href="#xmlrpc.server.SimpleXMLRPCServer" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>新しくサーバーインスタンスを作成します。このクラスはXML-RPCプロトコルで呼ばれる関数の登録のためのメソッドを提供します。引数 <em>requestHandler</em> には、リクエストハンドラーインスタンスのファクトリーを設定します。デフォルトは <a class="reference internal" href="#xmlrpc.server.SimpleXMLRPCRequestHandler" title="xmlrpc.server.SimpleXMLRPCRequestHandler"><code class="xref py py-class docutils literal"><span class="pre">SimpleXMLRPCRequestHandler</span></code></a> です。引数 <em>addr</em> と <em>requestHandler</em> は <code class="xref py py-class docutils literal"><span class="pre">SocketServer.TCPServer</span></code> のコンストラクターに引き渡されます。もし引数 <em>logRequests</em> が真(true)であれば、(それがデフォルトですが、)リクエストはログに記録されます。偽(false)である場合にはログは記録されません。引数 <em>allow_none</em> と <em>encoding</em> は <a class="reference internal" href="xmlrpc.client.html#module-xmlrpc.client" title="xmlrpc.client: XML-RPC client access."><code class="xref py py-mod docutils literal"><span class="pre">xmlrpc.client</span></code></a> に引き継がれ、サーバーから返されるXML-RPCレスポンスを制御します。 <em>bind_and_activate</em> 引数は、コンストラクタの呼び出し直後に <code class="xref py py-meth docutils literal"><span class="pre">server_bind()</span></code> と <code class="xref py py-meth docutils literal"><span class="pre">server_activate()</span></code> を呼ぶかどうかを指定します。デフォルトでは <code class="docutils literal"><span class="pre">True</span></code> です。この引数に <code class="docutils literal"><span class="pre">False</span></code> を指定することで、バインドする前に、 <em>allow_reuse_address</em> クラス変数を操作することができます。 (訳注: 同じ名前のインスタンス変数を追加することで、クラス変数をオーバーライドすることができます。) <em>use_builtin_types</em> パラメタは <a class="reference internal" href="xmlrpc.client.html#xmlrpc.client.loads" title="xmlrpc.client.loads"><code class="xref py py-func docutils literal"><span class="pre">loads()</span></code></a> 関数に渡されます。このパラメタは、日付/時刻の値やバイナリデータを受け取ったときにどの型が作られるかを制御し、デフォルトは偽です。</p>
+<div class="versionchanged">
+<p><span class="versionmodified">バージョン 3.3 で変更: </span>The <em>use_builtin_types</em> flag was added.</p>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="xmlrpc.server.CGIXMLRPCRequestHandler">
+<em class="property">class </em><code class="descclassname">xmlrpc.server.</code><code class="descname">CGIXMLRPCRequestHandler</code><span class="sig-paren">(</span><em>allow_none=False</em>, <em>encoding=None</em>, <em>use_builtin_types=False</em><span class="sig-paren">)</span><a class="headerlink" href="#xmlrpc.server.CGIXMLRPCRequestHandler" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>CGI 環境における XML-RPC リクエストハンドラーを、新たに作成します。引数 <em>allow_none</em> と <em>encoding</em> は <a class="reference internal" href="xmlrpc.client.html#module-xmlrpc.client" title="xmlrpc.client: XML-RPC client access."><code class="xref py py-mod docutils literal"><span class="pre">xmlrpc.client</span></code></a> に引き継がれ、サーバーから返されるXML-RPCレスポンスを制御します。 <em>use_builtin_types</em> パラメタは <a class="reference internal" href="xmlrpc.client.html#xmlrpc.client.loads" title="xmlrpc.client.loads"><code class="xref py py-func docutils literal"><span class="pre">loads()</span></code></a> 関数に渡されます。このパラメタは、日付/時刻の値やバイナリデータを受け取ったときにどの型が作られるかを制御し、デフォルトは偽です。</p>
+<div class="versionchanged">
+<p><span class="versionmodified">バージョン 3.3 で変更: </span>The <em>use_builtin_types</em> flag was added.</p>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="xmlrpc.server.SimpleXMLRPCRequestHandler">
+<em class="property">class </em><code class="descclassname">xmlrpc.server.</code><code class="descname">SimpleXMLRPCRequestHandler</code><a class="headerlink" href="#xmlrpc.server.SimpleXMLRPCRequestHandler" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>新しくリクエストハンドラーインスタンスを作成します。このリクエストハンドラーは <code class="docutils literal"><span class="pre">POST</span></code> リクエストを受け持ち、 <a class="reference internal" href="#xmlrpc.server.SimpleXMLRPCServer" title="xmlrpc.server.SimpleXMLRPCServer"><code class="xref py py-class docutils literal"><span class="pre">SimpleXMLRPCServer</span></code></a> のコンストラクターの引数 <em>logRequests</em> に従ったログ出力を行います。</p>
+</dd></dl>
+
+<div class="section" id="simplexmlrpcserver-objects">
+<span id="simple-xmlrpc-servers"></span><h2>21.27.1. SimpleXMLRPCServer オブジェクト<a class="headerlink" href="#simplexmlrpcserver-objects" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><a class="reference internal" href="#xmlrpc.server.SimpleXMLRPCServer" title="xmlrpc.server.SimpleXMLRPCServer"><code class="xref py py-class docutils literal"><span class="pre">SimpleXMLRPCServer</span></code></a> クラスは <code class="xref py py-class docutils literal"><span class="pre">socketserver.TCPServer</span></code> のサブクラスで、基本的なスタンドアロンの XML-RPC サーバーを作成する手段を提供します。</p>
+<dl class="method">
+<dt id="xmlrpc.server.SimpleXMLRPCServer.register_function">
+<code class="descclassname">SimpleXMLRPCServer.</code><code class="descname">register_function</code><span class="sig-paren">(</span><em>function</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#xmlrpc.server.SimpleXMLRPCServer.register_function" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>XML- RPCリクエストに応じる関数を登録します。引数 <em>name</em> が与えられている場合はその値が、関数 <em>function</em> に関連付けられます。これが与えられない場合は <code class="docutils literal"><span class="pre">function.__name__</span></code> の値が用いられます。引数 <em>name</em> は通常の文字列でもユニコード文字列でも良く、Pythonで識別子として正しくない文字(&#8221; . &#8220;ピリオドなど)を含んでいても。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xmlrpc.server.SimpleXMLRPCServer.register_instance">
+<code class="descclassname">SimpleXMLRPCServer.</code><code class="descname">register_instance</code><span class="sig-paren">(</span><em>instance</em>, <em>allow_dotted_names=False</em><span class="sig-paren">)</span><a class="headerlink" href="#xmlrpc.server.SimpleXMLRPCServer.register_instance" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>オブジェクトを登録し、そのオブジェクトの <a class="reference internal" href="#xmlrpc.server.SimpleXMLRPCServer.register_function" title="xmlrpc.server.SimpleXMLRPCServer.register_function"><code class="xref py py-meth docutils literal"><span class="pre">register_function()</span></code></a> で登録されていないメソッドを公開します。もし、 <em>instance</em> がメソッド <code class="xref py py-meth docutils literal"><span class="pre">_dispatch()</span></code> を定義していれば、 <code class="xref py py-meth docutils literal"><span class="pre">_dispatch()</span></code> が、リクエストされたメソッド名とパラメータの組を引数として呼び出されます。そして、 <code class="xref py py-meth docutils literal"><span class="pre">_dispatch()</span></code> の返り値が結果としてクライアントに返されます。そのAPIは  <code class="docutils literal"><span class="pre">def</span> <span class="pre">_dispatch(self,</span> <span class="pre">method,</span> <span class="pre">params)</span></code> (注意: <em>params</em> は可変引数リストではありません)です。仕事をするために下位の関数を呼ぶ時には、その関数は <code class="docutils literal"><span class="pre">func(*params)</span></code> のように呼ばれます。 <code class="xref py py-meth docutils literal"><span class="pre">_dispatch()</span></code> の返り値はクライアントへ結果として返されます。もし、 <em>instance</em> がメソッド <code class="xref py py-meth docutils literal"><span class="pre">_dispatch()</span></code> を定義していなければ、リクエストされたメソッド名がそのインスタンスに定義されているメソッド名から探されます。</p>
+<p>もしオプション引数 <em>allow_dotted_names</em> が真(true)で、インスタンスがメソッド <code class="xref py py-meth docutils literal"><span class="pre">_dispatch()</span></code> を定義していないとき、リクエストされたメソッド名がピリオドを含む場合は、（訳注: 通常のPythonでのピリオドの解釈と同様に）階層的にオブジェクトを探索します。そして、そこで見つかったオブジェクトをリクエストから渡された引数で呼び出し、その返り値をクライアントに返します。</p>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last"><em>allow_dotted_names</em> オプションを有効にすると、侵入者にあなたのモジュールのグローバル変数にアクセスすることを許し、あなたのコンピュータで任意のコードを実行することを許すことがあります。このオプションは安全な閉じたネットワークでのみお使い下さい。</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="xmlrpc.server.SimpleXMLRPCServer.register_introspection_functions">
+<code class="descclassname">SimpleXMLRPCServer.</code><code class="descname">register_introspection_functions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xmlrpc.server.SimpleXMLRPCServer.register_introspection_functions" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>XML-RPC のイントロスペクション関数、 <code class="docutils literal"><span class="pre">system.listMethods</span></code> 、 <code class="docutils literal"><span class="pre">system.methodHelp</span></code> 、 <code class="docutils literal"><span class="pre">system.methodSignature</span></code> を登録します。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xmlrpc.server.SimpleXMLRPCServer.register_multicall_functions">
+<code class="descclassname">SimpleXMLRPCServer.</code><code class="descname">register_multicall_functions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xmlrpc.server.SimpleXMLRPCServer.register_multicall_functions" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>XML-RPC における複数の要求を処理する関数 system.multicall を登録します。</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xmlrpc.server.SimpleXMLRPCRequestHandler.rpc_paths">
+<code class="descclassname">SimpleXMLRPCRequestHandler.</code><code class="descname">rpc_paths</code><a class="headerlink" href="#xmlrpc.server.SimpleXMLRPCRequestHandler.rpc_paths" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>この属性値はXML-RPCリクエストを受け付けるURLの正当なパス部分をリストするタプルでなければなりません。これ以外のパスへのリクエストは404「そのようなページはありません」 HTTPエラーになります。このタプルが空の場合は全てのパスが正当であると見なされます。デフォルト値は <code class="docutils literal"><span class="pre">('/',</span> <span class="pre">'/RPC2')</span></code> です。</p>
+</dd></dl>
+
+<div class="section" id="simplexmlrpcserver-example">
+<span id="id1"></span><h3>21.27.1.1. SimpleXMLRPCServer の例<a class="headerlink" href="#simplexmlrpcserver-example" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>サーバーのコード:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">xmlrpc.server</span> <span class="k">import</span> <span class="n">SimpleXMLRPCServer</span>
+<span class="kn">from</span> <span class="nn">xmlrpc.server</span> <span class="k">import</span> <span class="n">SimpleXMLRPCRequestHandler</span>
+
+<span class="c"># Restrict to a particular path.</span>
+<span class="k">class</span> <span class="nc">RequestHandler</span><span class="p">(</span><span class="n">SimpleXMLRPCRequestHandler</span><span class="p">):</span>
+    <span class="n">rpc_paths</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;/RPC2&#39;</span><span class="p">,)</span>
+
+<span class="c"># Create server</span>
+<span class="n">server</span> <span class="o">=</span> <span class="n">SimpleXMLRPCServer</span><span class="p">((</span><span class="s">&quot;localhost&quot;</span><span class="p">,</span> <span class="mi">8000</span><span class="p">),</span>
+                            <span class="n">requestHandler</span><span class="o">=</span><span class="n">RequestHandler</span><span class="p">)</span>
+<span class="n">server</span><span class="o">.</span><span class="n">register_introspection_functions</span><span class="p">()</span>
+
+<span class="c"># Register pow() function; this will use the value of</span>
+<span class="c"># pow.__name__ as the name, which is just &#39;pow&#39;.</span>
+<span class="n">server</span><span class="o">.</span><span class="n">register_function</span><span class="p">(</span><span class="nb">pow</span><span class="p">)</span>
+
+<span class="c"># Register a function under a different name</span>
+<span class="k">def</span> <span class="nf">adder_function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+<span class="n">server</span><span class="o">.</span><span class="n">register_function</span><span class="p">(</span><span class="n">adder_function</span><span class="p">,</span> <span class="s">&#39;add&#39;</span><span class="p">)</span>
+
+<span class="c"># Register an instance; all the methods of the instance are</span>
+<span class="c"># published as XML-RPC methods (in this case, just &#39;mul&#39;).</span>
+<span class="k">class</span> <span class="nc">MyFuncs</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
+
+<span class="n">server</span><span class="o">.</span><span class="n">register_instance</span><span class="p">(</span><span class="n">MyFuncs</span><span class="p">())</span>
+
+<span class="c"># Run the server&#39;s main loop</span>
+<span class="n">server</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>以下のクライアントコードは上のサーバーで使えるようになったメソッドを呼び出します:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">xmlrpc.client</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">xmlrpc</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">ServerProxy</span><span class="p">(</span><span class="s">&#39;http://localhost:8000&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>  <span class="c"># Returns 2**3 = 8</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>  <span class="c"># Returns 5</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>  <span class="c"># Returns 5*2 = 10</span>
+
+<span class="c"># Print list of available methods</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">listMethods</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>The following example included in <cite>Lib/xmlrpc/server.py</cite> module shows a server
+allowing dotted names and registering a multicall function.</p>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">Enabling the <em>allow_dotted_names</em> option allows intruders to access your
+module&#8217;s global variables and may allow intruders to execute arbitrary code on
+your machine.  Only use this example only within a secure, closed network.</p>
+</div>
+<div class="highlight-python3"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="k">class</span> <span class="nc">ExampleService</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">getData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;42&#39;</span>
+
+    <span class="k">class</span> <span class="nc">currentTime</span><span class="p">:</span>
+        <span class="nd">@staticmethod</span>
+        <span class="k">def</span> <span class="nf">getCurrentTime</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+<span class="n">server</span> <span class="o">=</span> <span class="n">SimpleXMLRPCServer</span><span class="p">((</span><span class="s">&quot;localhost&quot;</span><span class="p">,</span> <span class="mi">8000</span><span class="p">))</span>
+<span class="n">server</span><span class="o">.</span><span class="n">register_function</span><span class="p">(</span><span class="nb">pow</span><span class="p">)</span>
+<span class="n">server</span><span class="o">.</span><span class="n">register_function</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">,</span> <span class="s">&#39;add&#39;</span><span class="p">)</span>
+<span class="n">server</span><span class="o">.</span><span class="n">register_instance</span><span class="p">(</span><span class="n">ExampleService</span><span class="p">(),</span> <span class="n">allow_dotted_names</span><span class="o">=</span><span class="k">True</span><span class="p">)</span>
+<span class="n">server</span><span class="o">.</span><span class="n">register_multicall_functions</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s">&#39;Serving XML-RPC on localhost port 8000&#39;</span><span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">Keyboard interrupt received, exiting.&quot;</span><span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">server_close</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This ExampleService demo can be invoked from the command line:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">xmlrpc</span><span class="o">.</span><span class="n">server</span>
+</pre></div>
+</div>
+<p>The client that interacts with the above server is included in
+<cite>Lib/xmlrpc/client.py</cite>:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="n">server</span> <span class="o">=</span> <span class="n">ServerProxy</span><span class="p">(</span><span class="s">&quot;http://localhost:8000&quot;</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">server</span><span class="o">.</span><span class="n">currentTime</span><span class="o">.</span><span class="n">getCurrentTime</span><span class="p">())</span>
+<span class="k">except</span> <span class="n">Error</span> <span class="k">as</span> <span class="n">v</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s">&quot;ERROR&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+<span class="n">multi</span> <span class="o">=</span> <span class="n">MultiCall</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+<span class="n">multi</span><span class="o">.</span><span class="n">getData</span><span class="p">()</span>
+<span class="n">multi</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">9</span><span class="p">)</span>
+<span class="n">multi</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">response</span> <span class="ow">in</span> <span class="n">multi</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">Error</span> <span class="k">as</span> <span class="n">v</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s">&quot;ERROR&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This client which interacts with the demo XMLRPC server can be invoked as:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">xmlrpc</span><span class="o">.</span><span class="n">client</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="cgixmlrpcrequesthandler">
+<h2>21.27.2. CGIXMLRPCRequestHandler<a class="headerlink" href="#cgixmlrpcrequesthandler" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><a class="reference internal" href="#xmlrpc.server.CGIXMLRPCRequestHandler" title="xmlrpc.server.CGIXMLRPCRequestHandler"><code class="xref py py-class docutils literal"><span class="pre">CGIXMLRPCRequestHandler</span></code></a> クラスは、Python の CGI スクリプトに送られた XML-RPC リクエストを処理するときに使用できます。</p>
+<dl class="method">
+<dt id="xmlrpc.server.CGIXMLRPCRequestHandler.register_function">
+<code class="descclassname">CGIXMLRPCRequestHandler.</code><code class="descname">register_function</code><span class="sig-paren">(</span><em>function</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#xmlrpc.server.CGIXMLRPCRequestHandler.register_function" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>XML-RPC リクエストに応じる関数を登録します。引数 <em>name</em> が与えられている場合はその値が、関数 <em>function</em> に関連付けられます。これが与えられない場合は <code class="docutils literal"><span class="pre">function.__name__</span></code> の値が用いられます。引数 <em>name</em> は通常の文字列でもユニコード文字列でも良く、Pythonで識別子として正しくない文字(&#8221; . &#8220;ピリオドなど)を含んでもかまいません。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xmlrpc.server.CGIXMLRPCRequestHandler.register_instance">
+<code class="descclassname">CGIXMLRPCRequestHandler.</code><code class="descname">register_instance</code><span class="sig-paren">(</span><em>instance</em><span class="sig-paren">)</span><a class="headerlink" href="#xmlrpc.server.CGIXMLRPCRequestHandler.register_instance" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>オブジェクトを登録し、そのオブジェクトの <a class="reference internal" href="#xmlrpc.server.CGIXMLRPCRequestHandler.register_function" title="xmlrpc.server.CGIXMLRPCRequestHandler.register_function"><code class="xref py py-meth docutils literal"><span class="pre">register_function()</span></code></a> で登録されていないメソッドを公開します。もし、 <em>instance</em> がメソッド <code class="xref py py-meth docutils literal"><span class="pre">_dispatch()</span></code> を定義していれば、 <code class="xref py py-meth docutils literal"><span class="pre">_dispatch()</span></code> が、リクエストされたメソッド名とパラメータの組を引数として呼び出されます。そして、 <code class="xref py py-meth docutils literal"><span class="pre">_dispatch()</span></code> の返り値が結果としてクライアントに返されます。もし、 <em>instance</em> がメソッド <code class="xref py py-meth docutils literal"><span class="pre">_dispatch()</span></code> を定義していなければ、リクエストされたメソッド名がそのインスタンスに定義されているメソッド名から探されます。リクエストされたメソッド名がピリオドを含む場合は、（訳注: 通常のPythonでのピリオドの解釈と同様に）階層的にオブジェクトを探索します。そして、そこで見つかったオブジェクトをリクエストから渡された引数で呼び出し、その返り値をクライアントに返します。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xmlrpc.server.CGIXMLRPCRequestHandler.register_introspection_functions">
+<code class="descclassname">CGIXMLRPCRequestHandler.</code><code class="descname">register_introspection_functions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xmlrpc.server.CGIXMLRPCRequestHandler.register_introspection_functions" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>XML-RPC リクエストを処理します。 <em>request_text</em> で渡されるのは、HTTP サーバーに提供された POST データです。何も渡されなければ標準入力からのデータが使われます。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xmlrpc.server.CGIXMLRPCRequestHandler.register_multicall_functions">
+<code class="descclassname">CGIXMLRPCRequestHandler.</code><code class="descname">register_multicall_functions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xmlrpc.server.CGIXMLRPCRequestHandler.register_multicall_functions" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>XML-RPC マルチコール関数 <code class="docutils literal"><span class="pre">system.multicall</span></code> を登録します。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xmlrpc.server.CGIXMLRPCRequestHandler.handle_request">
+<code class="descclassname">CGIXMLRPCRequestHandler.</code><code class="descname">handle_request</code><span class="sig-paren">(</span><em>request_text=None</em><span class="sig-paren">)</span><a class="headerlink" href="#xmlrpc.server.CGIXMLRPCRequestHandler.handle_request" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>XML-RPC リクエストを処理します。 <em>request_text</em> が与えられるなら、HTTP サーバに提供された POST データでなければなりません。与えられなければ、標準入力の内容が使われます。</p>
+</dd></dl>
+
+<p>例:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MyFuncs</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
+
+
+<span class="n">handler</span> <span class="o">=</span> <span class="n">CGIXMLRPCRequestHandler</span><span class="p">()</span>
+<span class="n">handler</span><span class="o">.</span><span class="n">register_function</span><span class="p">(</span><span class="nb">pow</span><span class="p">)</span>
+<span class="n">handler</span><span class="o">.</span><span class="n">register_function</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">,</span> <span class="s">&#39;add&#39;</span><span class="p">)</span>
+<span class="n">handler</span><span class="o">.</span><span class="n">register_introspection_functions</span><span class="p">()</span>
+<span class="n">handler</span><span class="o">.</span><span class="n">register_instance</span><span class="p">(</span><span class="n">MyFuncs</span><span class="p">())</span>
+<span class="n">handler</span><span class="o">.</span><span class="n">handle_request</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="documenting-xmlrpc-server">
+<h2>21.27.3. Documenting XMLRPC server<a class="headerlink" href="#documenting-xmlrpc-server" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>These classes extend the above classes to serve HTML documentation in response
+to HTTP GET requests.  Servers can either be free standing, using
+<a class="reference internal" href="#xmlrpc.server.DocXMLRPCServer" title="xmlrpc.server.DocXMLRPCServer"><code class="xref py py-class docutils literal"><span class="pre">DocXMLRPCServer</span></code></a>, or embedded in a CGI environment, using
+<a class="reference internal" href="#xmlrpc.server.DocCGIXMLRPCRequestHandler" title="xmlrpc.server.DocCGIXMLRPCRequestHandler"><code class="xref py py-class docutils literal"><span class="pre">DocCGIXMLRPCRequestHandler</span></code></a>.</p>
+<dl class="class">
+<dt id="xmlrpc.server.DocXMLRPCServer">
+<em class="property">class </em><code class="descclassname">xmlrpc.server.</code><code class="descname">DocXMLRPCServer</code><span class="sig-paren">(</span><em>addr</em>, <em>requestHandler=DocXMLRPCRequestHandler</em>, <em>logRequests=True</em>, <em>allow_none=False</em>, <em>encoding=None</em>, <em>bind_and_activate=True</em>, <em>use_builtin_types=True</em><span class="sig-paren">)</span><a class="headerlink" href="#xmlrpc.server.DocXMLRPCServer" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>当たなサーバ・インスタンスを生成します。各パラメータの内容は <a class="reference internal" href="#xmlrpc.server.SimpleXMLRPCServer" title="xmlrpc.server.SimpleXMLRPCServer"><code class="xref py py-class docutils literal"><span class="pre">SimpleXMLRPCServer</span></code></a> のものと同じですが、 <em>requestHandler</em> のデフォルトは <a class="reference internal" href="#xmlrpc.server.DocXMLRPCRequestHandler" title="xmlrpc.server.DocXMLRPCRequestHandler"><code class="xref py py-class docutils literal"><span class="pre">DocXMLRPCRequestHandler</span></code></a> になっています。</p>
+<div class="versionchanged">
+<p><span class="versionmodified">バージョン 3.3 で変更: </span>The <em>use_builtin_types</em> flag was added.</p>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="xmlrpc.server.DocCGIXMLRPCRequestHandler">
+<em class="property">class </em><code class="descclassname">xmlrpc.server.</code><code class="descname">DocCGIXMLRPCRequestHandler</code><a class="headerlink" href="#xmlrpc.server.DocCGIXMLRPCRequestHandler" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>CGI環境に XMR-RPC リクエスト・ハンドラの新たなインスタンスを生成します。</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="xmlrpc.server.DocXMLRPCRequestHandler">
+<em class="property">class </em><code class="descclassname">xmlrpc.server.</code><code class="descname">DocXMLRPCRequestHandler</code><a class="headerlink" href="#xmlrpc.server.DocXMLRPCRequestHandler" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>リクエスト・ハンドラの新たなインスタンスを生成します。このリクエスト・ハンドラは XML-RPC POST リクエスト、ドキュメントの GET、そして <a class="reference internal" href="#xmlrpc.server.DocXMLRPCServer" title="xmlrpc.server.DocXMLRPCServer"><code class="xref py py-class docutils literal"><span class="pre">DocXMLRPCServer</span></code></a> コンストラクタに与えられた <em>logRequests</em> パラメータ設定を優先するため、ロギングの変更をサポートします。</p>
+</dd></dl>
+
+</div>
+<div class="section" id="docxmlrpcserver-objects">
+<span id="doc-xmlrpc-servers"></span><h2>21.27.4. DocXMLRPCServer オブジェクト<a class="headerlink" href="#docxmlrpcserver-objects" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><a class="reference internal" href="#xmlrpc.server.DocXMLRPCServer" title="xmlrpc.server.DocXMLRPCServer"><code class="xref py py-class docutils literal"><span class="pre">DocXMLRPCServer</span></code></a> は <a class="reference internal" href="#xmlrpc.server.SimpleXMLRPCServer" title="xmlrpc.server.SimpleXMLRPCServer"><code class="xref py py-class docutils literal"><span class="pre">SimpleXMLRPCServer</span></code></a> の派生クラスで、セルフ- ドキュメンティングの手段と XML-RPC サーバ機能を提供します。HTTP POST リクエストは XML-RPC メソッドの呼び出しとして扱われます。HTTP GET リクエストは pydoc スタイルの HTML ドキュメント生成のリクエストとして扱われます。これはサーバが自分自身のドキュメントを Web ベースで提供可能であることを意味します。</p>
+<dl class="method">
+<dt id="xmlrpc.server.DocXMLRPCServer.set_server_title">
+<code class="descclassname">DocXMLRPCServer.</code><code class="descname">set_server_title</code><span class="sig-paren">(</span><em>server_title</em><span class="sig-paren">)</span><a class="headerlink" href="#xmlrpc.server.DocXMLRPCServer.set_server_title" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>生成する HTML ドキュメントのタイトルをセットします。このタイトルは HTML の title 要素として使われます。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xmlrpc.server.DocXMLRPCServer.set_server_name">
+<code class="descclassname">DocXMLRPCServer.</code><code class="descname">set_server_name</code><span class="sig-paren">(</span><em>server_name</em><span class="sig-paren">)</span><a class="headerlink" href="#xmlrpc.server.DocXMLRPCServer.set_server_name" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>生成する HTML ドキュメントの名前をセットします。この名前は HTML 冒頭の h1 要素に使われます。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xmlrpc.server.DocXMLRPCServer.set_server_documentation">
+<code class="descclassname">DocXMLRPCServer.</code><code class="descname">set_server_documentation</code><span class="sig-paren">(</span><em>server_documentation</em><span class="sig-paren">)</span><a class="headerlink" href="#xmlrpc.server.DocXMLRPCServer.set_server_documentation" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>生成する HTML ドキュメントの本文をセットします。この本文はドキュメント中の名前の下にパラグラフとして出力されます。</p>
+</dd></dl>
+
+</div>
+<div class="section" id="doccgixmlrpcrequesthandler">
+<h2>21.27.5. DocCGIXMLRPCRequestHandler<a class="headerlink" href="#doccgixmlrpcrequesthandler" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><a class="reference internal" href="#xmlrpc.server.DocCGIXMLRPCRequestHandler" title="xmlrpc.server.DocCGIXMLRPCRequestHandler"><code class="xref py py-class docutils literal"><span class="pre">DocCGIXMLRPCRequestHandler</span></code></a> は <a class="reference internal" href="#xmlrpc.server.CGIXMLRPCRequestHandler" title="xmlrpc.server.CGIXMLRPCRequestHandler"><code class="xref py py-class docutils literal"><span class="pre">CGIXMLRPCRequestHandler</span></code></a> の派生クラスで、セルフ- ドキュメンティングの手段と XML-RPC CGI スクリプト機能を提供します。HTTP POST リクエストは XML-RCP メソッドの呼び出しとして扱われます。 HTTP GET リクエストは pydoc スタイルの HTML ドキュメント生成のリクエストとして扱われます。これはサーバが自分自身のドキュメントを Web ベースで提供可能であることを意味します。</p>
+<dl class="method">
+<dt id="xmlrpc.server.DocCGIXMLRPCRequestHandler.set_server_title">
+<code class="descclassname">DocCGIXMLRPCRequestHandler.</code><code class="descname">set_server_title</code><span class="sig-paren">(</span><em>server_title</em><span class="sig-paren">)</span><a class="headerlink" href="#xmlrpc.server.DocCGIXMLRPCRequestHandler.set_server_title" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>生成する HTML ドキュメントのタイトルをセットします。このタイトルは HTML の title 要素として使われます。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xmlrpc.server.DocCGIXMLRPCRequestHandler.set_server_name">
+<code class="descclassname">DocCGIXMLRPCRequestHandler.</code><code class="descname">set_server_name</code><span class="sig-paren">(</span><em>server_name</em><span class="sig-paren">)</span><a class="headerlink" href="#xmlrpc.server.DocCGIXMLRPCRequestHandler.set_server_name" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>生成する HTML ドキュメントの名前をセットします。この名前は HTML 冒頭の h1 要素に使われます。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xmlrpc.server.DocCGIXMLRPCRequestHandler.set_server_documentation">
+<code class="descclassname">DocCGIXMLRPCRequestHandler.</code><code class="descname">set_server_documentation</code><span class="sig-paren">(</span><em>server_documentation</em><span class="sig-paren">)</span><a class="headerlink" href="#xmlrpc.server.DocCGIXMLRPCRequestHandler.set_server_documentation" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>生成する HTML ドキュメントの本文をセットします。この本文はドキュメント中の名前の下にパラグラフとして出力されます。</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">21.27. <code class="docutils literal"><span class="pre">xmlrpc.server</span></code> &#8212; 基本的なXML-RPCサーバー</a><ul>
+<li><a class="reference internal" href="#simplexmlrpcserver-objects">21.27.1. SimpleXMLRPCServer オブジェクト</a><ul>
+<li><a class="reference internal" href="#simplexmlrpcserver-example">21.27.1.1. SimpleXMLRPCServer の例</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cgixmlrpcrequesthandler">21.27.2. CGIXMLRPCRequestHandler</a></li>
+<li><a class="reference internal" href="#documenting-xmlrpc-server">21.27.3. Documenting XMLRPC server</a></li>
+<li><a class="reference internal" href="#docxmlrpcserver-objects">21.27.4. DocXMLRPCServer オブジェクト</a></li>
+<li><a class="reference internal" href="#doccgixmlrpcrequesthandler">21.27.5. DocCGIXMLRPCRequestHandler</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="xmlrpc.client.html"
+                        title="前の章へ">21.26. <code class="docutils literal"><span class="pre">xmlrpc.client</span></code> &#8212; XML-RPC クライアントアクセス</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="ipaddress.html"
+                        title="次の章へ">21.28. <code class="docutils literal"><span class="pre">ipaddress</span></code> &#8212; IPv4/IPv6 操作ライブラリ</a></p>
+<h3>このページ</h3>
+<ul class="this-page-menu">
+  <li><a href="../bugs.html">Report a Bug</a></li>
+  <li><a href="../_sources/library/xmlrpc.server.txt"
+         rel="nofollow">Show Source</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="ipaddress.html" title="21.28. ipaddress — IPv4/IPv6 操作ライブラリ"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="xmlrpc.client.html" title="21.26. xmlrpc.client — XML-RPC クライアントアクセス"
+             >前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="http://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.3.6</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Python 標準ライブラリ</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="internet.html" >21. インターネットプロトコルとサポート</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+    &copy; <a href="../copyright.html">Copyright</a> 1990-2015, Python Software Foundation.
+    <br />
+    The Python Software Foundation is a non-profit corporation.
+    <a href="http://www.python.org/psf/donations/">Please donate.</a>
+    <br />
+    Last updated on Dec 28, 2015.
+    <a href="../bugs.html">Found a bug</a>?
+    <br />
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1.
+    <br />
+    <a href="https://github.com/python-doc-ja/python-doc-ja">Pythonドキュメント日本語翻訳プロジェクト</a>
+    によって翻訳されました。
+    <a href="https://github.com/python-doc-ja/python-doc-ja/issues">誤訳を報告する。</a>
+    </div>
+
+  </body>
+</html>

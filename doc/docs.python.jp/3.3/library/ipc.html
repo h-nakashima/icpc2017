@@ -1,0 +1,254 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>18. プロセス間通信とネットワーク &mdash; Python 3.3.6 ドキュメント</title>
+    
+    <link rel="stylesheet" href="../_static/pydoctheme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.3.6',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Python 3.3.6 ドキュメント 内を検索"
+          href="../_static/opensearch.xml"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="Python 3.3.6 ドキュメント" href="../contents.html" />
+    <link rel="up" title="Python 標準ライブラリ" href="index.html" />
+    <link rel="next" title="18.1. socket — 低レベルネットワークインターフェース" href="socket.html" />
+    <link rel="prev" title="17.11. _dummy_thread — _thread の代替モジュール" href="_dummy_thread.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/py.png" />
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/_jp.js"></script>
+    <script type="text/javascript" src="../_static/version_switch.js"></script>
+    
+ 
+
+  <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-34175846-1', 'python.jp');
+        ga('send', 'pageview');
+
+      </script>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="socket.html" title="18.1. socket — 低レベルネットワークインターフェース"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="_dummy_thread.html" title="17.11. _dummy_thread — _thread の代替モジュール"
+             accesskey="P">前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="http://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.3.6</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Python 標準ライブラリ</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="interprocess-communication-and-networking">
+<span id="ipc"></span><h1>18. プロセス間通信とネットワーク<a class="headerlink" href="#interprocess-communication-and-networking" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>この章で解説されるモジュールは他のプロセスと通信するメカニズムを提供します。</p>
+<p>Some modules only work for two processes that are on the same machine, e.g.
+<a class="reference internal" href="signal.html#module-signal" title="signal: Set handlers for asynchronous events."><code class="xref py py-mod docutils literal"><span class="pre">signal</span></code></a> and <a class="reference internal" href="mmap.html#module-mmap" title="mmap: Interface to memory-mapped files for Unix and Windows."><code class="xref py py-mod docutils literal"><span class="pre">mmap</span></code></a>.  Other modules support networking protocols
+that two or more processes can used to communicate across machines.</p>
+<p>この章で解説されるモジュールのリスト:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="socket.html">18.1. <code class="docutils literal"><span class="pre">socket</span></code> &#8212; 低レベルネットワークインターフェース</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="socket.html#socket-families">18.1.1. ソケットファミリー</a></li>
+<li class="toctree-l2"><a class="reference internal" href="socket.html#module-contents">18.1.2. モジュールの内容</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="socket.html#exceptions">18.1.2.1. 例外</a></li>
+<li class="toctree-l3"><a class="reference internal" href="socket.html#constants">18.1.2.2. 定数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="socket.html#functions">18.1.2.3. 関数</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="socket.html#creating-sockets">18.1.2.3.1. ソケットの作成</a></li>
+<li class="toctree-l4"><a class="reference internal" href="socket.html#other-functions">18.1.2.3.2. その他の関数</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="socket.html#socket-objects">18.1.3. socket オブジェクト</a></li>
+<li class="toctree-l2"><a class="reference internal" href="socket.html#notes-on-socket-timeouts">18.1.4. ソケットタイムアウトの注意事項</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="socket.html#timeouts-and-the-connect-method">18.1.4.1. タイムアウトと&#8221;connect&#8221;メソッド</a></li>
+<li class="toctree-l3"><a class="reference internal" href="socket.html#timeouts-and-the-accept-method">18.1.4.2. タイムアウトと&#8221;accept&#8221;メソッド</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="socket.html#example">18.1.5. 例</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ssl.html">18.2. <code class="docutils literal"><span class="pre">ssl</span></code> &#8212; ソケットオブジェクトに対する TLS/SSL ラッパー</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ssl.html#functions-constants-and-exceptions">18.2.1. 関数、定数、例外</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ssl.html#socket-creation">18.2.1.1. Socket creation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssl.html#random-generation">18.2.1.2. Random generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssl.html#certificate-handling">18.2.1.3. Certificate handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssl.html#constants">18.2.1.4. 定数</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ssl.html#ssl-sockets">18.2.2. SSL ソケット</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssl.html#ssl-contexts">18.2.3. SSL Contexts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssl.html#certificates">18.2.4. 証明書</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ssl.html#certificate-chains">18.2.4.1. Certificate chains</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssl.html#ca-certificates">18.2.4.2. CA certificates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssl.html#combined-key-and-certificate">18.2.4.3. Combined key and certificate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssl.html#self-signed-certificates">18.2.4.4. Self-signed certificates</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ssl.html#examples">18.2.5. 例</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ssl.html#testing-for-ssl-support">18.2.5.1. SSLサポートをテストする</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssl.html#client-side-operation">18.2.5.2. クライアントサイドの処理</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssl.html#server-side-operation">18.2.5.3. サーバーサイドの処理</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ssl.html#notes-on-non-blocking-sockets">18.2.6. Notes on non-blocking sockets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssl.html#security-considerations">18.2.7. Security considerations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ssl.html#verifying-certificates">18.2.7.1. Verifying certificates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssl.html#protocol-versions">18.2.7.2. Protocol versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssl.html#cipher-selection">18.2.7.3. Cipher selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssl.html#multi-processing">18.2.7.4. Multi-processing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="asyncore.html">18.3. <code class="docutils literal"><span class="pre">asyncore</span></code> &#8212; 非同期ソケットハンドラ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="asyncore.html#asyncore-example-basic-http-client">18.3.1. asyncoreの例: 簡単なHTTPクライアント</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asyncore.html#asyncore-example-basic-echo-server">18.3.2. 基本的な echo サーバーの例</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="asynchat.html">18.4. <code class="docutils literal"><span class="pre">asynchat</span></code> &#8212; 非同期ソケットコマンド/レスポンスハンドラ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="asynchat.html#asynchat-auxiliary-classes">18.4.1. asynchat - 補助クラス</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asynchat.html#asynchat-example">18.4.2. asynchat 使用例</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="signal.html">18.5. <code class="docutils literal"><span class="pre">signal</span></code> &#8212; 非同期イベントにハンドラを設定する</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="signal.html#general-rules">18.5.1. 一般的なルール</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="signal.html#execution-of-python-signal-handlers">18.5.1.1. Python のシグナルハンドラの実行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="signal.html#signals-and-threads">18.5.1.2. シグナルとスレッド</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="signal.html#module-contents">18.5.2. モジュールの内容</a></li>
+<li class="toctree-l2"><a class="reference internal" href="signal.html#example">18.5.3. 例</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mmap.html">18.6. <code class="docutils literal"><span class="pre">mmap</span></code> &#8212; メモリマップファイル</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="_dummy_thread.html"
+                        title="前の章へ">17.11. <code class="docutils literal"><span class="pre">_dummy_thread</span></code> &#8212; <code class="docutils literal"><span class="pre">_thread</span></code> の代替モジュール</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="socket.html"
+                        title="次の章へ">18.1. <code class="docutils literal"><span class="pre">socket</span></code> &#8212; 低レベルネットワークインターフェース</a></p>
+<h3>このページ</h3>
+<ul class="this-page-menu">
+  <li><a href="../bugs.html">Report a Bug</a></li>
+  <li><a href="../_sources/library/ipc.txt"
+         rel="nofollow">Show Source</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="socket.html" title="18.1. socket — 低レベルネットワークインターフェース"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="_dummy_thread.html" title="17.11. _dummy_thread — _thread の代替モジュール"
+             >前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="http://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.3.6</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Python 標準ライブラリ</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+    &copy; <a href="../copyright.html">Copyright</a> 1990-2015, Python Software Foundation.
+    <br />
+    The Python Software Foundation is a non-profit corporation.
+    <a href="http://www.python.org/psf/donations/">Please donate.</a>
+    <br />
+    Last updated on Dec 28, 2015.
+    <a href="../bugs.html">Found a bug</a>?
+    <br />
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1.
+    <br />
+    <a href="https://github.com/python-doc-ja/python-doc-ja">Pythonドキュメント日本語翻訳プロジェクト</a>
+    によって翻訳されました。
+    <a href="https://github.com/python-doc-ja/python-doc-ja/issues">誤訳を報告する。</a>
+    </div>
+
+  </body>
+</html>

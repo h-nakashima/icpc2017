@@ -1,0 +1,489 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>25.5. IDLE &mdash; Python 3.3.6 ドキュメント</title>
+    
+    <link rel="stylesheet" href="../_static/pydoctheme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.3.6',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Python 3.3.6 ドキュメント 内を検索"
+          href="../_static/opensearch.xml"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="Python 3.3.6 ドキュメント" href="../contents.html" />
+    <link rel="up" title="25. Tk を用いたグラフィカルユーザインターフェイス" href="tk.html" />
+    <link rel="next" title="25.6. 他のグラフィカルユーザインタフェースパッケージ" href="othergui.html" />
+    <link rel="prev" title="25.4. tkinter.scrolledtext — スクロールするテキストウィジェット" href="tkinter.scrolledtext.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/py.png" />
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/_jp.js"></script>
+    <script type="text/javascript" src="../_static/version_switch.js"></script>
+    
+ 
+
+  <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-34175846-1', 'python.jp');
+        ga('send', 'pageview');
+
+      </script>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="othergui.html" title="25.6. 他のグラフィカルユーザインタフェースパッケージ"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="tkinter.scrolledtext.html" title="25.4. tkinter.scrolledtext — スクロールするテキストウィジェット"
+             accesskey="P">前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="http://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.3.6</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Python 標準ライブラリ</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="tk.html" accesskey="U">25. Tk を用いたグラフィカルユーザインターフェイス</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="idle">
+<span id="id1"></span><h1>25.5. IDLE<a class="headerlink" href="#idle" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p id="index-0">IDLE は <a class="reference internal" href="tkinter.html#module-tkinter" title="tkinter: Interface to Tcl/Tk for graphical user interfaces"><code class="xref py py-mod docutils literal"><span class="pre">tkinter</span></code></a> GUI ツールキットをつかって作られた Python IDE です。</p>
+<p>IDLE は次のような特徴があります:</p>
+<ul class="simple">
+<li><p class="first"><a class="reference internal" href="tkinter.html#module-tkinter" title="tkinter: Interface to Tcl/Tk for graphical user interfaces"><code class="xref py py-mod docutils literal"><span class="pre">tkinter</span></code></a> GUIツールキットを使って、100% ピュア Python でコーディングされています</p>
+</li>
+<li><p class="first">クロスプラットホーム: Windows と Unix で動作します</p>
+</li>
+<li><p class="first">多段 Undo、 Python 対応の色づけや他にもたくさんの機能 (例えば、自動的な字下げや呼び出し情報の表示)をもつマルチウィンドウ・テキストエディタ</p>
+</li>
+<li><p class="first">Python シェルウィンドウ(別名、対話インタープリタ)</p>
+</li>
+<li><p class="first">デバッガ(完全ではありませんが、ブレークポイントの設定や値の表示、ステップ実行ができます)</p>
+</li>
+</ul>
+<div class="section" id="menus">
+<h2>25.5.1. メニュー<a class="headerlink" href="#menus" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="section" id="file-menu">
+<h3>25.5.1.1. Fileメニュー<a class="headerlink" href="#file-menu" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<dl class="docutils">
+<dt>New file</dt>
+<dd>create a new file editing window</dd>
+<dt>Open...</dt>
+<dd><p class="first last">既存のファイルをオープンします</p>
+</dd>
+<dt>Open module...</dt>
+<dd><p class="first last">既存のモジュールをオープンします(sys.pathを検索します)</p>
+</dd>
+<dt>Class browser</dt>
+<dd><p class="first last">現在のファイルの中のクラスとモジュールを示します</p>
+</dd>
+<dt>Path browser</dt>
+<dd><p class="first last">sys.pathディレクトリ、モジュール、クラスおよびメソッドを示します</p>
+</dd>
+</dl>
+<dl class="docutils" id="index-1">
+<dt>保存 (Save)</dt>
+<dd><p class="first last">現在のウィンドウを対応するファイルにセーブします(未セーブのウィンドウには、ウィンドウタイトルの前後に*があります)</p>
+</dd>
+<dt>Save As...</dt>
+<dd><p class="first last">現在のウィンドウを新しいファイルへセーブします。そのファイルが対応するファイルになります</p>
+</dd>
+<dt>Save Copy As...</dt>
+<dd><p class="first last">現在のウィンドウを対応するファイルを変えずに異なるファイルにセーブします。</p>
+</dd>
+<dt>閉じる (Close)</dt>
+<dd><p class="first last">現在のウィンドウを閉じます(未セーブの場合はセーブするか質問します)</p>
+</dd>
+<dt>終了 (Exit)</dt>
+<dd><p class="first last">すべてのウィンドウを閉じてIDLEを終了します(未セーブの場合はセーブするか質問します)</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="edit-menu">
+<h3>25.5.1.2. Editメニュー<a class="headerlink" href="#edit-menu" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<dl class="docutils">
+<dt>元に戻す (Undo)</dt>
+<dd><p class="first last">現在のウィンドウに対する最後の変更をUndo(取り消し)します(最大で1000個の変更)</p>
+</dd>
+<dt>やり直し (Redo)</dt>
+<dd><p class="first last">現在のウィンドウに対する最後にundoされた変更をRedo(再実行)します</p>
+</dd>
+<dt>Cut</dt>
+<dd><p class="first last">システムのクリップボードへ選択された部分をコピーします。それから選択された部分を削除します</p>
+</dd>
+<dt>コピー (Copy)</dt>
+<dd><p class="first last">選択された部分をシステムのクリップボードへコピーします</p>
+</dd>
+<dt>Paste</dt>
+<dd><p class="first last">システムのクリップボードをウィンドウへ挿入します</p>
+</dd>
+<dt>Select All</dt>
+<dd><p class="first last">編集バッファの内容全体を選択します</p>
+</dd>
+<dt>Find...</dt>
+<dd><p class="first last">たくさんのオプションをもつ検索ダイアログボックスを開きます</p>
+</dd>
+<dt>Find again</dt>
+<dd><p class="first last">最後の検索を繰り返します</p>
+</dd>
+<dt>Find selection</dt>
+<dd><p class="first last">選択された文字列を検索します</p>
+</dd>
+<dt>Find in Files...</dt>
+<dd><p class="first last">検索するファイルに対する検索ダイアログボックスを開きます</p>
+</dd>
+<dt>Replace...</dt>
+<dd><p class="first last">検索と置換ダイアログボックスを開きます</p>
+</dd>
+<dt>Go to line</dt>
+<dd><p class="first last">行番号を尋ね、その行を表示します</p>
+</dd>
+<dt>Indent region</dt>
+<dd><p class="first last">選択された行を右へ空白4個分シフトします</p>
+</dd>
+<dt>Dedent region</dt>
+<dd><p class="first last">選択された行を左へ空白4個分シフトします</p>
+</dd>
+<dt>Comment out region</dt>
+<dd><p class="first last">選択された行の先頭に##を挿入します</p>
+</dd>
+<dt>Uncomment region</dt>
+<dd><p class="first last">選択された行から先頭の#あるいは##を取り除きます</p>
+</dd>
+<dt>Tabify region</dt>
+<dd><p class="first last"><em>先頭</em> の一続きの空白をタブに置き換えます</p>
+</dd>
+<dt>Untabify region</dt>
+<dd><p class="first last"><em>すべての</em> タブを適切な数の空白に置き換えます</p>
+</dd>
+<dt>Expand word</dt>
+<dd><p class="first last">あなたがタイプした語を同じバッファの別の語に一致するように展開します。異なる展開を得るためには繰り返します</p>
+</dd>
+<dt>Format Paragraph</dt>
+<dd><p class="first last">現在の空行で区切られた段落を再フォーマットします</p>
+</dd>
+<dt>Import module</dt>
+<dd><p class="first last">現在のモジュールをインポートまたはリロードします</p>
+</dd>
+<dt>Run script</dt>
+<dd><p class="first last">現在のファイルを__main__名前空間内で実行します</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="windows-menu">
+<span id="index-2"></span><h3>25.5.1.3. Windowsメニュー<a class="headerlink" href="#windows-menu" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<dl class="docutils">
+<dt>Zoom Height</dt>
+<dd><p class="first last">ウィンドウを標準サイズ(24x80)と最大の高さの間で切り替えます。</p>
+</dd>
+</dl>
+<p>このメニューの残りはすべての開いたウィンドウの名前の一覧になっています。一つを選ぶとそれを最前面に持ってくることができます (必要ならばアイコン化をやめさせます)。</p>
+</div>
+<div class="section" id="debug-menu">
+<h3>25.5.1.4. Debug menu<a class="headerlink" href="#debug-menu" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul class="simple">
+<li>in the Python Shell window only</li>
+</ul>
+<dl class="docutils">
+<dt>Go to file/line</dt>
+<dd>Look around the insert point for a filename and line number, open the file,
+and show the line.  Useful to view the source lines referenced in an
+exception traceback.</dd>
+<dt>Debugger</dt>
+<dd>Run commands in the shell under the debugger.</dd>
+<dt>Stack viewer</dt>
+<dd>Show the stack traceback of the last exception.</dd>
+<dt>Auto-open Stack Viewer</dt>
+<dd>Open stack viewer on traceback.</dd>
+</dl>
+</div>
+<div class="section" id="edit-context-menu">
+<span id="index-3"></span><h3>25.5.1.5. Edit context menu<a class="headerlink" href="#edit-context-menu" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul class="simple">
+<li>Right-click in Edit window (Control-click on OS X)</li>
+</ul>
+<dl class="docutils">
+<dt>Cut</dt>
+<dd><p class="first last">システムのクリップボードへ選択された部分をコピーします。それから選択された部分を削除します</p>
+</dd>
+<dt>コピー (Copy)</dt>
+<dd><p class="first last">選択された部分をシステムのクリップボードへコピーします</p>
+</dd>
+<dt>Paste</dt>
+<dd><p class="first last">システムのクリップボードをウィンドウへ挿入します</p>
+</dd>
+<dt>Set Breakpoint</dt>
+<dd>Sets a breakpoint.  Breakpoints are only enabled when the debugger is open.</dd>
+<dt>Clear Breakpoint</dt>
+<dd>Clears the breakpoint on that line.</dd>
+</dl>
+</div>
+<div class="section" id="shell-context-menu">
+<span id="index-4"></span><h3>25.5.1.6. Shell context menu<a class="headerlink" href="#shell-context-menu" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul class="simple">
+<li>Right-click in Python Shell window (Control-click on OS X)</li>
+</ul>
+<dl class="docutils">
+<dt>Cut</dt>
+<dd><p class="first last">システムのクリップボードへ選択された部分をコピーします。それから選択された部分を削除します</p>
+</dd>
+<dt>コピー (Copy)</dt>
+<dd><p class="first last">選択された部分をシステムのクリップボードへコピーします</p>
+</dd>
+<dt>Paste</dt>
+<dd><p class="first last">システムのクリップボードをウィンドウへ挿入します</p>
+</dd>
+<dt>Go to file/line</dt>
+<dd>Same as in Debug menu.</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="basic-editing-and-navigation">
+<h2>25.5.2. 基本的な編集とナビゲーション<a class="headerlink" href="#basic-editing-and-navigation" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><p class="first"><code class="kbd docutils literal"><span class="pre">Backspace</span></code> は左側を削除し、 <code class="kbd docutils literal"><span class="pre">Del</span></code> は右側を削除します</p>
+</li>
+<li><p class="first">矢印キーと <code class="kbd docutils literal"><span class="pre">Page</span> <span class="pre">Up</span></code>/<code class="kbd docutils literal"><span class="pre">Page</span> <span class="pre">Down</span></code> はそれぞれ移動します</p>
+</li>
+<li><p class="first"><code class="kbd docutils literal"><span class="pre">Home</span></code>/<code class="kbd docutils literal"><span class="pre">End</span></code> は行の始め/終わりへ移動します</p>
+</li>
+<li><p class="first"><code class="kbd docutils literal"><span class="pre">C-Home</span></code>/<code class="kbd docutils literal"><span class="pre">C-End</span></code> はファイルの始め/終わりへ移動します</p>
+</li>
+<li><p class="first"><code class="kbd docutils literal"><span class="pre">C-B</span></code> 、 <code class="kbd docutils literal"><span class="pre">C-P</span></code> 、 <code class="kbd docutils literal"><span class="pre">C-A</span></code> 、 <code class="kbd docutils literal"><span class="pre">C-E</span></code> 、 <code class="kbd docutils literal"><span class="pre">C-D</span></code> 、 <code class="kbd docutils literal"><span class="pre">C-L</span></code> を含む、いくつかの <strong class="program">Emacs</strong> バインディングも動作します</p>
+</li>
+</ul>
+<div class="section" id="automatic-indentation">
+<h3>25.5.2.1. 自動的な字下げ<a class="headerlink" href="#automatic-indentation" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>ブロックの始まりの文の後、次の行は4つの空白(Python Shell ウィンドウでは、一つのタブ)で字下げされます。あるキーワード(break、return など)の後では、次の行は字下げが解除(dedent)されます。先頭の字下げでは、 <code class="kbd docutils literal"><span class="pre">Backspace</span></code> は4つの空白があれば削除します。 <code class="kbd docutils literal"><span class="pre">Tab</span></code> は1-4つの空白(Python Shell ウィンドウでは一つのタブ)を挿入します。edit メニューの indent/dedent region コマンドも参照してください。</p>
+</div>
+<div class="section" id="python-shell-window">
+<h3>25.5.2.2. Python Shellウィンドウ<a class="headerlink" href="#python-shell-window" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<ul class="simple">
+<li><p class="first"><code class="kbd docutils literal"><span class="pre">C-C</span></code> 実行中のコマンドを中断します</p>
+</li>
+<li><p class="first"><code class="kbd docutils literal"><span class="pre">C-D</span></code> ファイル終端(end-of-file)を送り、 <code class="docutils literal"><span class="pre">&gt;&gt;&gt;</span></code> プロンプトでタイプしていた場合はウィンドウを閉じます</p>
+</li>
+<li><p class="first"><code class="kbd docutils literal"><span class="pre">Alt-p</span></code> あなたがタイプしたことに一致する以前のコマンドを取り出します</p>
+</li>
+<li><p class="first"><code class="kbd docutils literal"><span class="pre">Alt-n</span></code> 次を取り出します</p>
+</li>
+<li><p class="first"><code class="kbd docutils literal"><span class="pre">Return</span></code> 以前のコマンドを取り出しているときは、そのコマンド</p>
+</li>
+<li><p class="first"><code class="kbd docutils literal"><span class="pre">Alt-/</span></code> (語を展開します)ここでも便利です</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="syntax-colors">
+<span id="index-5"></span><h2>25.5.3. 構文の色づけ<a class="headerlink" href="#syntax-colors" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>色づけはバックグランド&#8221;スレッド&#8221;で適用され、そのため時折色付けされないテキストが見えます。カラースキームを変えるには、 <code class="file docutils literal"><span class="pre">config.txt</span></code> の <code class="docutils literal"><span class="pre">[Colors]</span></code> 節を編集してください。</p>
+<dl class="docutils">
+<dt>Python syntax colors:</dt>
+<dd><dl class="first last docutils">
+<dt>キーワード (keyword)</dt>
+<dd><p class="first last">オレンジ</p>
+</dd>
+<dt>文字列</dt>
+<dd><p class="first last">緑</p>
+</dd>
+<dt>コメント (Comments)</dt>
+<dd><p class="first last">赤</p>
+</dd>
+<dt>定義</dt>
+<dd><p class="first last">青</p>
+</dd>
+</dl>
+</dd>
+<dt>Shell colors:</dt>
+<dd><dl class="first last docutils">
+<dt>Console output</dt>
+<dd><p class="first last">茶色</p>
+</dd>
+<dt>stdout</dt>
+<dd><p class="first last">青</p>
+</dd>
+<dt>stderr</dt>
+<dd><p class="first last">暗い緑</p>
+</dd>
+<dt>stdin</dt>
+<dd><p class="first last">黒</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</div>
+<div class="section" id="startup">
+<h2>25.5.4. スタートアップ<a class="headerlink" href="#startup" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">-s</span></code> オプションとともに起動すると、IDLEは環境変数 <span class="target" id="index-10"></span><code class="xref std std-envvar docutils literal"><span class="pre">IDLESTARTUP</span></code> か <span class="target" id="index-11"></span><a class="reference internal" href="../using/cmdline.html#envvar-PYTHONSTARTUP"><code class="xref std std-envvar docutils literal"><span class="pre">PYTHONSTARTUP</span></code></a> で参照されているファイルを実行します。 IDLEはまず <code class="docutils literal"><span class="pre">IDLESTARTUP</span></code> をチェックし、あれば参照しているファイルを実行します。 <code class="docutils literal"><span class="pre">IDLESTARTUP</span></code> が無ければ、IDLEは <code class="docutils literal"><span class="pre">PYTHONSTARTUP</span></code> をチェックします。これらの環境変数で参照されているファイルは、IDLEシェルでよく使う関数を置いたり、一般的なモジュールのimport文を実行するのに便利です。</p>
+<p>加えて、 <code class="docutils literal"><span class="pre">Tk</span></code> もスタートアップファイルがあればそれをロードします。そのTkのファイルは無条件にロードされることに注意してください。このファイルは <code class="docutils literal"><span class="pre">.Idle.py</span></code> で、ユーザーのホームディレクトリから探されます。このファイルの中の文は Tk の名前空間で実行されるので、IDLE の Pythonシェルで使う関数をimportするのには使えません。</p>
+<div class="section" id="command-line-usage">
+<h3>25.5.4.1. コマンドラインの使い方<a class="headerlink" href="#command-line-usage" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<div class="highlight-python3"><div class="highlight"><pre>idle.py [-c command] [-d] [-e] [-s] [-t title] [arg] ...
+
+-c command  run this command
+-d          enable debugger
+-e          edit mode; arguments are files to be edited
+-s          run $IDLESTARTUP or $PYTHONSTARTUP first
+-t title    set title of shell window
+</pre></div>
+</div>
+<p>引数がある場合:</p>
+<ol class="arabic simple">
+<li><p class="first"><code class="docutils literal"><span class="pre">-e</span></code> が使われる場合は、引数は編集のためにオープンされるファイルで、 <code class="docutils literal"><span class="pre">sys.argv</span></code> はIDLE自体へ渡される引数を反映します。</p>
+</li>
+<li><p class="first">そうではなく、 <code class="docutils literal"><span class="pre">-c</span></code> が使われる場合には、すべての引数が <code class="docutils literal"><span class="pre">sys.argv[1:...]</span></code> の中に置かれ、 <code class="docutils literal"><span class="pre">sys.argv[0]</span></code> が <code class="docutils literal"><span class="pre">'-c'</span></code> に設定されます。</p>
+</li>
+<li><p class="first">そうではなく、 <code class="docutils literal"><span class="pre">-e</span></code> も <code class="docutils literal"><span class="pre">-c</span></code> も使われない場合は、最初の引数は <code class="docutils literal"><span class="pre">sys.argv[1:...]</span></code> にある残りの引数とスクリプト名に設定される <code class="docutils literal"><span class="pre">sys.argv[0]</span></code> と一緒に実行されるスクリプトです。スクリプト名が &#8216;-&#8216; のときは、実行されるスクリプトはありませんが、対話的な Python セッションが始まります。引数はまだ <code class="docutils literal"><span class="pre">sys.argv</span></code> にあり利用できます。</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">25.5. IDLE</a><ul>
+<li><a class="reference internal" href="#menus">25.5.1. メニュー</a><ul>
+<li><a class="reference internal" href="#file-menu">25.5.1.1. Fileメニュー</a></li>
+<li><a class="reference internal" href="#edit-menu">25.5.1.2. Editメニュー</a></li>
+<li><a class="reference internal" href="#windows-menu">25.5.1.3. Windowsメニュー</a></li>
+<li><a class="reference internal" href="#debug-menu">25.5.1.4. Debug menu</a></li>
+<li><a class="reference internal" href="#edit-context-menu">25.5.1.5. Edit context menu</a></li>
+<li><a class="reference internal" href="#shell-context-menu">25.5.1.6. Shell context menu</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#basic-editing-and-navigation">25.5.2. 基本的な編集とナビゲーション</a><ul>
+<li><a class="reference internal" href="#automatic-indentation">25.5.2.1. 自動的な字下げ</a></li>
+<li><a class="reference internal" href="#python-shell-window">25.5.2.2. Python Shellウィンドウ</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#syntax-colors">25.5.3. 構文の色づけ</a></li>
+<li><a class="reference internal" href="#startup">25.5.4. スタートアップ</a><ul>
+<li><a class="reference internal" href="#command-line-usage">25.5.4.1. コマンドラインの使い方</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="tkinter.scrolledtext.html"
+                        title="前の章へ">25.4. <code class="docutils literal"><span class="pre">tkinter.scrolledtext</span></code> &#8212; スクロールするテキストウィジェット</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="othergui.html"
+                        title="次の章へ">25.6. 他のグラフィカルユーザインタフェースパッケージ</a></p>
+<h3>このページ</h3>
+<ul class="this-page-menu">
+  <li><a href="../bugs.html">Report a Bug</a></li>
+  <li><a href="../_sources/library/idle.txt"
+         rel="nofollow">Show Source</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="othergui.html" title="25.6. 他のグラフィカルユーザインタフェースパッケージ"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="tkinter.scrolledtext.html" title="25.4. tkinter.scrolledtext — スクロールするテキストウィジェット"
+             >前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="http://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.3.6</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Python 標準ライブラリ</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="tk.html" >25. Tk を用いたグラフィカルユーザインターフェイス</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+    &copy; <a href="../copyright.html">Copyright</a> 1990-2015, Python Software Foundation.
+    <br />
+    The Python Software Foundation is a non-profit corporation.
+    <a href="http://www.python.org/psf/donations/">Please donate.</a>
+    <br />
+    Last updated on Dec 28, 2015.
+    <a href="../bugs.html">Found a bug</a>?
+    <br />
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1.
+    <br />
+    <a href="https://github.com/python-doc-ja/python-doc-ja">Pythonドキュメント日本語翻訳プロジェクト</a>
+    によって翻訳されました。
+    <a href="https://github.com/python-doc-ja/python-doc-ja/issues">誤訳を報告する。</a>
+    </div>
+
+  </body>
+</html>

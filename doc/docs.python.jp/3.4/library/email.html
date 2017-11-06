@@ -1,0 +1,512 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>19.1. email — 電子メールと MIME 処理のためのパッケージ &mdash; Python 3.4.3 ドキュメント</title>
+    
+    <link rel="stylesheet" href="../_static/pydoctheme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.4.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Python 3.4.3 ドキュメント 内を検索"
+          href="../_static/opensearch.xml"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="Python 3.4.3 ドキュメント" href="../contents.html" />
+    <link rel="up" title="19. インターネット上のデータの操作" href="netdata.html" />
+    <link rel="next" title="19.1.1. email.message: Representing an email message" href="email.message.html" />
+    <link rel="prev" title="19. インターネット上のデータの操作" href="netdata.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/py.png" />
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/_jp.js"></script>
+    <script type="text/javascript" src="../_static/version_switch.js"></script>
+    
+ 
+
+  <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-34175846-1', 'python.jp');
+        ga('send', 'pageview');
+
+      </script>
+  <body role="document">  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="email.message.html" title="19.1.1. email.message: Representing an email message"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="netdata.html" title="19. インターネット上のデータの操作"
+             accesskey="P">前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="https://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.4.3</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Python 標準ライブラリ</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="netdata.html" accesskey="U">19. インターネット上のデータの操作</a> &raquo;</li> 
+      </ul>
+    </div>    
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-email">
+<span id="email-an-email-and-mime-handling-package"></span><h1>19.1. <a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> &#8212; 電子メールと MIME 処理のためのパッケージ<a class="headerlink" href="#module-email" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> は、電子メールのメッセージや MIME や他の <span class="target" id="index-19"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc2822.html"><strong>RFC 2822</strong></a>に基づくメッセージ文書を管理するためのパッケージです。このパッケージは、SMTP (<span class="target" id="index-20"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc2821.html"><strong>RFC 2821</strong></a>) や NNTP、その他のサービスで電子メールを送信するように設計されて <em>いません</em>。それらは <a class="reference internal" href="smtplib.html#module-smtplib" title="smtplib: SMTP protocol client (requires sockets)."><code class="xref py py-mod docutils literal"><span class="pre">smtplib</span></code></a> や <a class="reference internal" href="nntplib.html#module-nntplib" title="nntplib: NNTP protocol client (requires sockets)."><code class="xref py py-mod docutils literal"><span class="pre">nntplib</span></code></a> のようなモジュールの機能です。パッケージ <a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> は <span class="target" id="index-21"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc2822.html"><strong>RFC 2822</strong></a> だけでなく、MIME 関連の RFC (<span class="target" id="index-22"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc2045.html"><strong>RFC 2045</strong></a>、 <span class="target" id="index-23"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc2046.html"><strong>RFC 2046</strong></a>、 <span class="target" id="index-24"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc2047.html"><strong>RFC 2047</strong></a>、 <span class="target" id="index-25"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc2231.html"><strong>RFC 2231</strong></a>.) にできる限り RFC に準拠するように作られています。</p>
+<p><a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> パッケージの一番の特徴は、電子メールの内部表現である <em>オブジェクトモデル</em> と、電子メールメッセージの解析および生成とを分離していることです。 <a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> パッケージを使うアプリケーションは基本的にはオブジェクトを処理することができます。メッセージに子オブジェクトを追加したり、メッセージから子オブジェクトを削除したり、内容を完全に並べかえたり、といったことができます。フラットなテキスト文書からオブジェクトモデルへの変換、またそこからフラットな文書へと戻す変換はそれぞれ別々の解析器 (パーサ) と生成器 (ジェネレータ) が担当しています。また、一般的な MIME オブジェクトタイプのいくつかについては手軽なサブクラスが存在しており、メッセージフィールド値を抽出したり解析したり、 RFC 準拠の日付を生成したりなどのよくおこわれるタスクについてはいくつかの雑用ユーティリティもついています。</p>
+<p>以下の節では <a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> パッケージの機能を説明します。説明の順序は多くのアプリケーションで一般的な使用順序にもとづいています。まず、電子メールメッセージをファイルあるいはその他のソースからフラットなテキスト文書として読み込み、つぎにそのテキストを解析して電子メールのオブジェクト構造を作成し、その構造を操作して、最後にオブジェクトツリーをフラットなテキストに戻す、という順序になっています。</p>
+<p>このオブジェクト構造は、まったくのゼロから作りだしたものであってもいっこうにかまいません。この場合も上と似たような作業順序になるでしょう。</p>
+<p>またここには <a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> パッケージが提供するすべてのクラスおよびモジュールに関する説明と、 <a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> パッケージを使っていくうえで遭遇するかもしれない例外クラス、いくつかの補助ユーティリティ、そして少々のサンプルも含まれています。古い <code class="xref py py-mod docutils literal"><span class="pre">mimelib</span></code> や前バージョンの <a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> パッケージのユーザのために、現行バージョンとの違いと移植についての節も設けてあります。</p>
+<p>Contents of the <a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> package documentation:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="email.message.html">19.1.1. <code class="docutils literal"><span class="pre">email.message</span></code>: Representing an email message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="email.parser.html">19.1.2. <code class="docutils literal"><span class="pre">email.parser</span></code>: Parsing email messages</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="email.parser.html#feedparser-api">19.1.2.1. FeedParser API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="email.parser.html#parser-class-api">19.1.2.2. Parser クラス API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="email.parser.html#additional-notes">19.1.2.3. 追加事項</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="email.generator.html">19.1.3. <code class="docutils literal"><span class="pre">email.generator</span></code>: Generating MIME documents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="email.policy.html">19.1.4. <code class="docutils literal"><span class="pre">email.policy</span></code>: ポリシーオブジェクト</a></li>
+<li class="toctree-l1"><a class="reference internal" href="email.headerregistry.html">19.1.5. <code class="docutils literal"><span class="pre">email.headerregistry</span></code>: カスタムヘッダーオブジェクト</a></li>
+<li class="toctree-l1"><a class="reference internal" href="email.contentmanager.html">19.1.6. <code class="docutils literal"><span class="pre">email.contentmanager</span></code>: Managing MIME Content</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="email.contentmanager.html#content-manager-instances">19.1.6.1. Content Manager Instances</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="email.mime.html">19.1.7. <code class="docutils literal"><span class="pre">email.mime</span></code>: ゼロからのメールと MIME オブジェクトの作成</a></li>
+<li class="toctree-l1"><a class="reference internal" href="email.header.html">19.1.8. <code class="docutils literal"><span class="pre">email.header</span></code>: Internationalized headers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="email.charset.html">19.1.9. <code class="docutils literal"><span class="pre">email.charset</span></code>: 文字集合の表現</a></li>
+<li class="toctree-l1"><a class="reference internal" href="email.encoders.html">19.1.10. <code class="docutils literal"><span class="pre">email.encoders</span></code>: Encoders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="email.errors.html">19.1.11. <code class="docutils literal"><span class="pre">email.errors</span></code>: 例外及び欠陥クラス</a></li>
+<li class="toctree-l1"><a class="reference internal" href="email.util.html">19.1.12. <code class="docutils literal"><span class="pre">email.utils</span></code>: Miscellaneous utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="email.iterators.html">19.1.13. <code class="docutils literal"><span class="pre">email.iterators</span></code>: Iterators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="email-examples.html">19.1.14. <code class="docutils literal"><span class="pre">email</span></code>: 使用例</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="email-examples.html#examples-using-the-provisional-api">19.1.14.1. Examples using the Provisional API</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="smtplib.html#module-smtplib" title="smtplib: SMTP protocol client (requires sockets)."><code class="xref py py-mod docutils literal"><span class="pre">smtplib</span></code></a> モジュール</dt>
+<dd><p class="first last">SMTP プロトコルクライアント</p>
+</dd>
+<dt><a class="reference internal" href="nntplib.html#module-nntplib" title="nntplib: NNTP protocol client (requires sockets)."><code class="xref py py-mod docutils literal"><span class="pre">nntplib</span></code></a> モジュール</dt>
+<dd><p class="first last">NNTP プロトコルクライアント</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="package-history">
+<span id="email-pkg-history"></span><h2>19.1.15. パッケージの履歴<a class="headerlink" href="#package-history" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>このテーブルは email パッケージのリリース履歴を表しています。それぞれのバージョンと、それが同梱された Python のバージョンとの関連が示されています。このドキュメントでの、追加/変更されたバージョンの表記は email パッケージのバージョン <em>ではなく</em>、Pythonのバージョンです。このテーブルは Python の各バージョン間の email パッケージの互換性も示しています。</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="44%" />
+<col width="34%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><p class="first last">email バージョン</p>
+</th>
+<th class="head"><p class="first last">配布</p>
+</th>
+<th class="head"><p class="first last">互換</p>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="xref py py-const docutils literal"><span class="pre">1.x</span></code></td>
+<td><p class="first last">Python 2.2.0 から Python 2.2.1 まで</p>
+</td>
+<td><p class="first last"><em>もうサポートされません</em></p>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-const docutils literal"><span class="pre">2.5</span></code></td>
+<td><p class="first last">Python 2.2.2+ と Python 2.3</p>
+</td>
+<td><p class="first last">Python 2.1 から 2.5 まで</p>
+</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-const docutils literal"><span class="pre">3.0</span></code></td>
+<td>Python 2.4 and Python 2.5</td>
+<td>Python 2.3 to 2.6</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-const docutils literal"><span class="pre">4.0</span></code></td>
+<td>Python 2.5 to Python 2.7</td>
+<td>Python 2.3 to 2.7</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-const docutils literal"><span class="pre">5.0</span></code></td>
+<td><p class="first last">Python 3.0 と Python 3.1</p>
+</td>
+<td><p class="first last">Python 3.0 から 3.2 まで</p>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-const docutils literal"><span class="pre">5.1</span></code></td>
+<td>Python 3.2</td>
+<td>Python 3.2</td>
+</tr>
+</tbody>
+</table>
+<p>After Version 5.1 (Python 3.2), the email package no longer has a version that
+is separate from the Python version.  (See the <a class="reference internal" href="../whatsnew/index.html#whatsnew-index"><span>What&#8217;s New in Python</span></a> documents
+for the respective Python versions for details on changes.)</p>
+<p><a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> のバージョン 5.1 と 5.0 の違いは以下のようなものです:</p>
+<ul class="simple">
+<li>It is once again possible to parse messages containing non-ASCII bytes,
+and to reproduce such messages if the data containing the non-ASCII
+bytes is not modified.</li>
+<li>New functions <a class="reference internal" href="email.parser.html#email.message_from_bytes" title="email.message_from_bytes"><code class="xref py py-func docutils literal"><span class="pre">message_from_bytes()</span></code></a> and <a class="reference internal" href="email.parser.html#email.message_from_binary_file" title="email.message_from_binary_file"><code class="xref py py-func docutils literal"><span class="pre">message_from_binary_file()</span></code></a>,
+and new classes <a class="reference internal" href="email.parser.html#email.parser.BytesFeedParser" title="email.parser.BytesFeedParser"><code class="xref py py-class docutils literal"><span class="pre">BytesFeedParser</span></code></a> and
+<a class="reference internal" href="email.parser.html#email.parser.BytesParser" title="email.parser.BytesParser"><code class="xref py py-class docutils literal"><span class="pre">BytesParser</span></code></a> allow binary message data to be parsed
+into model objects.</li>
+<li>Given bytes input to the model, <a class="reference internal" href="email.message.html#email.message.Message.get_payload" title="email.message.Message.get_payload"><code class="xref py py-meth docutils literal"><span class="pre">get_payload()</span></code></a>
+will by default decode a message body that has a
+<em class="mailheader">Content-Transfer-Encoding</em> of <code class="docutils literal"><span class="pre">8bit</span></code> using the charset
+specified in the MIME headers and return the resulting string.</li>
+<li>Given bytes input to the model, <a class="reference internal" href="email.generator.html#email.generator.Generator" title="email.generator.Generator"><code class="xref py py-class docutils literal"><span class="pre">Generator</span></code></a> will
+convert message bodies that have a <em class="mailheader">Content-Transfer-Encoding</em> of
+8bit to instead have a 7bit Content-Transfer-Encoding.</li>
+<li>New class <a class="reference internal" href="email.generator.html#email.generator.BytesGenerator" title="email.generator.BytesGenerator"><code class="xref py py-class docutils literal"><span class="pre">BytesGenerator</span></code></a> produces bytes
+as output, preserving any unchanged non-ASCII data that was
+present in the input used to build the model, including message bodies
+with a <em class="mailheader">Content-Transfer-Encoding</em> of 8bit.</li>
+</ul>
+<p>Here are the major differences between <a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> version 5.0 and version 4:</p>
+<ul class="simple">
+<li>All operations are on unicode strings.  Text inputs must be strings,
+text outputs are strings.  Outputs are limited to the ASCII character
+set and so can be encoded to ASCII for transmission.  Inputs are also
+limited to ASCII; this is an acknowledged limitation of email 5.0 and
+means it can only be used to parse email that is 7bit clean.</li>
+</ul>
+<p>以下は <a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> バージョン4と3の間のおもな差分です:</p>
+<ul>
+<li><p class="first">全モジュールが <span class="target" id="index-26"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0008"><strong>PEP 8</strong></a> 標準にあわせてリネームされました。たとえば、version 3 でのモジュール <code class="xref py py-mod docutils literal"><span class="pre">email.Message</span></code> は version 4 では <a class="reference internal" href="email.message.html#module-email.message" title="email.message: The base class representing email messages."><code class="xref py py-mod docutils literal"><span class="pre">email.message</span></code></a> になりました。</p>
+</li>
+<li><p class="first">新しいサブパッケージ <a class="reference internal" href="email.mime.html#module-email.mime" title="email.mime: Build MIME messages."><code class="xref py py-mod docutils literal"><span class="pre">email.mime</span></code></a> が追加され、 version 3 の <code class="xref py py-mod docutils literal"><span class="pre">email.MIME*</span></code> は、 <a class="reference internal" href="email.mime.html#module-email.mime" title="email.mime: Build MIME messages."><code class="xref py py-mod docutils literal"><span class="pre">email.mime</span></code></a> のサブパッケージにまとめられました。たとえば、version 3 での <code class="xref py py-mod docutils literal"><span class="pre">email.MIMEText</span></code> は、 <code class="xref py py-mod docutils literal"><span class="pre">email.mime.text</span></code> になりました。</p>
+<p><em>Python 2.6までは version 3 の名前も有効です</em>。</p>
+</li>
+<li><p class="first">The <code class="xref py py-mod docutils literal"><span class="pre">email.mime.application</span></code> module was added, which contains the
+<a class="reference internal" href="email.mime.html#email.mime.application.MIMEApplication" title="email.mime.application.MIMEApplication"><code class="xref py py-class docutils literal"><span class="pre">MIMEApplication</span></code></a> class.</p>
+</li>
+<li><p class="first">version 3 で推奨されないとされた機能は削除されました。これらは <code class="xref py py-meth docutils literal"><span class="pre">Generator.__call__()</span></code>, <code class="xref py py-meth docutils literal"><span class="pre">Message.get_type()</span></code>, <code class="xref py py-meth docutils literal"><span class="pre">Message.get_main_type()</span></code>, <code class="xref py py-meth docutils literal"><span class="pre">Message.get_subtype()</span></code> を含みます。</p>
+</li>
+<li><p class="first">Fixes have been added for <span class="target" id="index-8"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc2231.html"><strong>RFC 2231</strong></a> support which can change some of the
+return types for <a class="reference internal" href="email.message.html#email.message.Message.get_param" title="email.message.Message.get_param"><code class="xref py py-func docutils literal"><span class="pre">Message.get_param</span></code></a>
+and friends.  Under some
+circumstances, values which used to return a 3-tuple now return simple strings
+(specifically, if all extended parameter segments were unencoded, there is no
+language and charset designation expected, so the return type is now a simple
+string).  Also, %-decoding used to be done for both encoded and unencoded
+segments; this decoding is now done only for encoded segments.</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> バージョン 3 とバージョン 2 との違いは以下のようなものです:</p>
+<ul class="simple">
+<li>The <a class="reference internal" href="email.parser.html#email.parser.FeedParser" title="email.parser.FeedParser"><code class="xref py py-class docutils literal"><span class="pre">FeedParser</span></code></a> class was introduced, and the
+<a class="reference internal" href="email.parser.html#email.parser.Parser" title="email.parser.Parser"><code class="xref py py-class docutils literal"><span class="pre">Parser</span></code></a> class was implemented in terms of the
+<a class="reference internal" href="email.parser.html#email.parser.FeedParser" title="email.parser.FeedParser"><code class="xref py py-class docutils literal"><span class="pre">FeedParser</span></code></a>.  All parsing therefore is
+non-strict, and parsing will make a best effort never to raise an exception.
+Problems found while parsing messages are stored in the message&#8217;s <em>defect</em>
+attribute.</li>
+<li>All aspects of the API which raised <a class="reference internal" href="exceptions.html#DeprecationWarning" title="DeprecationWarning"><code class="xref py py-exc docutils literal"><span class="pre">DeprecationWarning</span></code></a>s in version 2
+have been removed.  These include the <em>_encoder</em> argument to the
+<a class="reference internal" href="email.mime.html#email.mime.text.MIMEText" title="email.mime.text.MIMEText"><code class="xref py py-class docutils literal"><span class="pre">MIMEText</span></code></a> constructor, the
+<code class="xref py py-meth docutils literal"><span class="pre">Message.add_payload()</span></code> method, the <code class="xref py py-func docutils literal"><span class="pre">Utils.dump_address_pair()</span></code>
+function, and the functions <code class="xref py py-func docutils literal"><span class="pre">Utils.decode()</span></code> and <code class="xref py py-func docutils literal"><span class="pre">Utils.encode()</span></code>.</li>
+<li>New <a class="reference internal" href="exceptions.html#DeprecationWarning" title="DeprecationWarning"><code class="xref py py-exc docutils literal"><span class="pre">DeprecationWarning</span></code></a>s have been added to:
+<code class="xref py py-meth docutils literal"><span class="pre">Generator.__call__()</span></code>, <code class="xref py py-meth docutils literal"><span class="pre">Message.get_type()</span></code>,
+<code class="xref py py-meth docutils literal"><span class="pre">Message.get_main_type()</span></code>, <code class="xref py py-meth docutils literal"><span class="pre">Message.get_subtype()</span></code>, and the <em>strict</em>
+argument to the <a class="reference internal" href="email.parser.html#email.parser.Parser" title="email.parser.Parser"><code class="xref py py-class docutils literal"><span class="pre">Parser</span></code></a> class.  These are expected to
+be removed in future versions.</li>
+<li><p class="first">Python 2.3 以前はサポートされなくなりました。</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> バージョン 2 とバージョン 1 との違いは以下のようなものです:</p>
+<ul>
+<li><p class="first"><code class="xref py py-mod docutils literal"><span class="pre">email.Header</span></code> モジュールおよび <code class="xref py py-mod docutils literal"><span class="pre">email.Charset</span></code> モジュールが追加されています。</p>
+</li>
+<li><p class="first">The pickle format for <a class="reference internal" href="email.message.html#email.message.Message" title="email.message.Message"><code class="xref py py-class docutils literal"><span class="pre">Message</span></code></a> instances has changed.
+Since this was never (and still isn&#8217;t) formally defined, this isn&#8217;t
+considered a backward incompatibility.  However if your application pickles
+and unpickles <a class="reference internal" href="email.message.html#email.message.Message" title="email.message.Message"><code class="xref py py-class docutils literal"><span class="pre">Message</span></code></a> instances, be aware that in
+<a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> version 2, <a class="reference internal" href="email.message.html#email.message.Message" title="email.message.Message"><code class="xref py py-class docutils literal"><span class="pre">Message</span></code></a> instances now have
+private variables <em>_charset</em> and <em>_default_type</em>.</p>
+</li>
+<li><p class="first">Several methods in the <a class="reference internal" href="email.message.html#email.message.Message" title="email.message.Message"><code class="xref py py-class docutils literal"><span class="pre">Message</span></code></a> class have been
+deprecated, or their signatures changed.  Also, many new methods have been
+added.  See the documentation for the <a class="reference internal" href="email.message.html#email.message.Message" title="email.message.Message"><code class="xref py py-class docutils literal"><span class="pre">Message</span></code></a> class
+for details.  The changes should be completely backward compatible.</p>
+</li>
+<li><p class="first">The object structure has changed in the face of <em class="mimetype">message/rfc822</em>
+content types.  In <a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> version 1, such a type would be represented
+by a scalar payload, i.e. the container message&#8217;s
+<a class="reference internal" href="email.message.html#email.message.Message.is_multipart" title="email.message.Message.is_multipart"><code class="xref py py-meth docutils literal"><span class="pre">is_multipart()</span></code></a> returned false,
+<a class="reference internal" href="email.message.html#email.message.Message.get_payload" title="email.message.Message.get_payload"><code class="xref py py-meth docutils literal"><span class="pre">get_payload()</span></code></a> was not a list object, but a
+single <a class="reference internal" href="email.message.html#email.message.Message" title="email.message.Message"><code class="xref py py-class docutils literal"><span class="pre">Message</span></code></a> instance.</p>
+<p>This structure was inconsistent with the rest of the package, so the object
+representation for <em class="mimetype">message/rfc822</em> content types was changed.  In
+<a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> version 2, the container <em>does</em> return <code class="docutils literal"><span class="pre">True</span></code> from
+<a class="reference internal" href="email.message.html#email.message.Message.is_multipart" title="email.message.Message.is_multipart"><code class="xref py py-meth docutils literal"><span class="pre">is_multipart()</span></code></a>, and
+<a class="reference internal" href="email.message.html#email.message.Message.get_payload" title="email.message.Message.get_payload"><code class="xref py py-meth docutils literal"><span class="pre">get_payload()</span></code></a> returns a list containing a single
+<a class="reference internal" href="email.message.html#email.message.Message" title="email.message.Message"><code class="xref py py-class docutils literal"><span class="pre">Message</span></code></a> item.</p>
+<p>Note that this is one place that backward compatibility could not be
+completely maintained.  However, if you&#8217;re already testing the return type of
+<a class="reference internal" href="email.message.html#email.message.Message.get_payload" title="email.message.Message.get_payload"><code class="xref py py-meth docutils literal"><span class="pre">get_payload()</span></code></a>, you should be fine.  You just need
+to make sure your code doesn&#8217;t do a <a class="reference internal" href="email.message.html#email.message.Message.set_payload" title="email.message.Message.set_payload"><code class="xref py py-meth docutils literal"><span class="pre">set_payload()</span></code></a>
+with a <a class="reference internal" href="email.message.html#email.message.Message" title="email.message.Message"><code class="xref py py-class docutils literal"><span class="pre">Message</span></code></a> instance on a container with a content
+type of <em class="mimetype">message/rfc822</em>.</p>
+</li>
+<li><p class="first">The <a class="reference internal" href="email.parser.html#email.parser.Parser" title="email.parser.Parser"><code class="xref py py-class docutils literal"><span class="pre">Parser</span></code></a> constructor&#8217;s <em>strict</em> argument was added,
+and its <a class="reference internal" href="email.parser.html#email.parser.Parser.parse" title="email.parser.Parser.parse"><code class="xref py py-meth docutils literal"><span class="pre">parse()</span></code></a> and
+<a class="reference internal" href="email.parser.html#email.parser.Parser.parsestr" title="email.parser.Parser.parsestr"><code class="xref py py-meth docutils literal"><span class="pre">parsestr()</span></code></a> methods grew a <em>headersonly</em> argument.
+The <em>strict</em> flag was also added to functions <a class="reference internal" href="email.parser.html#email.message_from_file" title="email.message_from_file"><code class="xref py py-func docutils literal"><span class="pre">email.message_from_file()</span></code></a>
+and <a class="reference internal" href="email.parser.html#email.message_from_string" title="email.message_from_string"><code class="xref py py-func docutils literal"><span class="pre">email.message_from_string()</span></code></a>.</p>
+</li>
+<li><p class="first"><code class="xref py py-meth docutils literal"><span class="pre">Generator.__call__()</span></code> is deprecated; use <a class="reference internal" href="email.generator.html#email.generator.Generator.flatten" title="email.generator.Generator.flatten"><code class="xref py py-meth docutils literal"><span class="pre">Generator.flatten</span></code></a> instead.  The
+<a class="reference internal" href="email.generator.html#email.generator.Generator" title="email.generator.Generator"><code class="xref py py-class docutils literal"><span class="pre">Generator</span></code></a> class has also grown the
+<a class="reference internal" href="email.generator.html#email.generator.Generator.clone" title="email.generator.Generator.clone"><code class="xref py py-meth docutils literal"><span class="pre">clone()</span></code></a> method.</p>
+</li>
+<li><p class="first">The <a class="reference internal" href="email.generator.html#email.generator.DecodedGenerator" title="email.generator.DecodedGenerator"><code class="xref py py-class docutils literal"><span class="pre">DecodedGenerator</span></code></a> class in the
+<a class="reference internal" href="email.generator.html#module-email.generator" title="email.generator: Generate flat text email messages from a message structure."><code class="xref py py-mod docutils literal"><span class="pre">email.generator</span></code></a> module was added.</p>
+</li>
+<li><p class="first">The intermediate base classes
+<a class="reference internal" href="email.mime.html#email.mime.nonmultipart.MIMENonMultipart" title="email.mime.nonmultipart.MIMENonMultipart"><code class="xref py py-class docutils literal"><span class="pre">MIMENonMultipart</span></code></a> and
+<a class="reference internal" href="email.mime.html#email.mime.multipart.MIMEMultipart" title="email.mime.multipart.MIMEMultipart"><code class="xref py py-class docutils literal"><span class="pre">MIMEMultipart</span></code></a> have been added, and interposed
+in the class hierarchy for most of the other MIME-related derived classes.</p>
+</li>
+<li><p class="first">The <em>_encoder</em> argument to the <a class="reference internal" href="email.mime.html#email.mime.text.MIMEText" title="email.mime.text.MIMEText"><code class="xref py py-class docutils literal"><span class="pre">MIMEText</span></code></a> constructor
+has been deprecated.  Encoding  now happens implicitly based on the
+<em>_charset</em> argument.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="email.util.html#module-email.utils" title="email.utils: Miscellaneous email package utilities."><code class="xref py py-mod docutils literal"><span class="pre">email.utils</span></code></a> モジュールにおける以下の関数は推奨されなくなりました: <code class="xref py py-func docutils literal"><span class="pre">dump_address_pairs()</span></code>, <code class="xref py py-func docutils literal"><span class="pre">decode()</span></code>, および <code class="xref py py-func docutils literal"><span class="pre">encode()</span></code> 。また、このモジュールには以下の関数が追加されています: <code class="xref py py-func docutils literal"><span class="pre">make_msgid()</span></code>, <code class="xref py py-func docutils literal"><span class="pre">decode_rfc2231()</span></code>, <code class="xref py py-func docutils literal"><span class="pre">encode_rfc2231()</span></code> そして <code class="xref py py-func docutils literal"><span class="pre">decode_params()</span></code> 。</p>
+</li>
+<li><p class="first">Public ではない関数 <a class="reference internal" href="email.iterators.html#email.iterators._structure" title="email.iterators._structure"><code class="xref py py-func docutils literal"><span class="pre">email.iterators._structure()</span></code></a> が追加されました。</p>
+</li>
+</ul>
+</div>
+<div class="section" id="differences-from-mimelib">
+<h2>19.1.16. <code class="xref py py-mod docutils literal"><span class="pre">mimelib</span></code> との違い<a class="headerlink" href="#differences-from-mimelib" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> パッケージはもともと <a class="reference external" href="http://mimelib.sourceforge.net/">mimelib</a> と呼ばれる個別のライブラリからつくられたものです。その後変更が加えられ、メソッド名がより一貫したものになり、いくつかのメソッドやモジュールが加えられたりはずされたりしました。いくつかのメソッドでは、その意味も変更されています。しかしほとんどの部分において、 <code class="xref py py-mod docutils literal"><span class="pre">mimelib</span></code> パッケージで使うことのできた機能は、ときどきその方法が変わってはいるものの <a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> パッケージでも使用可能です。 <code class="xref py py-mod docutils literal"><span class="pre">mimelib</span></code> パッケージと <a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> パッケージの間の下位互換性はあまり優先はされませんでした。</p>
+<p>以下では <code class="xref py py-mod docutils literal"><span class="pre">mimelib</span></code> パッケージと <a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> パッケージにおける違いを簡単に説明し、それに沿ってアプリケーションを移植するさいの指針を述べています。</p>
+<p>おそらく 2つのパッケージのもっとも明らかな違いは、パッケージ名が <a class="reference internal" href="#module-email" title="email: Package supporting the parsing, manipulating, and generating email messages, including MIME documents."><code class="xref py py-mod docutils literal"><span class="pre">email</span></code></a> に変更されたことでしょう。さらにトップレベルのパッケージが以下のように変更されました:</p>
+<ul class="simple">
+<li><p class="first"><code class="xref py py-func docutils literal"><span class="pre">messageFromString()</span></code> は <a class="reference internal" href="email.parser.html#email.message_from_string" title="email.message_from_string"><code class="xref py py-func docutils literal"><span class="pre">message_from_string()</span></code></a> に名前が変更されました。</p>
+</li>
+<li><p class="first"><code class="xref py py-func docutils literal"><span class="pre">messageFromFile()</span></code> は <a class="reference internal" href="email.parser.html#email.message_from_file" title="email.message_from_file"><code class="xref py py-func docutils literal"><span class="pre">message_from_file()</span></code></a> に名前が変更されました。</p>
+</li>
+</ul>
+<p>The <a class="reference internal" href="email.message.html#email.message.Message" title="email.message.Message"><code class="xref py py-class docutils literal"><span class="pre">Message</span></code></a> class has the following differences:</p>
+<ul class="simple">
+<li><p class="first"><code class="xref py py-meth docutils literal"><span class="pre">asString()</span></code> メソッドは <a class="reference internal" href="email.message.html#email.message.Message.as_string" title="email.message.Message.as_string"><code class="xref py py-meth docutils literal"><span class="pre">as_string()</span></code></a> に名前が変更されました。</p>
+</li>
+<li><p class="first"><code class="xref py py-meth docutils literal"><span class="pre">ismultipart()</span></code> メソッドは <a class="reference internal" href="email.message.html#email.message.Message.is_multipart" title="email.message.Message.is_multipart"><code class="xref py py-meth docutils literal"><span class="pre">is_multipart()</span></code></a> に名前が変更されました。</p>
+</li>
+<li>The <a class="reference internal" href="email.message.html#email.message.Message.get_payload" title="email.message.Message.get_payload"><code class="xref py py-meth docutils literal"><span class="pre">get_payload()</span></code></a> method has grown a <em>decode</em>
+optional argument.</li>
+<li><p class="first"><code class="xref py py-meth docutils literal"><span class="pre">getall()</span></code> メソッドは <a class="reference internal" href="email.message.html#email.message.Message.get_all" title="email.message.Message.get_all"><code class="xref py py-meth docutils literal"><span class="pre">get_all()</span></code></a> に名前が変更されました。</p>
+</li>
+<li><p class="first"><code class="xref py py-meth docutils literal"><span class="pre">addheader()</span></code> メソッドは <a class="reference internal" href="email.message.html#email.message.Message.add_header" title="email.message.Message.add_header"><code class="xref py py-meth docutils literal"><span class="pre">add_header()</span></code></a> に名前が変更されました。</p>
+</li>
+<li><p class="first"><code class="xref py py-meth docutils literal"><span class="pre">gettype()</span></code> メソッドは <code class="xref py py-meth docutils literal"><span class="pre">get_type()</span></code> に名前が変更されました。</p>
+</li>
+<li><p class="first"><code class="xref py py-meth docutils literal"><span class="pre">getmaintype()</span></code> メソッドは <code class="xref py py-meth docutils literal"><span class="pre">get_main_type()</span></code> に名前が変更されました。</p>
+</li>
+<li><p class="first"><code class="xref py py-meth docutils literal"><span class="pre">getsubtype()</span></code> メソッドは <code class="xref py py-meth docutils literal"><span class="pre">get_subtype()</span></code> に名前が変更されました。</p>
+</li>
+<li>The method <code class="xref py py-meth docutils literal"><span class="pre">getparams()</span></code> was renamed to
+<a class="reference internal" href="email.message.html#email.message.Message.get_params" title="email.message.Message.get_params"><code class="xref py py-meth docutils literal"><span class="pre">get_params()</span></code></a>. Also, whereas <code class="xref py py-meth docutils literal"><span class="pre">getparams()</span></code>
+returned a list of strings, <a class="reference internal" href="email.message.html#email.message.Message.get_params" title="email.message.Message.get_params"><code class="xref py py-meth docutils literal"><span class="pre">get_params()</span></code></a> returns
+a list of 2-tuples, effectively the key/value pairs of the parameters, split
+on the <code class="docutils literal"><span class="pre">'='</span></code> sign.</li>
+<li><p class="first"><code class="xref py py-meth docutils literal"><span class="pre">getparam()</span></code> メソッドは <a class="reference internal" href="email.message.html#email.message.Message.get_param" title="email.message.Message.get_param"><code class="xref py py-meth docutils literal"><span class="pre">get_param()</span></code></a> に名前が変更されました。</p>
+</li>
+<li><p class="first"><code class="xref py py-meth docutils literal"><span class="pre">getcharsets()</span></code> メソッドは <a class="reference internal" href="email.message.html#email.message.Message.get_charsets" title="email.message.Message.get_charsets"><code class="xref py py-meth docutils literal"><span class="pre">get_charsets()</span></code></a> に名前が変更されました。</p>
+</li>
+<li><p class="first"><code class="xref py py-meth docutils literal"><span class="pre">getfilename()</span></code> メソッドは <a class="reference internal" href="email.message.html#email.message.Message.get_filename" title="email.message.Message.get_filename"><code class="xref py py-meth docutils literal"><span class="pre">get_filename()</span></code></a> に名前が変更されました。</p>
+</li>
+<li><p class="first"><code class="xref py py-meth docutils literal"><span class="pre">getboundary()</span></code> は <a class="reference internal" href="email.message.html#email.message.Message.get_boundary" title="email.message.Message.get_boundary"><code class="xref py py-meth docutils literal"><span class="pre">get_boundary()</span></code></a> に名前が変更されました。</p>
+</li>
+<li><p class="first"><code class="xref py py-meth docutils literal"><span class="pre">setboundary()</span></code> メソッドは <a class="reference internal" href="email.message.html#email.message.Message.set_boundary" title="email.message.Message.set_boundary"><code class="xref py py-meth docutils literal"><span class="pre">set_boundary()</span></code></a> に名前が変更されました。</p>
+</li>
+<li>The method <code class="xref py py-meth docutils literal"><span class="pre">getdecodedpayload()</span></code> was removed.  To get similar
+functionality, pass the value 1 to the <em>decode</em> flag of the
+<a class="reference internal" href="email.message.html#email.message.Message.get_payload" title="email.message.Message.get_payload"><code class="xref py py-meth docutils literal"><span class="pre">get_payload()</span></code></a> method.</li>
+<li>The method <code class="xref py py-meth docutils literal"><span class="pre">getpayloadastext()</span></code> was removed.  Similar functionality is
+supported by the <a class="reference internal" href="email.generator.html#email.generator.DecodedGenerator" title="email.generator.DecodedGenerator"><code class="xref py py-class docutils literal"><span class="pre">DecodedGenerator</span></code></a> class in the
+<a class="reference internal" href="email.generator.html#module-email.generator" title="email.generator: Generate flat text email messages from a message structure."><code class="xref py py-mod docutils literal"><span class="pre">email.generator</span></code></a> module.</li>
+<li>The method <code class="xref py py-meth docutils literal"><span class="pre">getbodyastext()</span></code> was removed.  You can get similar
+functionality by creating an iterator with
+<a class="reference internal" href="email.iterators.html#email.iterators.typed_subpart_iterator" title="email.iterators.typed_subpart_iterator"><code class="xref py py-func docutils literal"><span class="pre">typed_subpart_iterator()</span></code></a> in the <a class="reference internal" href="email.iterators.html#module-email.iterators" title="email.iterators: Iterate over a  message object tree."><code class="xref py py-mod docutils literal"><span class="pre">email.iterators</span></code></a>
+module.</li>
+</ul>
+<p>The <a class="reference internal" href="email.parser.html#email.parser.Parser" title="email.parser.Parser"><code class="xref py py-class docutils literal"><span class="pre">Parser</span></code></a> class has no differences in its public
+interface. It does have some additional smarts to recognize
+<em class="mimetype">message/delivery-status</em> type messages, which it represents as a
+<a class="reference internal" href="email.message.html#email.message.Message" title="email.message.Message"><code class="xref py py-class docutils literal"><span class="pre">Message</span></code></a> instance containing separate
+<a class="reference internal" href="email.message.html#email.message.Message" title="email.message.Message"><code class="xref py py-class docutils literal"><span class="pre">Message</span></code></a> subparts for each header block in the delivery
+status notification <a class="footnote-reference" href="#id2" id="id1">[1]</a>.</p>
+<p>The <a class="reference internal" href="email.generator.html#email.generator.Generator" title="email.generator.Generator"><code class="xref py py-class docutils literal"><span class="pre">Generator</span></code></a> class has no differences in its public
+interface.  There is a new class in the <a class="reference internal" href="email.generator.html#module-email.generator" title="email.generator: Generate flat text email messages from a message structure."><code class="xref py py-mod docutils literal"><span class="pre">email.generator</span></code></a> module though,
+called <a class="reference internal" href="email.generator.html#email.generator.DecodedGenerator" title="email.generator.DecodedGenerator"><code class="xref py py-class docutils literal"><span class="pre">DecodedGenerator</span></code></a> which provides most of the
+functionality previously available in the <code class="xref py py-meth docutils literal"><span class="pre">Message.getpayloadastext()</span></code>
+method.</p>
+<p>また、以下のモジュールおよびクラスが変更されています:</p>
+<ul>
+<li><p class="first">The <a class="reference internal" href="email.mime.html#email.mime.base.MIMEBase" title="email.mime.base.MIMEBase"><code class="xref py py-class docutils literal"><span class="pre">MIMEBase</span></code></a> class constructor arguments <em>_major</em>
+and <em>_minor</em> have changed to <em>_maintype</em> and <em>_subtype</em> respectively.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">Image</span></code> クラスおよびモジュールは <code class="docutils literal"><span class="pre">MIMEImage</span></code> に名前が変更されました。<em>_minor</em> 引数も <em>_subtype</em> に名前が変更されています。</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">Text</span></code> クラスおよびモジュールは <code class="docutils literal"><span class="pre">MIMEText</span></code> に名前が変更されました。<em>_minor</em> 引数も <em>_subtype</em> に名前が変更されています。</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">MessageRFC822</span></code> クラスおよびモジュールは <code class="docutils literal"><span class="pre">MIMEMessage</span></code> に名前が変更されました。注意: 従来バージョンの <code class="xref py py-mod docutils literal"><span class="pre">mimelib</span></code> では、このクラスおよびモジュールは <code class="docutils literal"><span class="pre">RFC822</span></code> という名前でしたが、これは大文字小文字を区別しないファイルシステムでは Python の標準ライブラリモジュール <code class="xref py py-mod docutils literal"><span class="pre">rfc822</span></code> と名前がかち合ってしまっていました。</p>
+<p>Also, the <a class="reference internal" href="email.mime.html#email.mime.message.MIMEMessage" title="email.mime.message.MIMEMessage"><code class="xref py py-class docutils literal"><span class="pre">MIMEMessage</span></code></a> class now represents any
+kind of MIME message
+with main type <em class="mimetype">message</em>.  It takes an optional argument <em>_subtype</em>
+which is used to set the MIME subtype.  <em>_subtype</em> defaults to
+<em class="mimetype">rfc822</em>.</p>
+</li>
+</ul>
+<p><code class="xref py py-mod docutils literal"><span class="pre">mimelib</span></code> では、 <code class="xref py py-mod docutils literal"><span class="pre">address</span></code> および <code class="xref py py-mod docutils literal"><span class="pre">date</span></code> モジュールでいくつかのユーティリティ関数が提供されていました。これらの関数はすべて <a class="reference internal" href="email.util.html#module-email.utils" title="email.utils: Miscellaneous email package utilities."><code class="xref py py-mod docutils literal"><span class="pre">email.utils</span></code></a> モジュールの中に移されています。</p>
+<p>The <code class="docutils literal"><span class="pre">MsgReader</span></code> class/module has been removed.  Its functionality is most
+closely supported in the <a class="reference internal" href="email.iterators.html#email.iterators.body_line_iterator" title="email.iterators.body_line_iterator"><code class="xref py py-func docutils literal"><span class="pre">body_line_iterator()</span></code></a> function
+in the <a class="reference internal" href="email.iterators.html#module-email.iterators" title="email.iterators: Iterate over a  message object tree."><code class="xref py py-mod docutils literal"><span class="pre">email.iterators</span></code></a> module.</p>
+<p class="rubric">脚注</p>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><p class="first last">配送状態通知 (Delivery Status Notifications, DSN) は <span class="target" id="index-27"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc1894.html"><strong>RFC 1894</strong></a> によって定義されています。</p>
+</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">19.1. <code class="docutils literal"><span class="pre">email</span></code> &#8212; 電子メールと MIME 処理のためのパッケージ</a><ul>
+<li><a class="reference internal" href="#package-history">19.1.15. パッケージの履歴</a></li>
+<li><a class="reference internal" href="#differences-from-mimelib">19.1.16. <code class="docutils literal"><span class="pre">mimelib</span></code> との違い</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="netdata.html"
+                        title="前の章へ">19. インターネット上のデータの操作</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="email.message.html"
+                        title="次の章へ">19.1.1. <code class="docutils literal"><span class="pre">email.message</span></code>: Representing an email message</a></p>
+<h3>このページ</h3>
+<ul class="this-page-menu">
+  <li><a href="../bugs.html">Report a Bug</a></li>
+  <li><a href="../_sources/library/email.txt"
+         rel="nofollow">Show Source</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="email.message.html" title="19.1.1. email.message: Representing an email message"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="netdata.html" title="19. インターネット上のデータの操作"
+             >前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="https://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.4.3</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Python 標準ライブラリ</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="netdata.html" >19. インターネット上のデータの操作</a> &raquo;</li> 
+      </ul>
+    </div>  
+    <div class="footer">
+    &copy; <a href="../copyright.html">Copyright</a> 1990-2015, Python Software Foundation.
+    <br />
+    The Python Software Foundation is a non-profit corporation.
+    <a href="https://www.python.org/psf/donations/">Please donate.</a>
+    <br />
+    Last updated on Dec 28, 2015.
+    <a href="../bugs.html">Found a bug</a>?
+    <br />
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1.
+    <br />
+    <a href="https://github.com/python-doc-ja/python-doc-ja">Pythonドキュメント日本語翻訳プロジェクト</a>
+    によって翻訳されました。
+    <a href="https://github.com/python-doc-ja/python-doc-ja/issues">誤訳を報告する。</a>
+    </div>
+
+  </body>
+</html>

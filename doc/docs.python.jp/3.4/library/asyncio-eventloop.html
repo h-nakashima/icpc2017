@@ -1,0 +1,905 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>18.5.1. 基底イベントループ &mdash; Python 3.4.3 ドキュメント</title>
+    
+    <link rel="stylesheet" href="../_static/pydoctheme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.4.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Python 3.4.3 ドキュメント 内を検索"
+          href="../_static/opensearch.xml"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="Python 3.4.3 ドキュメント" href="../contents.html" />
+    <link rel="up" title="18.5. asyncio – 非同期 I/O、イベントループ、コルーチンおよびタスク" href="asyncio.html" />
+    <link rel="next" title="18.5.2. イベントループ" href="asyncio-eventloops.html" />
+    <link rel="prev" title="18.5. asyncio – 非同期 I/O、イベントループ、コルーチンおよびタスク" href="asyncio.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/py.png" />
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/_jp.js"></script>
+    <script type="text/javascript" src="../_static/version_switch.js"></script>
+    
+ 
+
+  <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-34175846-1', 'python.jp');
+        ga('send', 'pageview');
+
+      </script>
+  <body role="document">  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="asyncio-eventloops.html" title="18.5.2. イベントループ"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="asyncio.html" title="18.5. asyncio – 非同期 I/O、イベントループ、コルーチンおよびタスク"
+             accesskey="P">前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="https://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.4.3</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Python 標準ライブラリ</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="ipc.html" >18. プロセス間通信とネットワーク</a> &raquo;</li>
+          <li class="nav-item nav-item-3"><a href="asyncio.html" accesskey="U">18.5. <code class="docutils literal"><span class="pre">asyncio</span></code> &#8211; 非同期 I/O、イベントループ、コルーチンおよびタスク</a> &raquo;</li> 
+      </ul>
+    </div>    
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="base-event-loop">
+<span id="asyncio-event-loop"></span><h1>18.5.1. 基底イベントループ<a class="headerlink" href="#base-event-loop" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>イベントループは <a class="reference internal" href="asyncio.html#module-asyncio" title="asyncio: Asynchronous I/O, event loop, coroutines and tasks."><code class="xref py py-mod docutils literal"><span class="pre">asyncio</span></code></a>  が提供する中心実行デバイスです。以下の複合的な機能を提供しています:</p>
+<ul class="simple">
+<li><p class="first">遅延呼び出しの登録、実行およびキャンセル (タイムアウト)。</p>
+</li>
+<li><p class="first">さまざまな種類の通信のためのクライアントおよびサーバー <a class="reference internal" href="asyncio-protocol.html#asyncio-transport"><span>トランスポート</span></a> の作成。</p>
+</li>
+<li><p class="first">外部プログラムとの通信のためのサブプロセスおよび関連する <a class="reference internal" href="asyncio-protocol.html#asyncio-transport"><span>トランスポート</span></a> の起動。</p>
+</li>
+<li><p class="first">スレッドのプールへ呼び出す、コストの大きい関数の委譲。</p>
+</li>
+</ul>
+<dl class="class">
+<dt id="asyncio.BaseEventLoop">
+<em class="property">class </em><code class="descclassname">asyncio.</code><code class="descname">BaseEventLoop</code><a class="headerlink" href="#asyncio.BaseEventLoop" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>イベントループの基底クラスです。</p>
+<p>このクラスは <a class="reference internal" href="asyncio-dev.html#asyncio-multithreading"><span>スレッド安全ではありません</span></a>。</p>
+</dd></dl>
+
+<div class="section" id="run-an-event-loop">
+<h2>18.5.1.1. イベントループの実行<a class="headerlink" href="#run-an-event-loop" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.run_forever">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">run_forever</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.run_forever" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="#asyncio.BaseEventLoop.stop" title="asyncio.BaseEventLoop.stop"><code class="xref py py-meth docutils literal"><span class="pre">stop()</span></code></a> が呼び出されるまで実行します。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.run_until_complete">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">run_until_complete</code><span class="sig-paren">(</span><em>future</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.run_until_complete" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="asyncio-task.html#asyncio.Future" title="asyncio.Future"><code class="xref py py-class docutils literal"><span class="pre">Future</span></code></a> が完了するまで実行します。</p>
+<p>引数が <a class="reference internal" href="asyncio-task.html#coroutine"><span>コルーチンオブジェクト</span></a> の場合、<a class="reference internal" href="asyncio-task.html#asyncio.async" title="asyncio.async"><code class="xref py py-func docutils literal"><span class="pre">async()</span></code></a> でラップされます。</p>
+<p>Future の結果を返すか、例外を送出します。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.is_running">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">is_running</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.is_running" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>イベントループの実行状態を返します。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.stop">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.stop" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>実行中のイベントループを停止します。</p>
+<p><a class="reference internal" href="#asyncio.BaseEventLoop.stop" title="asyncio.BaseEventLoop.stop"><code class="xref py py-meth docutils literal"><span class="pre">stop()</span></code></a> が呼ばれる前にスケジュールされていたコールバックはすべて実行されます。<a class="reference internal" href="#asyncio.BaseEventLoop.stop" title="asyncio.BaseEventLoop.stop"><code class="xref py py-meth docutils literal"><span class="pre">stop()</span></code></a> が呼ばれたあとにスケジュールされたコールバックは実行されませんが、それらは <a class="reference internal" href="#asyncio.BaseEventLoop.run_forever" title="asyncio.BaseEventLoop.run_forever"><code class="xref py py-meth docutils literal"><span class="pre">run_forever()</span></code></a> が再び呼ばれた後に実行されます。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.is_closed">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">is_closed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.is_closed" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>イベントループが閉じられていた場合 <code class="docutils literal"><span class="pre">True</span></code> を返します。</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.4.2 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.close">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.close" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>イベントループを閉じます。ループは実行中であってはなりません。</p>
+<p>これはキューをクリアしエグゼキューターをシャットダウンしますが、エグゼキューターの終了を待ちません。</p>
+<p>これはべき等 (何回やっても結果は同じ) であり取り消せません。この後他のメソッドを呼び出してはなりません。</p>
+</dd></dl>
+
+</div>
+<div class="section" id="calls">
+<span id="asyncio-pass-keywords"></span><h2>18.5.1.2. 呼び出し<a class="headerlink" href="#calls" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Most <a class="reference internal" href="asyncio.html#module-asyncio" title="asyncio: Asynchronous I/O, event loop, coroutines and tasks."><code class="xref py py-mod docutils literal"><span class="pre">asyncio</span></code></a> functions don&#8217;t accept keywords. If you want to pass
+keywords to your callback, use <a class="reference internal" href="functools.html#functools.partial" title="functools.partial"><code class="xref py py-func docutils literal"><span class="pre">functools.partial()</span></code></a>. For example,
+<code class="docutils literal"><span class="pre">loop.call_soon(functools.partial(print,</span> <span class="pre">&quot;Hello&quot;,</span> <span class="pre">flush=True))</span></code> will call
+<code class="docutils literal"><span class="pre">print(&quot;Hello&quot;,</span> <span class="pre">flush=True)</span></code>.</p>
+<div class="admonition note">
+<p class="first admonition-title">注釈</p>
+<p class="last"><a class="reference internal" href="functools.html#functools.partial" title="functools.partial"><code class="xref py py-func docutils literal"><span class="pre">functools.partial()</span></code></a> is better than <code class="docutils literal"><span class="pre">lambda</span></code> functions, because
+<a class="reference internal" href="asyncio.html#module-asyncio" title="asyncio: Asynchronous I/O, event loop, coroutines and tasks."><code class="xref py py-mod docutils literal"><span class="pre">asyncio</span></code></a> can inspect <a class="reference internal" href="functools.html#functools.partial" title="functools.partial"><code class="xref py py-func docutils literal"><span class="pre">functools.partial()</span></code></a> object to display
+parameters in debug mode, whereas <code class="docutils literal"><span class="pre">lambda</span></code> functions have a poor
+representation.</p>
+</div>
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.call_soon">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">call_soon</code><span class="sig-paren">(</span><em>callback</em>, <em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.call_soon" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Arrange for a callback to be called as soon as possible.  The callback is
+called after <a class="reference internal" href="#asyncio.BaseEventLoop.call_soon" title="asyncio.BaseEventLoop.call_soon"><code class="xref py py-meth docutils literal"><span class="pre">call_soon()</span></code></a> returns, when control returns to the event
+loop.</p>
+<p>これは FIFO キューとして操作し、コールバックは登録された順に呼び出されます。各コールバックは厳密に 1 回だけ呼び出されます。</p>
+<p><em>callback</em> の後の位置引数 <em>args</em> は、コールバックが呼び出されたときに渡されます。</p>
+<p>An instance of <a class="reference internal" href="#asyncio.Handle" title="asyncio.Handle"><code class="xref py py-class docutils literal"><span class="pre">asyncio.Handle</span></code></a> is returned, which can be
+used to cancel the callback.</p>
+<p><a class="reference internal" href="#asyncio-pass-keywords"><span>Use functools.partial to pass keywords to the callback</span></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.call_soon_threadsafe">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">call_soon_threadsafe</code><span class="sig-paren">(</span><em>callback</em>, <em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.call_soon_threadsafe" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="#asyncio.BaseEventLoop.call_soon" title="asyncio.BaseEventLoop.call_soon"><code class="xref py py-meth docutils literal"><span class="pre">call_soon()</span></code></a> に似ていますが、スレッドセーフです。</p>
+<p>See the <a class="reference internal" href="asyncio-dev.html#asyncio-multithreading"><span>concurrency and multithreading</span></a>
+section of the documentation.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="delayed-calls">
+<span id="asyncio-delayed-calls"></span><h2>18.5.1.3. 遅延呼び出し<a class="headerlink" href="#delayed-calls" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>イベントループはタイムアウトを計測するために自身に内部時計を持っています。内部時計は (プラットフォーム固有の) イベントループの実装に依存したものが使用されます; 理想的には、この時計で使うのはモノトニック時刻です。これは通常 <a class="reference internal" href="time.html#time.time" title="time.time"><code class="xref py py-func docutils literal"><span class="pre">time.time()</span></code></a> とは異なる時計です。</p>
+<div class="admonition note">
+<p class="first admonition-title">注釈</p>
+<p class="last">タイムアウト (相対値 <em>delay</em> または絶対値 <em>when</em>) は 1 日を超えてはいけません。</p>
+</div>
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.call_later">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">call_later</code><span class="sig-paren">(</span><em>delay</em>, <em>callback</em>, <em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.call_later" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>引数 <em>delay</em> 秒後に呼び出される <em>callback</em> を準備します。<em>delay</em> は整数または浮動小数点値をとります。</p>
+<p>An instance of <a class="reference internal" href="#asyncio.Handle" title="asyncio.Handle"><code class="xref py py-class docutils literal"><span class="pre">asyncio.Handle</span></code></a> is returned, which can be
+used to cancel the callback.</p>
+<p><em>callback</em> は <a class="reference internal" href="#asyncio.BaseEventLoop.call_later" title="asyncio.BaseEventLoop.call_later"><code class="xref py py-meth docutils literal"><span class="pre">call_later()</span></code></a> を呼び出すたびに厳密に 1 度だけ呼び出されます。2 個のコールバックが完全に同じ時間にスケジュールされている場合、どちらが先に実行されるかは保証されません。</p>
+<p>コールバックが呼び出されたときに任意の位置引数 <em>args</em> が渡されます。名前付き引数をコールバックに渡したい場合、クロージャか <a class="reference internal" href="functools.html#functools.partial" title="functools.partial"><code class="xref py py-func docutils literal"><span class="pre">functools.partial()</span></code></a> を使用してください。</p>
+<p><a class="reference internal" href="#asyncio-pass-keywords"><span>Use functools.partial to pass keywords to the callback</span></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.call_at">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">call_at</code><span class="sig-paren">(</span><em>when</em>, <em>callback</em>, <em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.call_at" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>絶対値の時刻 <em>when</em> (整数または浮動小数点) になったときに呼び出される <em>callback</em> を準備します。時刻は <a class="reference internal" href="#asyncio.BaseEventLoop.time" title="asyncio.BaseEventLoop.time"><code class="xref py py-meth docutils literal"><span class="pre">BaseEventLoop.time()</span></code></a> を参照します。</p>
+<p>このメソッドの振る舞いは <a class="reference internal" href="#asyncio.BaseEventLoop.call_later" title="asyncio.BaseEventLoop.call_later"><code class="xref py py-meth docutils literal"><span class="pre">call_later()</span></code></a> と同じです。</p>
+<p>An instance of <a class="reference internal" href="#asyncio.Handle" title="asyncio.Handle"><code class="xref py py-class docutils literal"><span class="pre">asyncio.Handle</span></code></a> is returned, which can be
+used to cancel the callback.</p>
+<p><a class="reference internal" href="#asyncio-pass-keywords"><span>Use functools.partial to pass keywords to the callback</span></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.time">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">time</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.time" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>現在の時刻を <a class="reference internal" href="functions.html#float" title="float"><code class="xref py py-class docutils literal"><span class="pre">float</span></code></a> 値で返します。時刻はイベントループの内部時計に従います。</p>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<p class="last">関数 <a class="reference internal" href="asyncio-task.html#asyncio.sleep" title="asyncio.sleep"><code class="xref py py-func docutils literal"><span class="pre">asyncio.sleep()</span></code></a>。</p>
+</div>
+</div>
+<div class="section" id="tasks">
+<h2>18.5.1.4. Tasks<a class="headerlink" href="#tasks" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.create_task">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">create_task</code><span class="sig-paren">(</span><em>coro</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.create_task" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="asyncio-task.html#coroutine"><span>コルーチンオブジェクト</span></a> の実行をスケジュールします: このときフューチャにラップします。<a class="reference internal" href="asyncio-task.html#asyncio.Task" title="asyncio.Task"><code class="xref py py-class docutils literal"><span class="pre">Task</span></code></a> オブジェクトを返します。</p>
+<p>サードパーティのイベントループは相互運用のための自身の <a class="reference internal" href="asyncio-task.html#asyncio.Task" title="asyncio.Task"><code class="xref py py-class docutils literal"><span class="pre">Task</span></code></a> のサブクラスを使用できます。この場合、結果は <a class="reference internal" href="asyncio-task.html#asyncio.Task" title="asyncio.Task"><code class="xref py py-class docutils literal"><span class="pre">Task</span></code></a> のサブクラスになります。</p>
+<p>このメソッドは Python 3.4.2 で追加されました。Python の過去のバージョンもサポートするには <a class="reference internal" href="asyncio-task.html#asyncio.async" title="asyncio.async"><code class="xref py py-func docutils literal"><span class="pre">async()</span></code></a> 関数を使用してください。</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.4.2 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.set_task_factory">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">set_task_factory</code><span class="sig-paren">(</span><em>factory</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.set_task_factory" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Set a task factory that will be used by
+<a class="reference internal" href="#asyncio.BaseEventLoop.create_task" title="asyncio.BaseEventLoop.create_task"><code class="xref py py-meth docutils literal"><span class="pre">BaseEventLoop.create_task()</span></code></a>.</p>
+<p>If <em>factory</em> is <code class="docutils literal"><span class="pre">None</span></code> the default task factory will be set.</p>
+<p>If <em>factory</em> is a <em>callable</em>, it should have a signature matching
+<code class="docutils literal"><span class="pre">(loop,</span> <span class="pre">coro)</span></code>, where <em>loop</em> will be a reference to the active
+event loop, <em>coro</em> will be a coroutine object.  The callable
+must return an <a class="reference internal" href="asyncio-task.html#asyncio.Future" title="asyncio.Future"><code class="xref py py-class docutils literal"><span class="pre">asyncio.Future</span></code></a> compatible object.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.4.4 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.get_task_factory">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">get_task_factory</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.get_task_factory" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Return a task factory, or <code class="docutils literal"><span class="pre">None</span></code> if the default one is in use.</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.4.4 で追加.</span></p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="creating-connections">
+<h2>18.5.1.5. コネクションの作成<a class="headerlink" href="#creating-connections" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.create_connection">
+<em class="property">coroutine </em><code class="descclassname">BaseEventLoop.</code><code class="descname">create_connection</code><span class="sig-paren">(</span><em>protocol_factory</em>, <em>host=None</em>, <em>port=None</em>, <em>*</em>, <em>ssl=None</em>, <em>family=0</em>, <em>proto=0</em>, <em>flags=0</em>, <em>sock=None</em>, <em>local_addr=None</em>, <em>server_hostname=None</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.create_connection" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>インターネット <em>host</em> および <em>port</em> へのストリーミング転送コネクションを作成します: ソケットファミリ <a class="reference internal" href="socket.html#socket.AF_INET" title="socket.AF_INET"><code class="xref py py-data docutils literal"><span class="pre">AF_INET</span></code></a> または <a class="reference internal" href="socket.html#socket.AF_INET6" title="socket.AF_INET6"><code class="xref py py-data docutils literal"><span class="pre">AF_INET6</span></code></a> は <em>host</em> (または指定されていれば <em>family</em>) に依存し、ソケットタイプは <a class="reference internal" href="socket.html#socket.SOCK_STREAM" title="socket.SOCK_STREAM"><code class="xref py py-data docutils literal"><span class="pre">SOCK_STREAM</span></code></a> になります。<em>protocol_factory</em> は <a class="reference internal" href="asyncio-protocol.html#asyncio-protocol"><span>プロトコル</span></a> のインスタンスを返す呼び出し可能オブジェクトでなければなりません。</p>
+<p>このメソッドはバックグラウンドでコネクションの確立を試みる <a class="reference internal" href="asyncio-task.html#coroutine"><span>コルーチン</span></a> です。成功すると、コルーチンは <code class="docutils literal"><span class="pre">(トランスポート,</span> <span class="pre">プロトコル)</span></code> のペアを返します。</p>
+<p>時系列での下層処理の概要は以下のとおりです:</p>
+<ol class="arabic simple">
+<li><p class="first">コネクションを確立し、それを表す <a class="reference internal" href="asyncio-protocol.html#asyncio-transport"><span>トランスポート</span></a> が作成される。</p>
+</li>
+<li><p class="first"><em>protocol_factory</em> が引数なしで呼び出され、<a class="reference internal" href="asyncio-protocol.html#asyncio-protocol"><span>プロトコル</span></a> のインスタンスを返す。</p>
+</li>
+<li><p class="first">プロトコルインスタンスはトランスポートと紐付けられ、それの <code class="xref py py-meth docutils literal"><span class="pre">connection_made()</span></code> メソッドが呼び出される。</p>
+</li>
+<li><p class="first">コルーチンは <code class="docutils literal"><span class="pre">(トランスポート,</span> <span class="pre">プロトコル)</span></code> のペアを返す。</p>
+</li>
+</ol>
+<p>作成されたトランスポートは実装依存の双方向ストリームです。</p>
+<div class="admonition note">
+<p class="first admonition-title">注釈</p>
+<p class="last"><em>protocol_factory</em> はクラスである必要はなく、あらゆる種類の呼び出し可能オブジェクトを使用可能です。例えば、あらかじめ作成しておいたプロコルインスタンスを使用したい場合、<code class="docutils literal"><span class="pre">lambda:</span> <span class="pre">my_protocol</span></code> を渡します。</p>
+</div>
+<p>コネクションの作成方法を変更するオプションは以下のとおりです:</p>
+<ul>
+<li><p class="first"><em>ssl</em>: 偽値以外が与えられた場合、SSL/TLS トランスポートが作成されます (デフォルトではプレーン TCP トランスポートが作成されます)。<em>ssl</em> が <a class="reference internal" href="ssl.html#ssl.SSLContext" title="ssl.SSLContext"><code class="xref py py-class docutils literal"><span class="pre">ssl.SSLContext</span></code></a> オブジェクトの場合、このコンテキストはトランスポートを作成するために使用されます; <em>ssl</em> が <a class="reference internal" href="constants.html#True" title="True"><code class="xref py py-const docutils literal"><span class="pre">True</span></code></a> の場合、いくつかの未定義のデフォルト値が使用されます。</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<p class="last"><a class="reference internal" href="ssl.html#ssl-security"><span>SSL/TLS セキュリティについての考察</span></a></p>
+</div>
+</li>
+<li><p class="first"><em>server_hostname</em> は <em>ssl</em> 指定時のみ使用し、対象サーバーの証明書に一致するホスト名を設定またはオーバーライドします。デフォルトでは引数 <em>host</em> の値が使用されます。<em>host</em> が空の場合デフォルト値はなく、<em>server_hostname</em> に値を渡さなければなりません。<em>server_hostname</em> が空の場合、ホスト名のマッチングは無効になります (深刻なセキュリティリスクになり、中間者攻撃に対する脆弱性になります)。</p>
+</li>
+<li><p class="first"><em>family</em>, <em>proto</em>, <em>flags</em> は任意のアドレスファミリであり、<em>host</em> 解決のための getaddrinfo() 経由で渡されるプロトコルおよびフラグになります。このオプションが与えられた場合、これらはすべて <a class="reference internal" href="socket.html#module-socket" title="socket: Low-level networking interface."><code class="xref py py-mod docutils literal"><span class="pre">socket</span></code></a> モジュール定数に従った整数でなければなりません。</p>
+</li>
+<li><p class="first"><em>sock</em> を与える場合、トランスポートに使用される、既存の、すでに接続済の <a class="reference internal" href="socket.html#socket.socket" title="socket.socket"><code class="xref py py-class docutils literal"><span class="pre">socket.socket</span></code></a> オブジェクトを指定します。<em>sock</em> を指定する場合、<em>host</em>、<em>port</em>、<em>family</em>、<em>proto</em>、<em>flags</em> および <em>local_addr</em> を指定してはなりません。</p>
+</li>
+<li><p class="first"><em>local_addr</em> を与える場合、ソケットをローカルに束縛するために使用する <code class="docutils literal"><span class="pre">(local_host,</span> <span class="pre">local_port)</span></code> のタプルを指定します。<em>local_host</em> および <em>local_port</em> は <em>host</em> および <em>port</em> と同様に getaddrinfo() を使用してルックアップされます。</p>
+</li>
+</ul>
+<p>Windows の <a class="reference internal" href="asyncio-eventloops.html#asyncio.ProactorEventLoop" title="asyncio.ProactorEventLoop"><code class="xref py py-class docutils literal"><span class="pre">ProactorEventLoop</span></code></a> では、SSL/TLS はサポートされていません。</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<p class="last">関数 <a class="reference internal" href="asyncio-stream.html#asyncio.open_connection" title="asyncio.open_connection"><code class="xref py py-func docutils literal"><span class="pre">open_connection()</span></code></a> はプロトコルではなく (<a class="reference internal" href="asyncio-stream.html#asyncio.StreamReader" title="asyncio.StreamReader"><code class="xref py py-class docutils literal"><span class="pre">StreamReader</span></code></a>, <a class="reference internal" href="asyncio-stream.html#asyncio.StreamWriter" title="asyncio.StreamWriter"><code class="xref py py-class docutils literal"><span class="pre">StreamWriter</span></code></a>) のペアの取得に使用できます。</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.create_datagram_endpoint">
+<em class="property">coroutine </em><code class="descclassname">BaseEventLoop.</code><code class="descname">create_datagram_endpoint</code><span class="sig-paren">(</span><em>protocol_factory</em>, <em>local_addr=None</em>, <em>remote_addr=None</em>, <em>*</em>, <em>family=0</em>, <em>proto=0</em>, <em>flags=0</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.create_datagram_endpoint" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>データグラムコネクションを作成します: ソケットファミリ <a class="reference internal" href="socket.html#socket.AF_INET" title="socket.AF_INET"><code class="xref py py-data docutils literal"><span class="pre">AF_INET</span></code></a> または <a class="reference internal" href="socket.html#socket.AF_INET6" title="socket.AF_INET6"><code class="xref py py-data docutils literal"><span class="pre">AF_INET6</span></code></a> は <em>host</em> (または指定されていれば <em>family</em>) に依存し、ソケットタイプは <a class="reference internal" href="socket.html#socket.SOCK_DGRAM" title="socket.SOCK_DGRAM"><code class="xref py py-data docutils literal"><span class="pre">SOCK_DGRAM</span></code></a> になります。</p>
+<p>このメソッドはバックグラウンドでコネクションの確立を試みる <a class="reference internal" href="asyncio-task.html#coroutine"><span>コルーチン</span></a> です。成功すると、コルーチンは <code class="docutils literal"><span class="pre">(トランスポート,</span> <span class="pre">プロトコル)</span></code> のペアを返します。</p>
+<p>パラメーターについては <a class="reference internal" href="#asyncio.BaseEventLoop.create_connection" title="asyncio.BaseEventLoop.create_connection"><code class="xref py py-meth docutils literal"><span class="pre">BaseEventLoop.create_connection()</span></code></a> メソッドを参照してください。</p>
+<p>Windows の <a class="reference internal" href="asyncio-eventloops.html#asyncio.ProactorEventLoop" title="asyncio.ProactorEventLoop"><code class="xref py py-class docutils literal"><span class="pre">ProactorEventLoop</span></code></a> では、このメソッドはサポートされていません。</p>
+<p><a class="reference internal" href="asyncio-protocol.html#asyncio-udp-echo-client-protocol"><span>UDP echo クライアントプロトコル</span></a> および <a class="reference internal" href="asyncio-protocol.html#asyncio-udp-echo-server-protocol"><span>UDP echo サーバープロトコル</span></a> の例を参照してください。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.create_unix_connection">
+<em class="property">coroutine </em><code class="descclassname">BaseEventLoop.</code><code class="descname">create_unix_connection</code><span class="sig-paren">(</span><em>protocol_factory</em>, <em>path</em>, <em>*</em>, <em>ssl=None</em>, <em>sock=None</em>, <em>server_hostname=None</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.create_unix_connection" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>UNIX コネクションを作成します: ソケットファミリは <a class="reference internal" href="socket.html#socket.AF_UNIX" title="socket.AF_UNIX"><code class="xref py py-data docutils literal"><span class="pre">AF_UNIX</span></code></a>、ソケットタイプは <a class="reference internal" href="socket.html#socket.SOCK_STREAM" title="socket.SOCK_STREAM"><code class="xref py py-data docutils literal"><span class="pre">SOCK_STREAM</span></code></a> になります。<a class="reference internal" href="socket.html#socket.AF_UNIX" title="socket.AF_UNIX"><code class="xref py py-data docutils literal"><span class="pre">AF_UNIX</span></code></a> ソケットファミリは同一マシン上のプロセス間で効率的に通信するために使用されます。</p>
+<p>このメソッドはバックグラウンドでコネクションの確立を試みる <a class="reference internal" href="asyncio-task.html#coroutine"><span>コルーチン</span></a> です。成功すると、コルーチンは <code class="docutils literal"><span class="pre">(トランスポート,</span> <span class="pre">プロトコル)</span></code> のペアを返します。</p>
+<p>パラメーターについては <a class="reference internal" href="#asyncio.BaseEventLoop.create_connection" title="asyncio.BaseEventLoop.create_connection"><code class="xref py py-meth docutils literal"><span class="pre">BaseEventLoop.create_connection()</span></code></a> メソッドを参照してください。</p>
+<p>利用できる環境: UNIX。</p>
+</dd></dl>
+
+</div>
+<div class="section" id="creating-listening-connections">
+<h2>18.5.1.6. 待ち受けコネクションの作成<a class="headerlink" href="#creating-listening-connections" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.create_server">
+<em class="property">coroutine </em><code class="descclassname">BaseEventLoop.</code><code class="descname">create_server</code><span class="sig-paren">(</span><em>protocol_factory</em>, <em>host=None</em>, <em>port=None</em>, <em>*</em>, <em>family=socket.AF_UNSPEC</em>, <em>flags=socket.AI_PASSIVE</em>, <em>sock=None</em>, <em>backlog=100</em>, <em>ssl=None</em>, <em>reuse_address=None</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.create_server" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>host</em> および <em>port</em> に束縛された TCP サーバー (ソケットタイプ <a class="reference internal" href="socket.html#socket.SOCK_STREAM" title="socket.SOCK_STREAM"><code class="xref py py-data docutils literal"><span class="pre">SOCK_STREAM</span></code></a>) を作成します。</p>
+<p><a class="reference internal" href="#asyncio.Server" title="asyncio.Server"><code class="xref py py-class docutils literal"><span class="pre">Server</span></code></a> オブジェクトを返します。これの <a class="reference internal" href="#asyncio.Server.sockets" title="asyncio.Server.sockets"><code class="xref py py-attr docutils literal"><span class="pre">sockets</span></code></a> 属性には作成されたソケットが含まれています。サーバーを停止するには <a class="reference internal" href="#asyncio.Server.close" title="asyncio.Server.close"><code class="xref py py-meth docutils literal"><span class="pre">Server.close()</span></code></a> メソッドを使用します: 待受中のソケットを閉じます。</p>
+<p>パラメーター:</p>
+<ul class="simple">
+<li><p class="first"><em>host</em> が空の文字列か <code class="docutils literal"><span class="pre">None</span></code> の場合、すべてのインターフェースが想定され、複合的なソケットのリスト (通常は一つが IPv4、もう一つが IPv6) が返されます。</p>
+</li>
+<li><p class="first"><em>family</em> には <a class="reference internal" href="socket.html#socket.AF_INET" title="socket.AF_INET"><code class="xref py py-data docutils literal"><span class="pre">socket.AF_INET</span></code></a> または <a class="reference internal" href="socket.html#socket.AF_INET6" title="socket.AF_INET6"><code class="xref py py-data docutils literal"><span class="pre">AF_INET6</span></code></a> のどちらかを指定でき、指定するとソケットで IPv4 を使用するか IPv6 を使用するか強制的に設定できます。設定されない場合ホストから決定されます (<code class="xref py py-data docutils literal"><span class="pre">socket.AF_UNSPEC</span></code> がデフォルトになります)。</p>
+</li>
+<li><p class="first"><em>flags</em> は <a class="reference internal" href="#asyncio.BaseEventLoop.getaddrinfo" title="asyncio.BaseEventLoop.getaddrinfo"><code class="xref py py-meth docutils literal"><span class="pre">getaddrinfo()</span></code></a> のためのビットマスクになります。</p>
+</li>
+<li><p class="first">任意の引数 <em>sock</em> には、既存のソケットオブジェクトの使用順を指定できます。指定した場合、<em>host</em> および <em>port</em> を指定してはなりません (<a class="reference internal" href="constants.html#None" title="None"><code class="xref py py-const docutils literal"><span class="pre">None</span></code></a> でなければなりません)。</p>
+</li>
+<li><p class="first"><em>backlog</em> は <a class="reference internal" href="socket.html#socket.socket.listen" title="socket.socket.listen"><code class="xref py py-meth docutils literal"><span class="pre">listen()</span></code></a> に渡される、キューに入るコネクションの最大数になります (デフォルトは 100)。</p>
+</li>
+<li><p class="first"><em>ssl</em> には <a class="reference internal" href="ssl.html#ssl.SSLContext" title="ssl.SSLContext"><code class="xref py py-class docutils literal"><span class="pre">SSLContext</span></code></a> を指定できます。指定すると、受け付けたコネクション上での SSL を有効にします。</p>
+</li>
+<li><p class="first"><em>reuse_address</em> を指定すると、通常のタイムアウトを待機するのではなく、TIME_WAIT の状態によりローカルソケットの再利用を行うようカーネルに通知します。指定しない場合、UNIX では自動的に <code class="docutils literal"><span class="pre">True</span></code> が設定されます。</p>
+</li>
+</ul>
+<p>このメソッドは <a class="reference internal" href="asyncio-task.html#coroutine"><span>コルーチン</span></a> です。</p>
+<p>Windows の <a class="reference internal" href="asyncio-eventloops.html#asyncio.ProactorEventLoop" title="asyncio.ProactorEventLoop"><code class="xref py py-class docutils literal"><span class="pre">ProactorEventLoop</span></code></a> では、SSL/TLS はサポートされていません。</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<p class="last">関数 <a class="reference internal" href="asyncio-stream.html#asyncio.start_server" title="asyncio.start_server"><code class="xref py py-func docutils literal"><span class="pre">start_server()</span></code></a> は (<a class="reference internal" href="asyncio-stream.html#asyncio.StreamReader" title="asyncio.StreamReader"><code class="xref py py-class docutils literal"><span class="pre">StreamReader</span></code></a>, <a class="reference internal" href="asyncio-stream.html#asyncio.StreamWriter" title="asyncio.StreamWriter"><code class="xref py py-class docutils literal"><span class="pre">StreamWriter</span></code></a>) のペアを作成し、このペアで関数を再度呼び出します。</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.create_unix_server">
+<em class="property">coroutine </em><code class="descclassname">BaseEventLoop.</code><code class="descname">create_unix_server</code><span class="sig-paren">(</span><em>protocol_factory</em>, <em>path=None</em>, <em>*</em>, <em>sock=None</em>, <em>backlog=100</em>, <em>ssl=None</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.create_unix_server" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="#asyncio.BaseEventLoop.create_server" title="asyncio.BaseEventLoop.create_server"><code class="xref py py-meth docutils literal"><span class="pre">BaseEventLoop.create_server()</span></code></a> と似ていますが、ソケットファミリ <a class="reference internal" href="socket.html#socket.AF_UNIX" title="socket.AF_UNIX"><code class="xref py py-data docutils literal"><span class="pre">AF_UNIX</span></code></a> 固有です。</p>
+<p>このメソッドは <a class="reference internal" href="asyncio-task.html#coroutine"><span>コルーチン</span></a> です。</p>
+<p>利用できる環境: UNIX。</p>
+</dd></dl>
+
+</div>
+<div class="section" id="watch-file-descriptors">
+<h2>18.5.1.7. ファイル記述子の監視<a class="headerlink" href="#watch-file-descriptors" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Windows の <a class="reference internal" href="asyncio-eventloops.html#asyncio.SelectorEventLoop" title="asyncio.SelectorEventLoop"><code class="xref py py-class docutils literal"><span class="pre">SelectorEventLoop</span></code></a> では、ソケットの扱いのみサポートされています (例えばパイプのファイル記述子はサポートされません)。</p>
+<p>Wndows の <a class="reference internal" href="asyncio-eventloops.html#asyncio.ProactorEventLoop" title="asyncio.ProactorEventLoop"><code class="xref py py-class docutils literal"><span class="pre">ProactorEventLoop</span></code></a> では、これらのメソッドはサポートされません。</p>
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.add_reader">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">add_reader</code><span class="sig-paren">(</span><em>fd</em>, <em>callback</em>, <em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.add_reader" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>読み込み可能なファイル記述子の監視を開始し、指定された引数で <em>callback</em> を呼び出します。</p>
+<p><a class="reference internal" href="#asyncio-pass-keywords"><span>Use functools.partial to pass keywords to the callback</span></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.remove_reader">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">remove_reader</code><span class="sig-paren">(</span><em>fd</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.remove_reader" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>読み込み可能なファイル記述子の監視を停止します。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.add_writer">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">add_writer</code><span class="sig-paren">(</span><em>fd</em>, <em>callback</em>, <em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.add_writer" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>書き込み可能なファイル記述子の監視を開始し、指定された引数で <em>callback</em> を呼び出します。</p>
+<p><a class="reference internal" href="#asyncio-pass-keywords"><span>Use functools.partial to pass keywords to the callback</span></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.remove_writer">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">remove_writer</code><span class="sig-paren">(</span><em>fd</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.remove_writer" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>書き込み可能なファイル記述子の監視を停止します。</p>
+</dd></dl>
+
+<p><a class="reference internal" href="#asyncio-watch-read-event"><span>読み込みイベント用のファイル記述子の監視</span></a> の例では、ソケットのファイル記述子の登録に低レベルの <a class="reference internal" href="#asyncio.BaseEventLoop.add_reader" title="asyncio.BaseEventLoop.add_reader"><code class="xref py py-meth docutils literal"><span class="pre">BaseEventLoop.add_reader()</span></code></a> メソッドを使用しています。</p>
+</div>
+<div class="section" id="low-level-socket-operations">
+<h2>18.5.1.8. 低レベルのソケット操作<a class="headerlink" href="#low-level-socket-operations" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.sock_recv">
+<em class="property">coroutine </em><code class="descclassname">BaseEventLoop.</code><code class="descname">sock_recv</code><span class="sig-paren">(</span><em>sock</em>, <em>nbytes</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.sock_recv" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>ソケットからデータを受信します。返り値は受信データを表すバイト列オブジェクトになります。一度に受信できる最大データ量は <em>nbytes</em> で指定します。</p>
+<p><a class="reference internal" href="asyncio-eventloops.html#asyncio.SelectorEventLoop" title="asyncio.SelectorEventLoop"><code class="xref py py-class docutils literal"><span class="pre">SelectorEventLoop</span></code></a> イベントループの場合、ソケット <em>sock</em> は非ブロックでなければなりません。</p>
+<p>このメソッドは <a class="reference internal" href="asyncio-task.html#coroutine"><span>コルーチン</span></a> です。</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<p class="last"><a class="reference internal" href="socket.html#socket.socket.recv" title="socket.socket.recv"><code class="xref py py-meth docutils literal"><span class="pre">socket.socket.recv()</span></code></a> メソッド。</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.sock_sendall">
+<em class="property">coroutine </em><code class="descclassname">BaseEventLoop.</code><code class="descname">sock_sendall</code><span class="sig-paren">(</span><em>sock</em>, <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.sock_sendall" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>ソケットにデータを送信します。ソケットはリモートソケットに接続されていなくてはなりません。このメソッドは <em>data</em> からのデータをすべて送信するか、エラーが発生するまで継続します。正常終了すると <code class="docutils literal"><span class="pre">None</span></code> が返ります。エラー発生時は例外が送出されますが、送信されたデータ量を確認する手段はありません。たとえあったとしても、それは接続の終了を受信してからでないと正常に処理できません。</p>
+<p><a class="reference internal" href="asyncio-eventloops.html#asyncio.SelectorEventLoop" title="asyncio.SelectorEventLoop"><code class="xref py py-class docutils literal"><span class="pre">SelectorEventLoop</span></code></a> イベントループの場合、ソケット <em>sock</em> は非ブロックでなければなりません。</p>
+<p>このメソッドは <a class="reference internal" href="asyncio-task.html#coroutine"><span>コルーチン</span></a> です。</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<p class="last"><a class="reference internal" href="socket.html#socket.socket.sendall" title="socket.socket.sendall"><code class="xref py py-meth docutils literal"><span class="pre">socket.socket.sendall()</span></code></a> メソッド。</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.sock_connect">
+<em class="property">coroutine </em><code class="descclassname">BaseEventLoop.</code><code class="descname">sock_connect</code><span class="sig-paren">(</span><em>sock</em>, <em>address</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.sock_connect" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>address</em> のリモートソケットに接続します。</p>
+<p><em>address</em> は、アドレスの DNS ルックアップが要求されたためにイベントループ全体がハング状態になることがないように解決済みでなければなりません。例えば、それはホスト名ではなく、<a class="reference internal" href="socket.html#socket.AF_INET" title="socket.AF_INET"><code class="xref py py-data docutils literal"><span class="pre">AF_INET</span></code></a> や <a class="reference internal" href="socket.html#socket.AF_INET6" title="socket.AF_INET6"><code class="xref py py-data docutils literal"><span class="pre">AF_INET6</span></code></a> アドレスファミリである IP アドレスでなければなりません。ホスト名の解決には <a class="reference internal" href="#asyncio.BaseEventLoop.getaddrinfo" title="asyncio.BaseEventLoop.getaddrinfo"><code class="xref py py-meth docutils literal"><span class="pre">getaddrinfo()</span></code></a> を使用してください。</p>
+<p><a class="reference internal" href="asyncio-eventloops.html#asyncio.SelectorEventLoop" title="asyncio.SelectorEventLoop"><code class="xref py py-class docutils literal"><span class="pre">SelectorEventLoop</span></code></a> イベントループの場合、ソケット <em>sock</em> は非ブロックでなければなりません。</p>
+<p>このメソッドは <a class="reference internal" href="asyncio-task.html#coroutine"><span>コルーチン</span></a> です。</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<p class="last"><a class="reference internal" href="#asyncio.BaseEventLoop.create_connection" title="asyncio.BaseEventLoop.create_connection"><code class="xref py py-meth docutils literal"><span class="pre">BaseEventLoop.create_connection()</span></code></a> メソッド、<a class="reference internal" href="asyncio-stream.html#asyncio.open_connection" title="asyncio.open_connection"><code class="xref py py-func docutils literal"><span class="pre">open_connection()</span></code></a> 関数および <a class="reference internal" href="socket.html#socket.socket.connect" title="socket.socket.connect"><code class="xref py py-meth docutils literal"><span class="pre">socket.socket.connect()</span></code></a> メソッド。</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.sock_accept">
+<em class="property">coroutine </em><code class="descclassname">BaseEventLoop.</code><code class="descname">sock_accept</code><span class="sig-paren">(</span><em>sock</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.sock_accept" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>接続を受け付けます。ソケットはアドレスに束縛済みで、待ち受け中である必要があります。返り値は <code class="docutils literal"><span class="pre">(conn,</span> <span class="pre">address)</span></code> のペアで、<em>conn</em> は接続を通じてデータの送受信を行うための <em>新しい</em> ソケットオブジェクト、<em>address</em> は接続先でソケットに束縛されているアドレスを示します。</p>
+<p>ソケット <em>sock</em> は非ブロックでなければなりません。</p>
+<p>このメソッドは <a class="reference internal" href="asyncio-task.html#coroutine"><span>コルーチン</span></a> です。</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<p class="last"><a class="reference internal" href="#asyncio.BaseEventLoop.create_server" title="asyncio.BaseEventLoop.create_server"><code class="xref py py-meth docutils literal"><span class="pre">BaseEventLoop.create_server()</span></code></a> メソッド、<a class="reference internal" href="asyncio-stream.html#asyncio.start_server" title="asyncio.start_server"><code class="xref py py-func docutils literal"><span class="pre">start_server()</span></code></a> 関数および <a class="reference internal" href="socket.html#socket.socket.accept" title="socket.socket.accept"><code class="xref py py-meth docutils literal"><span class="pre">socket.socket.accept()</span></code></a> メソッド。</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="resolve-host-name">
+<h2>18.5.1.9. ホスト名の解決<a class="headerlink" href="#resolve-host-name" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.getaddrinfo">
+<em class="property">coroutine </em><code class="descclassname">BaseEventLoop.</code><code class="descname">getaddrinfo</code><span class="sig-paren">(</span><em>host</em>, <em>port</em>, <em>*</em>, <em>family=0</em>, <em>type=0</em>, <em>proto=0</em>, <em>flags=0</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.getaddrinfo" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>このメソッドは <a class="reference internal" href="asyncio-task.html#coroutine"><span>コルーチン</span></a> で、<a class="reference internal" href="socket.html#socket.getaddrinfo" title="socket.getaddrinfo"><code class="xref py py-meth docutils literal"><span class="pre">socket.getaddrinfo()</span></code></a> 関数に似ていますが、ブロックされません。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.getnameinfo">
+<em class="property">coroutine </em><code class="descclassname">BaseEventLoop.</code><code class="descname">getnameinfo</code><span class="sig-paren">(</span><em>sockaddr</em>, <em>flags=0</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.getnameinfo" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>このメソッドは <a class="reference internal" href="asyncio-task.html#coroutine"><span>コルーチン</span></a> で、<a class="reference internal" href="socket.html#socket.getnameinfo" title="socket.getnameinfo"><code class="xref py py-meth docutils literal"><span class="pre">socket.getnameinfo()</span></code></a> 関数に似ていますが、ブロックされません。</p>
+</dd></dl>
+
+</div>
+<div class="section" id="connect-pipes">
+<h2>18.5.1.10. パイプの接続<a class="headerlink" href="#connect-pipes" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Windows の <a class="reference internal" href="asyncio-eventloops.html#asyncio.SelectorEventLoop" title="asyncio.SelectorEventLoop"><code class="xref py py-class docutils literal"><span class="pre">SelectorEventLoop</span></code></a> では、これらメソッドはサポートされていません。Windows でパイプをサポートするには、<a class="reference internal" href="asyncio-eventloops.html#asyncio.ProactorEventLoop" title="asyncio.ProactorEventLoop"><code class="xref py py-class docutils literal"><span class="pre">ProactorEventLoop</span></code></a> を使用してください。</p>
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.connect_read_pipe">
+<em class="property">coroutine </em><code class="descclassname">BaseEventLoop.</code><code class="descname">connect_read_pipe</code><span class="sig-paren">(</span><em>protocol_factory</em>, <em>pipe</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.connect_read_pipe" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>イベントループ内で読み込みパイプを登録します。</p>
+<p><em>protocol_factory</em> は <a class="reference internal" href="asyncio-protocol.html#asyncio.Protocol" title="asyncio.Protocol"><code class="xref py py-class docutils literal"><span class="pre">Protocol</span></code></a> インターフェースを持つオブジェクトのインスタンスを作成しなければなりません。<em>pipe</em> は <a class="reference internal" href="../glossary.html#term-file-object"><span class="xref std std-term">ファイルライクオブジェクト</span></a> です。<code class="docutils literal"><span class="pre">(トランスポート,</span> <span class="pre">プロトコル)</span></code> のペアを返し、<em>トランスポート</em> は <a class="reference internal" href="asyncio-protocol.html#asyncio.ReadTransport" title="asyncio.ReadTransport"><code class="xref py py-class docutils literal"><span class="pre">ReadTransport</span></code></a> インターフェースをサポートします。</p>
+<p><a class="reference internal" href="asyncio-eventloops.html#asyncio.SelectorEventLoop" title="asyncio.SelectorEventLoop"><code class="xref py py-class docutils literal"><span class="pre">SelectorEventLoop</span></code></a> イベントループの場合、<em>pipe</em> は非ブロックモードに設定されていなければなりません。</p>
+<p>このメソッドは <a class="reference internal" href="asyncio-task.html#coroutine"><span>コルーチン</span></a> です。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.connect_write_pipe">
+<em class="property">coroutine </em><code class="descclassname">BaseEventLoop.</code><code class="descname">connect_write_pipe</code><span class="sig-paren">(</span><em>protocol_factory</em>, <em>pipe</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.connect_write_pipe" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>イベントループ内の書き込みパイプを登録します。</p>
+<p><em>protocol_factory</em> は <code class="xref py py-class docutils literal"><span class="pre">BaseProtocol</span></code> で作成されたインスタンスオブジェクトでなければなりません。<em>pipe</em> は:term:<cite>ファイルライクオブジェクト &lt;file object&gt;</cite> です。<a href="#id1"><span class="problematic" id="id2">``</span></a>(transport, protocol)` のペアを返します。<em>transport</em> は <a class="reference internal" href="asyncio-protocol.html#asyncio.WriteTransport" title="asyncio.WriteTransport"><code class="xref py py-class docutils literal"><span class="pre">WriteTransport</span></code></a> インターフェースをサポートしています。</p>
+<p><a class="reference internal" href="asyncio-eventloops.html#asyncio.SelectorEventLoop" title="asyncio.SelectorEventLoop"><code class="xref py py-class docutils literal"><span class="pre">SelectorEventLoop</span></code></a> イベントループの場合、<em>pipe</em> は非ブロックモードに設定されていなければなりません。</p>
+<p>このメソッドは <a class="reference internal" href="asyncio-task.html#coroutine"><span>コルーチン</span></a> です。</p>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<p class="last"><a class="reference internal" href="asyncio-subprocess.html#asyncio.BaseEventLoop.subprocess_exec" title="asyncio.BaseEventLoop.subprocess_exec"><code class="xref py py-meth docutils literal"><span class="pre">BaseEventLoop.subprocess_exec()</span></code></a> および <a class="reference internal" href="asyncio-subprocess.html#asyncio.BaseEventLoop.subprocess_shell" title="asyncio.BaseEventLoop.subprocess_shell"><code class="xref py py-meth docutils literal"><span class="pre">BaseEventLoop.subprocess_shell()</span></code></a> メソッド。</p>
+</div>
+</div>
+<div class="section" id="unix-signals">
+<h2>18.5.1.11. UNIX シグナル<a class="headerlink" href="#unix-signals" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>利用できる環境: UNIX のみ。</p>
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.add_signal_handler">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">add_signal_handler</code><span class="sig-paren">(</span><em>signum</em>, <em>callback</em>, <em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.add_signal_handler" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>シグナル用のハンドラーを追加します。</p>
+<p>シグナルナンバーが誤っているか補足不可能な場合 <a class="reference internal" href="exceptions.html#ValueError" title="ValueError"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code></a> が送出されます。ハンドラーの設定に問題があった場合 <a class="reference internal" href="exceptions.html#RuntimeError" title="RuntimeError"><code class="xref py py-exc docutils literal"><span class="pre">RuntimeError</span></code></a> が送出されます。</p>
+<p><a class="reference internal" href="#asyncio-pass-keywords"><span>Use functools.partial to pass keywords to the callback</span></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.remove_signal_handler">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">remove_signal_handler</code><span class="sig-paren">(</span><em>sig</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.remove_signal_handler" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>シグナル用のハンドラーを削除します。</p>
+<p>シグナルハンドラーが削除されると <code class="docutils literal"><span class="pre">True</span></code> が、されなければ <code class="docutils literal"><span class="pre">False</span></code> を返します。</p>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<p class="last"><a class="reference internal" href="signal.html#module-signal" title="signal: Set handlers for asynchronous events."><code class="xref py py-mod docutils literal"><span class="pre">signal</span></code></a> モジュール。</p>
+</div>
+</div>
+<div class="section" id="executor">
+<h2>18.5.1.12. エグゼキューター<a class="headerlink" href="#executor" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p><a class="reference internal" href="concurrent.futures.html#concurrent.futures.Executor" title="concurrent.futures.Executor"><code class="xref py py-class docutils literal"><span class="pre">Executor</span></code></a> (スレッドプールまたはプロセスプール) 内の関数を呼び出します。デフォルトでは、一つのイベントループは一つのスレッドプールエグゼキューター (<a class="reference internal" href="concurrent.futures.html#concurrent.futures.ThreadPoolExecutor" title="concurrent.futures.ThreadPoolExecutor"><code class="xref py py-class docutils literal"><span class="pre">ThreadPoolExecutor</span></code></a>) を使用します。</p>
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.run_in_executor">
+<em class="property">coroutine </em><code class="descclassname">BaseEventLoop.</code><code class="descname">run_in_executor</code><span class="sig-paren">(</span><em>executor</em>, <em>callback</em>, <em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.run_in_executor" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>指定したエグゼキューター内で呼び出されるコールバックを準備します。</p>
+<p>引数 <em>executor</em> は <a class="reference internal" href="concurrent.futures.html#concurrent.futures.Executor" title="concurrent.futures.Executor"><code class="xref py py-class docutils literal"><span class="pre">Executor</span></code></a> のインスタンスでなければなりません。<em>executor</em> が <code class="docutils literal"><span class="pre">None</span></code> のときデフォルトのエグゼキューターが使用されます。</p>
+<p><a class="reference internal" href="#asyncio-pass-keywords"><span>Use functools.partial to pass keywords to the callback</span></a>.</p>
+<p>このメソッドは <a class="reference internal" href="asyncio-task.html#coroutine"><span>コルーチン</span></a> です。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.set_default_executor">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">set_default_executor</code><span class="sig-paren">(</span><em>executor</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.set_default_executor" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="#asyncio.BaseEventLoop.run_in_executor" title="asyncio.BaseEventLoop.run_in_executor"><code class="xref py py-meth docutils literal"><span class="pre">run_in_executor()</span></code></a> で使用されるエグゼキューターを設定します。</p>
+</dd></dl>
+
+</div>
+<div class="section" id="error-handling-api">
+<h2>18.5.1.13. エラーハンドリング API<a class="headerlink" href="#error-handling-api" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>イベントループ内での例外の扱い方をカスタマイズできます。</p>
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.set_exception_handler">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">set_exception_handler</code><span class="sig-paren">(</span><em>handler</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.set_exception_handler" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><em>handler</em> を新しいイベントループ例外ハンドラーとして設定します。</p>
+<p><em>handler</em> が <code class="docutils literal"><span class="pre">None</span></code> の場合、デフォルトの例外ハンドラーが設定されます。</p>
+<p><em>handler</em> が呼び出し可能オブジェクトの場合、<code class="docutils literal"><span class="pre">(loop,</span> <span class="pre">context)</span></code> へのマッチングシグネチャを持たなければなりません。<code class="docutils literal"><span class="pre">loop</span></code> はアクティブなイベントループへの参照、<code class="docutils literal"><span class="pre">context</span></code> は <code class="docutils literal"><span class="pre">dict</span></code> オブジェクトになります (コンテキストの詳細については <a class="reference internal" href="#asyncio.BaseEventLoop.call_exception_handler" title="asyncio.BaseEventLoop.call_exception_handler"><code class="xref py py-meth docutils literal"><span class="pre">call_exception_handler()</span></code></a> ドキュメントを参照してください)。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.default_exception_handler">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">default_exception_handler</code><span class="sig-paren">(</span><em>context</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.default_exception_handler" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>デフォルトの例外ハンドラーです。</p>
+<p>これは例外が発生したときおよび例外ハンドラーが設定されていないときに呼び出され、デフォルトとは振る舞いの異なるカスタム例外ハンドラーを呼び出すこともできます。</p>
+<p>パラメーター <em>context</em> は <a class="reference internal" href="#asyncio.BaseEventLoop.call_exception_handler" title="asyncio.BaseEventLoop.call_exception_handler"><code class="xref py py-meth docutils literal"><span class="pre">call_exception_handler()</span></code></a> と同じ意味です。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.call_exception_handler">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">call_exception_handler</code><span class="sig-paren">(</span><em>context</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.call_exception_handler" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>現在のイベントループ例外ハンドラーを呼び出します。</p>
+<p><em>context</em> は以下のキーを含む <code class="docutils literal"><span class="pre">dict</span></code> オブジェクトです (新しいキーは後で導入されます):</p>
+<ul class="simple">
+<li><p class="first">&#8216;message&#8217;: エラーメッセージ;</p>
+</li>
+<li><p class="first">&#8216;exception&#8217; (任意): 例外オブジェクト;</p>
+</li>
+<li><p class="first">&#8216;future&#8217; (任意): <a class="reference internal" href="asyncio-task.html#asyncio.Future" title="asyncio.Future"><code class="xref py py-class docutils literal"><span class="pre">asyncio.Future</span></code></a> インスタンス;</p>
+</li>
+<li><p class="first">&#8216;handle&#8217; (任意): <a class="reference internal" href="#asyncio.Handle" title="asyncio.Handle"><code class="xref py py-class docutils literal"><span class="pre">asyncio.Handle</span></code></a> インスタンス;</p>
+</li>
+<li><p class="first">&#8216;protocol&#8217; (任意): <a class="reference internal" href="asyncio-protocol.html#asyncio-protocol"><span>プロトコル</span></a> インスタンス;</p>
+</li>
+<li><p class="first">&#8216;transport&#8217; (任意): <a class="reference internal" href="asyncio-protocol.html#asyncio-transport"><span>トランスポート</span></a> インスタンス;</p>
+</li>
+<li><p class="first">&#8216;socket&#8217; (任意): <a class="reference internal" href="socket.html#socket.socket" title="socket.socket"><code class="xref py py-class docutils literal"><span class="pre">socket.socket</span></code></a> インスタンス;</p>
+</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">注釈</p>
+<p class="last">注意: このメソッドはサブクラス化されたイベントループ内でオーバーロードされてはなりません。あらゆるカスタム例外ハンドリングには、<a class="reference internal" href="#asyncio.BaseEventLoop.set_exception_handler" title="asyncio.BaseEventLoop.set_exception_handler"><code class="xref py py-meth docutils literal"><span class="pre">set_exception_handler()</span></code></a> メソッドを使用してください。</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="debug-mode">
+<h2>18.5.1.14. デバッグモード<a class="headerlink" href="#debug-mode" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.get_debug">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">get_debug</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.get_debug" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>イベントループのデバッグモード (<a class="reference internal" href="functions.html#bool" title="bool"><code class="xref py py-class docutils literal"><span class="pre">bool</span></code></a>) を取得します。</p>
+<p>環境変数 <span class="target" id="index-2"></span><a class="reference internal" href="../using/cmdline.html#envvar-PYTHONASYNCIODEBUG"><code class="xref std std-envvar docutils literal"><span class="pre">PYTHONASYNCIODEBUG</span></code></a> に空でない文字列が設定されている場合のデフォルト値は <code class="docutils literal"><span class="pre">True</span></code>、そうでない場合は <code class="docutils literal"><span class="pre">False</span></code> になります。</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.4.2 で追加.</span></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.BaseEventLoop.set_debug">
+<code class="descclassname">BaseEventLoop.</code><code class="descname">set_debug</code><span class="sig-paren">(</span><em>enabled: bool</em><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.BaseEventLoop.set_debug" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>イベントループのデバッグモードを設定します。</p>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.4.2 で追加.</span></p>
+</div>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<p class="last"><a class="reference internal" href="asyncio-dev.html#asyncio-debug-mode"><span>asyncio のデバッグモード</span></a>。</p>
+</div>
+</div>
+<div class="section" id="server">
+<h2>18.5.1.15. サーバー<a class="headerlink" href="#server" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<dl class="class">
+<dt id="asyncio.Server">
+<em class="property">class </em><code class="descclassname">asyncio.</code><code class="descname">Server</code><a class="headerlink" href="#asyncio.Server" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>ソケット上で待ち受けるサーバーです。</p>
+<p><a class="reference internal" href="#asyncio.BaseEventLoop.create_server" title="asyncio.BaseEventLoop.create_server"><code class="xref py py-meth docutils literal"><span class="pre">BaseEventLoop.create_server()</span></code></a> メソッドおよび <a class="reference internal" href="asyncio-stream.html#asyncio.start_server" title="asyncio.start_server"><code class="xref py py-func docutils literal"><span class="pre">start_server()</span></code></a> 関数によって作成されたオブジェクトです。クラスから直接インスタンスを作成しないでください。</p>
+<dl class="method">
+<dt id="asyncio.Server.close">
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.Server.close" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>サーバーを停止します: 待ち受けているソケットをクローズし <a class="reference internal" href="#asyncio.Server.sockets" title="asyncio.Server.sockets"><code class="xref py py-attr docutils literal"><span class="pre">sockets</span></code></a> 属性に <code class="docutils literal"><span class="pre">None</span></code> を設定します。</p>
+<p>既存の受信中のクライアントとの接続を表すソケットはオープンされたままになります。</p>
+<p>サーバーは非同期に停止されます。サーバーの停止を待ちたい場合は <a class="reference internal" href="#asyncio.Server.wait_closed" title="asyncio.Server.wait_closed"><code class="xref py py-meth docutils literal"><span class="pre">wait_closed()</span></code></a> コルーチンを使用します。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="asyncio.Server.wait_closed">
+<em class="property">coroutine </em><code class="descname">wait_closed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.Server.wait_closed" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="#asyncio.Server.close" title="asyncio.Server.close"><code class="xref py py-meth docutils literal"><span class="pre">close()</span></code></a> メソッドが完了するまで待ちます。</p>
+<p>このメソッドは <a class="reference internal" href="asyncio-task.html#coroutine"><span>コルーチン</span></a> です。</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="asyncio.Server.sockets">
+<code class="descname">sockets</code><a class="headerlink" href="#asyncio.Server.sockets" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>サーバーが待ち受けている <a class="reference internal" href="socket.html#socket.socket" title="socket.socket"><code class="xref py py-class docutils literal"><span class="pre">socket.socket</span></code></a> オブジェクトのリストです。サーバーが停止しているときは <code class="docutils literal"><span class="pre">None</span></code> になります。</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="handle">
+<h2>18.5.1.16. ハンドル<a class="headerlink" href="#handle" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<dl class="class">
+<dt id="asyncio.Handle">
+<em class="property">class </em><code class="descclassname">asyncio.</code><code class="descname">Handle</code><a class="headerlink" href="#asyncio.Handle" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="#asyncio.BaseEventLoop.call_soon" title="asyncio.BaseEventLoop.call_soon"><code class="xref py py-func docutils literal"><span class="pre">BaseEventLoop.call_soon()</span></code></a>、<a class="reference internal" href="#asyncio.BaseEventLoop.call_soon_threadsafe" title="asyncio.BaseEventLoop.call_soon_threadsafe"><code class="xref py py-func docutils literal"><span class="pre">BaseEventLoop.call_soon_threadsafe()</span></code></a>、<a class="reference internal" href="#asyncio.BaseEventLoop.call_later" title="asyncio.BaseEventLoop.call_later"><code class="xref py py-func docutils literal"><span class="pre">BaseEventLoop.call_later()</span></code></a> および <a class="reference internal" href="#asyncio.BaseEventLoop.call_at" title="asyncio.BaseEventLoop.call_at"><code class="xref py py-func docutils literal"><span class="pre">BaseEventLoop.call_at()</span></code></a> によって返されるコールバックのラッパーオブジェクトです。</p>
+<dl class="method">
+<dt id="asyncio.Handle.cancel">
+<code class="descname">cancel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#asyncio.Handle.cancel" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Cancel the call.  If the callback is already canceled or executed,
+this method has no effect.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="event-loop-examples">
+<h2>18.5.1.17. イベントループの例<a class="headerlink" href="#event-loop-examples" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="section" id="hello-world-with-call-soon">
+<span id="asyncio-hello-world-callback"></span><h3>18.5.1.17.1. call_soon() を使った Hello World<a class="headerlink" href="#hello-world-with-call-soon" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Example using the <a class="reference internal" href="#asyncio.BaseEventLoop.call_soon" title="asyncio.BaseEventLoop.call_soon"><code class="xref py py-meth docutils literal"><span class="pre">BaseEventLoop.call_soon()</span></code></a> method to schedule a
+callback. The callback displays <code class="docutils literal"><span class="pre">&quot;Hello</span> <span class="pre">World&quot;</span></code> and then stops the event
+loop:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">asyncio</span>
+
+<span class="k">def</span> <span class="nf">hello_world</span><span class="p">(</span><span class="n">loop</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Hello World&#39;</span><span class="p">)</span>
+    <span class="n">loop</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+<span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+
+<span class="c"># Schedule a call to hello_world()</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">call_soon</span><span class="p">(</span><span class="n">hello_world</span><span class="p">,</span> <span class="n">loop</span><span class="p">)</span>
+
+<span class="c"># Blocking call interrupted by loop.stop()</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">run_forever</span><span class="p">()</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<p class="last"><a class="reference internal" href="asyncio-task.html#asyncio-hello-world-coroutine"><span>コルーチンを使った Hello World</span></a> の例では <a class="reference internal" href="asyncio-task.html#coroutine"><span>コルーチン</span></a> を使用しています。</p>
+</div>
+</div>
+<div class="section" id="display-the-current-date-with-call-later">
+<span id="asyncio-date-callback"></span><h3>18.5.1.17.2. Display the current date with call_later()<a class="headerlink" href="#display-the-current-date-with-call-later" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Example of callback displaying the current date every second. The callback uses
+the <a class="reference internal" href="#asyncio.BaseEventLoop.call_later" title="asyncio.BaseEventLoop.call_later"><code class="xref py py-meth docutils literal"><span class="pre">BaseEventLoop.call_later()</span></code></a> method to reschedule itself during 5
+seconds, and then stops the event loop:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="k">def</span> <span class="nf">display_date</span><span class="p">(</span><span class="n">end_time</span><span class="p">,</span> <span class="n">loop</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">loop</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">end_time</span><span class="p">:</span>
+        <span class="n">loop</span><span class="o">.</span><span class="n">call_later</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">display_date</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="n">loop</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">loop</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+<span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+
+<span class="c"># Schedule the first call to display_date()</span>
+<span class="n">end_time</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="mf">5.0</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">call_soon</span><span class="p">(</span><span class="n">display_date</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="n">loop</span><span class="p">)</span>
+
+<span class="c"># Blocking call interrupted by loop.stop()</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">run_forever</span><span class="p">()</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<p class="last">The <a class="reference internal" href="asyncio-task.html#asyncio-date-coroutine"><span>coroutine displaying the current date</span></a> example uses a <a class="reference internal" href="asyncio-task.html#coroutine"><span>coroutine</span></a>.</p>
+</div>
+</div>
+<div class="section" id="watch-a-file-descriptor-for-read-events">
+<span id="asyncio-watch-read-event"></span><h3>18.5.1.17.3. 読み込みイベント用ファイル記述子の監視<a class="headerlink" href="#watch-a-file-descriptor-for-read-events" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>ファイル記述子が <a class="reference internal" href="#asyncio.BaseEventLoop.add_reader" title="asyncio.BaseEventLoop.add_reader"><code class="xref py py-meth docutils literal"><span class="pre">BaseEventLoop.add_reader()</span></code></a> を使用してデータを受信するまで待機し、その後イベントループを閉じます:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">socket</span> <span class="k">import</span> <span class="n">socketpair</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">asyncio.windows_utils</span> <span class="k">import</span> <span class="n">socketpair</span>
+
+<span class="c"># Create a pair of connected file descriptors</span>
+<span class="n">rsock</span><span class="p">,</span> <span class="n">wsock</span> <span class="o">=</span> <span class="n">socketpair</span><span class="p">()</span>
+<span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">reader</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">rsock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s">&quot;Received:&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+    <span class="c"># We are done: unregister the file descriptor</span>
+    <span class="n">loop</span><span class="o">.</span><span class="n">remove_reader</span><span class="p">(</span><span class="n">rsock</span><span class="p">)</span>
+    <span class="c"># Stop the event loop</span>
+    <span class="n">loop</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+<span class="c"># Register the file descriptor for read event</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">add_reader</span><span class="p">(</span><span class="n">rsock</span><span class="p">,</span> <span class="n">reader</span><span class="p">)</span>
+
+<span class="c"># Simulate the reception of data from the network</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">call_soon</span><span class="p">(</span><span class="n">wsock</span><span class="o">.</span><span class="n">send</span><span class="p">,</span> <span class="s">&#39;abc&#39;</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+
+<span class="c"># Run the event loop</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">run_forever</span><span class="p">()</span>
+
+<span class="c"># We are done, close sockets and the event loop</span>
+<span class="n">rsock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="n">wsock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<p>The <a class="reference internal" href="asyncio-protocol.html#asyncio-register-socket"><span>プロトコルを使ってデータを待つオープンソケットの登録</span></a> の例では <a class="reference internal" href="#asyncio.BaseEventLoop.create_connection" title="asyncio.BaseEventLoop.create_connection"><code class="xref py py-meth docutils literal"><span class="pre">BaseEventLoop.create_connection()</span></code></a> メソッドによって作成された低レベルプロトコルを使用しています。</p>
+<p class="last"><a class="reference internal" href="asyncio-stream.html#asyncio-register-socket-streams"><span>ストリームを使ってデータを待つオープンソケットの登録</span></a> の例ではコルーチンの <a class="reference internal" href="asyncio-stream.html#asyncio.open_connection" title="asyncio.open_connection"><code class="xref py py-func docutils literal"><span class="pre">open_connection()</span></code></a> 関数によって作成された高レベルストリームを使用しています。</p>
+</div>
+</div>
+<div class="section" id="set-signal-handlers-for-sigint-and-sigterm">
+<h3>18.5.1.17.4. SIGINT および SIGTERM 用のシグナルハンドラーの設定<a class="headerlink" href="#set-signal-handlers-for-sigint-and-sigterm" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p><a class="reference internal" href="#asyncio.BaseEventLoop.add_signal_handler" title="asyncio.BaseEventLoop.add_signal_handler"><code class="xref py py-meth docutils literal"><span class="pre">BaseEventLoop.add_signal_handler()</span></code></a> メソッドを使用した、シグナル <code class="xref py py-data docutils literal"><span class="pre">SIGINT</span></code> および <code class="xref py py-data docutils literal"><span class="pre">SIGTERM</span></code> 用のハンドラーを登録します:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">signal</span>
+
+<span class="k">def</span> <span class="nf">ask_exit</span><span class="p">(</span><span class="n">signame</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s">&quot;got signal %s: exit&quot;</span> <span class="o">%</span> <span class="n">signame</span><span class="p">)</span>
+    <span class="n">loop</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+<span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">signame</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;SIGINT&#39;</span><span class="p">,</span> <span class="s">&#39;SIGTERM&#39;</span><span class="p">):</span>
+    <span class="n">loop</span><span class="o">.</span><span class="n">add_signal_handler</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">signame</span><span class="p">),</span>
+                            <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">ask_exit</span><span class="p">,</span> <span class="n">signame</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s">&quot;Event loop running forever, press CTRL+c to interrupt.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s">&quot;pid %s: send SIGINT or SIGTERM to exit.&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">loop</span><span class="o">.</span><span class="n">run_forever</span><span class="p">()</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This example only works on UNIX.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">18.5.1. 基底イベントループ</a><ul>
+<li><a class="reference internal" href="#run-an-event-loop">18.5.1.1. イベントループの実行</a></li>
+<li><a class="reference internal" href="#calls">18.5.1.2. 呼び出し</a></li>
+<li><a class="reference internal" href="#delayed-calls">18.5.1.3. 遅延呼び出し</a></li>
+<li><a class="reference internal" href="#tasks">18.5.1.4. Tasks</a></li>
+<li><a class="reference internal" href="#creating-connections">18.5.1.5. コネクションの作成</a></li>
+<li><a class="reference internal" href="#creating-listening-connections">18.5.1.6. 待ち受けコネクションの作成</a></li>
+<li><a class="reference internal" href="#watch-file-descriptors">18.5.1.7. ファイル記述子の監視</a></li>
+<li><a class="reference internal" href="#low-level-socket-operations">18.5.1.8. 低レベルのソケット操作</a></li>
+<li><a class="reference internal" href="#resolve-host-name">18.5.1.9. ホスト名の解決</a></li>
+<li><a class="reference internal" href="#connect-pipes">18.5.1.10. パイプの接続</a></li>
+<li><a class="reference internal" href="#unix-signals">18.5.1.11. UNIX シグナル</a></li>
+<li><a class="reference internal" href="#executor">18.5.1.12. エグゼキューター</a></li>
+<li><a class="reference internal" href="#error-handling-api">18.5.1.13. エラーハンドリング API</a></li>
+<li><a class="reference internal" href="#debug-mode">18.5.1.14. デバッグモード</a></li>
+<li><a class="reference internal" href="#server">18.5.1.15. サーバー</a></li>
+<li><a class="reference internal" href="#handle">18.5.1.16. ハンドル</a></li>
+<li><a class="reference internal" href="#event-loop-examples">18.5.1.17. イベントループの例</a><ul>
+<li><a class="reference internal" href="#hello-world-with-call-soon">18.5.1.17.1. call_soon() を使った Hello World</a></li>
+<li><a class="reference internal" href="#display-the-current-date-with-call-later">18.5.1.17.2. Display the current date with call_later()</a></li>
+<li><a class="reference internal" href="#watch-a-file-descriptor-for-read-events">18.5.1.17.3. 読み込みイベント用ファイル記述子の監視</a></li>
+<li><a class="reference internal" href="#set-signal-handlers-for-sigint-and-sigterm">18.5.1.17.4. SIGINT および SIGTERM 用のシグナルハンドラーの設定</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="asyncio.html"
+                        title="前の章へ">18.5. <code class="docutils literal"><span class="pre">asyncio</span></code> &#8211; 非同期 I/O、イベントループ、コルーチンおよびタスク</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="asyncio-eventloops.html"
+                        title="次の章へ">18.5.2. イベントループ</a></p>
+<h3>このページ</h3>
+<ul class="this-page-menu">
+  <li><a href="../bugs.html">Report a Bug</a></li>
+  <li><a href="../_sources/library/asyncio-eventloop.txt"
+         rel="nofollow">Show Source</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="asyncio-eventloops.html" title="18.5.2. イベントループ"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="asyncio.html" title="18.5. asyncio – 非同期 I/O、イベントループ、コルーチンおよびタスク"
+             >前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="https://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.4.3</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Python 標準ライブラリ</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="ipc.html" >18. プロセス間通信とネットワーク</a> &raquo;</li>
+          <li class="nav-item nav-item-3"><a href="asyncio.html" >18.5. <code class="docutils literal"><span class="pre">asyncio</span></code> &#8211; 非同期 I/O、イベントループ、コルーチンおよびタスク</a> &raquo;</li> 
+      </ul>
+    </div>  
+    <div class="footer">
+    &copy; <a href="../copyright.html">Copyright</a> 1990-2015, Python Software Foundation.
+    <br />
+    The Python Software Foundation is a non-profit corporation.
+    <a href="https://www.python.org/psf/donations/">Please donate.</a>
+    <br />
+    Last updated on Dec 28, 2015.
+    <a href="../bugs.html">Found a bug</a>?
+    <br />
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1.
+    <br />
+    <a href="https://github.com/python-doc-ja/python-doc-ja">Pythonドキュメント日本語翻訳プロジェクト</a>
+    によって翻訳されました。
+    <a href="https://github.com/python-doc-ja/python-doc-ja/issues">誤訳を報告する。</a>
+    </div>
+
+  </body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2. Python インタプリタを使う &mdash; Python 3.3.6 ドキュメント</title>
+    
+    <link rel="stylesheet" href="../_static/pydoctheme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.3.6',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Python 3.3.6 ドキュメント 内を検索"
+          href="../_static/opensearch.xml"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="Python 3.3.6 ドキュメント" href="../contents.html" />
+    <link rel="up" title="Python チュートリアル" href="index.html" />
+    <link rel="next" title="3. 形式ばらない Python の紹介" href="introduction.html" />
+    <link rel="prev" title="1. やる気を高めよう" href="appetite.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/py.png" />
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/_jp.js"></script>
+    <script type="text/javascript" src="../_static/version_switch.js"></script>
+    
+ 
+
+  <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-34175846-1', 'python.jp');
+        ga('send', 'pageview');
+
+      </script>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="introduction.html" title="3. 形式ばらない Python の紹介"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="appetite.html" title="1. やる気を高めよう"
+             accesskey="P">前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="http://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.3.6</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Python チュートリアル</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="using-the-python-interpreter">
+<span id="tut-using"></span><h1>2. Python インタプリタを使う<a class="headerlink" href="#using-the-python-interpreter" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="invoking-the-interpreter">
+<span id="tut-invoking"></span><h2>2.1. インタプリタを起動する<a class="headerlink" href="#invoking-the-interpreter" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Python インタプリタは、それが使えるマシン上では通常 <code class="file docutils literal"><span class="pre">/usr/local/bin/python3.3</span></code> としてインストールされています; Unix シェルの検索パスに <code class="file docutils literal"><span class="pre">/usr/local/bin</span></code> を入れることによって、次のコマンドをタイプしてインタプリタを開始することができます:</p>
+<div class="highlight-text"><div class="highlight"><pre>python3.3
+</pre></div>
+</div>
+<p><a class="footnote-reference" href="#id3" id="id1">[1]</a> どのディレクトリに Python インタプリタをインストールするかはインストール時に選択できるので、インタプリタは他のディレクトリにあるかもしれません; 身近な Python に詳しい人か、システム管理者に聞いてみてください。 (例えば、その他の場所としては <code class="file docutils literal"><span class="pre">/usr/local/python</span></code> が一般的です。)</p>
+<p>Windows では、 Python は大抵の場合 <code class="file docutils literal"><span class="pre">C:\Python33</span></code> にインストールされますが、インストーラ実行時に変更することができます。このディレクトリをあなたのパスに追加するには、以下のコマンドをコマンドプロンプトで実行してください。</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="nb">set</span> <span class="n">path</span><span class="o">=%</span><span class="n">path</span><span class="o">%</span><span class="p">;</span><span class="n">C</span><span class="p">:</span>\<span class="n">python33</span>
+</pre></div>
+</div>
+<p>ファイル終端文字 (Unixでは <code class="kbd docutils literal"><span class="pre">Control-D</span></code> 、DOS や Windows では <code class="kbd docutils literal"><span class="pre">Control-Z</span></code>) を一次プロンプト (訳注: &#8216;&gt;&gt;&gt;&#8217; のこと) に入力すると、インタプリタが終了ステータス 0 で終了します。もしこの操作がうまく働かないなら、コマンド: <code class="docutils literal"><span class="pre">quit()</span></code> と入力すればインタプリタを終了できます。</p>
+<p>通常、インタプリタの行編集機能は、あまり洗練されたものではありません。 Unix では、インタプリタをインストールした誰かが GNU readline ライブラリのサポートを有効にしていれば、洗練された対話的行編集やヒストリ機能が利用できます。コマンドライン編集機能がサポートされているかを最も手っ取り早く調べる方法は、おそらく最初に表示された Python プロンプトに Control-P を入力してみることでしょう。ビープ音が鳴るなら、コマンドライン編集機能があります。編集キーについての解説は付録 <a class="reference internal" href="interactive.html#tut-interacting"><span>対話入力編集とヒストリ置換</span></a> を参照してください。何も起こらないように見えるか、 <code class="docutils literal"><span class="pre">^P</span></code> がエコーバックされるなら、コマンドライン編集機能は利用できません。この場合、現在編集中の行から文字を削除するにはバックスペースを使うしかありません。</p>
+<p>インタプリタはさながら Unix シェルのように働きます。標準入力が端末に接続された状態で呼び出されると、コマンドを対話的に読み込んで実行します。ファイル名を引数にしたり、標準入力からファイルを入力すると、インタプリタはファイルから <em>スクリプト</em> を読み込んで実行します。</p>
+<p>インタプリタを起動する第二の方法は <code class="docutils literal"><span class="pre">python</span> <span class="pre">-c</span> <span class="pre">command</span> <span class="pre">[arg]</span> <span class="pre">...</span></code> です。この形式では、シェルの <a class="reference internal" href="../using/cmdline.html#cmdoption-c"><code class="xref std std-option docutils literal"><span class="pre">-c</span></code></a> オプションと同じように、 <em>command</em> に指定した文を実行します。 Python 文には、スペースなどのシェルにとって特殊な意味をもつ文字がしばしば含まれるので、 <em>command</em> 全体をシングルクォート(訳注: <code class="docutils literal"><span class="pre">'</span></code>)で囲っておいたほうが良いでしょう。</p>
+<p>Python のモジュールには、スクリプトとしても便利に使えるものがあります。 <code class="docutils literal"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">module</span> <span class="pre">[arg]</span> <span class="pre">...</span></code> のようにすると、 <em>module</em> のソースファイルを、フルパスを指定して起動したかのように実行できます。</p>
+<p>スクリプトファイルが使われた場合、スクリプトを走らせて、そのまま対話モードに入れると便利なことがあります。これには <a class="reference internal" href="../using/cmdline.html#cmdoption-i"><code class="xref std std-option docutils literal"><span class="pre">-i</span></code></a> をスクリプトの前に追加します。</p>
+<div class="section" id="argument-passing">
+<span id="tut-argpassing"></span><h3>2.1.1. 引数の受け渡し<a class="headerlink" href="#argument-passing" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>スクリプト名と引数を指定してインタプリタを起動した場合、スクリプト名やスクリプト名以後に指定した引数は、文字列のリストに変換されて <code class="docutils literal"><span class="pre">sys</span></code> モジュールの <code class="docutils literal"><span class="pre">argv</span></code> 変数に格納されます。 <code class="docutils literal"><span class="pre">import</span> <span class="pre">sys</span></code> することでこのリストにアクセスすることができます。 <code class="docutils literal"><span class="pre">sys.argv</span></code> には少なくとも一つ要素が入っています。スクリプト名も引数も指定しなければ <code class="docutils literal"><span class="pre">sys.argv[0]</span></code> は空の文字列になります。スクリプト名の代わりに <code class="docutils literal"><span class="pre">'-'</span></code> (標準入力を意味します) を指定すると、 <code class="docutils literal"><span class="pre">sys.argv[0]</span></code> は <code class="docutils literal"><span class="pre">'-'</span></code> になります。 <a class="reference internal" href="../using/cmdline.html#cmdoption-c"><code class="xref std std-option docutils literal"><span class="pre">-c</span></code></a>  <em>command</em> を使うと、 <code class="docutils literal"><span class="pre">sys.argv[0]</span></code> は <code class="docutils literal"><span class="pre">'-c'</span></code> になります。 <a class="reference internal" href="../using/cmdline.html#cmdoption-m"><code class="xref std std-option docutils literal"><span class="pre">-m</span></code></a> <em>module</em> を使った場合、 <code class="docutils literal"><span class="pre">sys.argv[0]</span></code> はモジュールのフルパスになります。 <a class="reference internal" href="../using/cmdline.html#cmdoption-c"><code class="xref std std-option docutils literal"><span class="pre">-c</span></code></a> <em>command</em> や <a class="reference internal" href="../using/cmdline.html#cmdoption-m"><code class="xref std std-option docutils literal"><span class="pre">-m</span></code></a> <em>module</em> の後ろにオプションを指定した場合、 Python インタプリタ自体はこれらの引数を処理せず、 <code class="docutils literal"><span class="pre">sys.argv</span></code> を介して <em>command</em> や <em>module</em> から扱えるようになります。</p>
+</div>
+<div class="section" id="interactive-mode">
+<span id="tut-interactive"></span><h3>2.1.2. 対話モード<a class="headerlink" href="#interactive-mode" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>インタプリタが命令を端末 (tty) やコマンドプロンプトから読み取っている場合、インタプリタは <em>対話モード (interactive mode)</em> で動作しているといいます。このモードでは、インタプリタは <em>一次プロンプト (primary prompt)</em> を表示して、ユーザにコマンドを入力するよう促します。一次プロンプトは普通、三つの「大なり記号」 (<code class="docutils literal"><span class="pre">&gt;&gt;&gt;</span></code>) です。一つの入力が次の行まで続く (行継続: continuation line を行う) 場合、インタプリタは <em>二次プロンプト (secondary prompt)</em> を表示します。二次プロンプトは、デフォルトでは三つのドット (<code class="docutils literal"><span class="pre">...</span></code>) です。インタプリタは、最初のプロンプトを出す前にバージョン番号と著作権表示から始まる起動メッセージを出力します:</p>
+<div class="highlight-python3"><div class="highlight"><pre>$ python3.3
+Python 3.3 (default, Sep 24 2012, 09:25:04)
+[GCC 4.6.3] on linux2
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+&gt;&gt;&gt;
+</pre></div>
+</div>
+<p>行継続は、例えば以下の <a class="reference internal" href="../reference/compound_stmts.html#if"><code class="xref std std-keyword docutils literal"><span class="pre">if</span></code></a> 文のように、複数の行からなる構文を入力するときに必要です:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">the_world_is_flat</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">the_world_is_flat</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s">&quot;Be careful not to fall off!&quot;</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">Be careful not to fall off!</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="the-interpreter-and-its-environment">
+<span id="tut-interp"></span><h2>2.2. インタプリタとその環境<a class="headerlink" href="#the-interpreter-and-its-environment" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="section" id="error-handling">
+<span id="tut-error"></span><h3>2.2.1. エラー処理<a class="headerlink" href="#error-handling" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>エラーが発生すると、インタプリタはエラーメッセージとスタックトレース (stack trace) を出力します。対話モードにいるときは、インタプリタは一次プロンプトに戻ります; スクリプトをファイルから実行しているときは、インタプリタはスタックトレースを出力した後、非ゼロの終了ステータスで終了します。 (<a class="reference internal" href="../reference/compound_stmts.html#try"><code class="xref std std-keyword docutils literal"><span class="pre">try</span></code></a> 文の <a class="reference internal" href="../reference/compound_stmts.html#except"><code class="xref std std-keyword docutils literal"><span class="pre">except</span></code></a> 節で処理された例外は、ここでいうエラーにはあたりません。) いくつかのエラーは常に致命的であり、非ゼロの終了ステータスとなるプログラムの終了を引き起こします。例えばインタプリタ内部の矛盾やある種のメモリ枯渇が当てはまります。エラーメッセージは全て標準エラー出力に書き込まれます; これに対して、通常は実行した命令から出力される内容は標準出力に書き込まれます。</p>
+<p>割り込み文字 (interrupt character、普通は Control-C か DEL) を一次または二次プロンプトに対してタイプすると、入力が取り消されて一次プロンプトに戻ります。 <a class="footnote-reference" href="#id4" id="id2">[2]</a> コマンドの実行中に割り込み文字をタイプすると <a class="reference internal" href="../library/exceptions.html#KeyboardInterrupt" title="KeyboardInterrupt"><code class="xref py py-exc docutils literal"><span class="pre">KeyboardInterrupt</span></code></a> 例外が送出されます。この例外は <a class="reference internal" href="../reference/compound_stmts.html#try"><code class="xref std std-keyword docutils literal"><span class="pre">try</span></code></a> 文で処理できます。</p>
+</div>
+<div class="section" id="executable-python-scripts">
+<span id="tut-scripts"></span><h3>2.2.2. 実行可能な Python スクリプト<a class="headerlink" href="#executable-python-scripts" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>BSD 風の Unix システムでは、Python スクリプトはシェルスクリプトのように直接実行可能にできます。これを行うには、以下の行</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="c">#! /usr/bin/env python3.3</span>
+</pre></div>
+</div>
+<p>(ここではインタプリタがユーザの <span class="target" id="index-4"></span><code class="xref std std-envvar docutils literal"><span class="pre">PATH</span></code> 上にあると仮定しています) をスクリプトの先頭に置き、スクリプトファイルに実行可能モードを設定します。 <code class="docutils literal"><span class="pre">#!</span></code> はファイルの最初の２文字でなければなりません。プラットフォームによっては、この最初の行を終端する改行文字が Windows 形式 (<code class="docutils literal"><span class="pre">'\r\n'</span></code>) ではなく、 Unix形式(<code class="docutils literal"><span class="pre">'\n'</span></code>)でなければならないことがあります。ハッシュまたはポンド文字、すなわち <code class="docutils literal"><span class="pre">'#'</span></code> は、Python ではコメントを書き始めるために使われていることに注意してください。</p>
+<p><strong class="program">chmod</strong> コマンドを使えば、スクリプトに実行モード (または実行権) を与えることができます:</p>
+<div class="highlight-python3"><div class="highlight"><pre>$ chmod +x myscript.py
+</pre></div>
+</div>
+<p>Windows では、&#8221;実行モード&#8221; のような概念はありません。 Python のインストーラーは自動的に <code class="docutils literal"><span class="pre">.py</span></code> ファイルを <code class="docutils literal"><span class="pre">python.exe</span></code> に関連付けるので、 Python ファイルをダブルクリックするとそれをスクリプトとして実行します。 <code class="docutils literal"><span class="pre">.pyw</span></code> 拡張子も(訳注: <code class="docutils literal"><span class="pre">pythonw.exe</span></code> に)関連付けられ、通常コンソールウィンドウを抑制して実行します。</p>
+</div>
+<div class="section" id="source-code-encoding">
+<span id="tut-source-encoding"></span><h3>2.2.3. ソースコードの文字コード<a class="headerlink" href="#source-code-encoding" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>デフォルトでは、 Python のソースコードは UTF-8 でエンコードされているものとして扱われます。 UTF-8 では、世界中のほとんどの言語の文字を同時に文字列リテラルや識別子やコメント中に書くことができます。 &#8212; ただし、標準ライブラリは識別子に ASCII 文字のみを利用していて、その他のポータブルなコードもその慣習に従うべきです。
+それらの文字を正しく表示するためには、エディターはそのファイルが UTF-8 である事を識別して、そのファイルに含まれている文字を全てサポートしたフォントを使わなければなりません。</p>
+<p>ソースファイルで扱う異なるエンコーディングを指定することもできます。そのためには、 <code class="docutils literal"><span class="pre">#!</span></code> 行の直後に、ソースファイルエンコーディングを定義する特殊なコメント行を置いてください:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="c"># -*- coding: encoding -*-</span>
+</pre></div>
+</div>
+<p>このように宣言しておくと、ソースファイル中の全ては UTF-8 ではなく <em>encoding</em> という文字コードでエンコードされているものとして扱われます。実際に利用できるエンコードのリストは Python ライブラリリファレンスの <a class="reference internal" href="../library/codecs.html#module-codecs" title="codecs: Encode and decode data and streams."><code class="xref py py-mod docutils literal"><span class="pre">codecs</span></code></a> の節にあります。訳注: <em>エンコーディング</em> の部分には、実際には <code class="docutils literal"><span class="pre">utf-8</span></code> や <code class="docutils literal"><span class="pre">cp932</span></code> など、そのソースコードのエンコーディングを記述します。プログラムから日本語を扱う場合には、必ずある程度の文字コードの知識が必要になります。もし文字コードについてよく判らないのであれば、まずは英語だけ扱いながらチュートリアルを読み進めて、並行して文字コードについても勉強してみましょう。現在は、 Unicode の扱い易さの観点から、推奨される文字コードは <code class="docutils literal"><span class="pre">utf-8</span></code> です。ただし、 <code class="docutils literal"><span class="pre">utf-8</span></code> でソースを書いた場合、 <code class="docutils literal"><span class="pre">utf-8</span></code> を表示できない Windows のコマンドプロンプトは <code class="docutils literal"><span class="pre">print</span> <span class="pre">&quot;こんにちは&quot;</span></code> を実行すると文字化けを起こすでしょう。その場合は、互換性のために古い <code class="docutils literal"><span class="pre">cp932</span></code> エンコーディングを使うか、 <code class="docutils literal"><span class="pre">print</span> <span class="pre">u&quot;こんにちは&quot;</span></code> のように Unicode 文字列を使います。</p>
+<p>例えば、エディターが UTF-8 でエンコードされたファイルをサポートせず他のエンコーディング、例えば Windows-1252 を利用しないといけない場合、次のように書くことができます:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="c"># -*- coding: cp-1252 -*-</span>
+</pre></div>
+</div>
+<p>そして Windows-1252 文字集合中の文字をソースコード中に使うことができます。
+この特殊なエンコーディングコメントはファイルの <em>1行目か2行目</em> に書く必要があります。</p>
+</div>
+<div class="section" id="the-interactive-startup-file">
+<span id="tut-startup"></span><h3>2.2.4. 対話モード用の起動時実行ファイル<a class="headerlink" href="#the-interactive-startup-file" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Python を対話的に使うときには、インタプリタが起動する度に実行される何らかの標準的なコマンドがあると便利なことがよくあります。これを行うには、 <span class="target" id="index-5"></span><a class="reference internal" href="../using/cmdline.html#envvar-PYTHONSTARTUP"><code class="xref std std-envvar docutils literal"><span class="pre">PYTHONSTARTUP</span></code></a> と呼ばれる環境変数を、インタプリタ起動時に実行されるコマンドが入ったファイル名に設定します。この機能は Unix シェルの <code class="file docutils literal"><span class="pre">.profile</span></code> に似ています。</p>
+<p>このファイルは対話セッションのときだけ読み出されます。 Python がコマンドをスクリプトから読み出しているときや、 <code class="file docutils literal"><span class="pre">/dev/tty</span></code> がコマンドの入力元として明示的に指定されている(この場合対話的セッションのように動作します) <em>わけではない</em> 場合にはこのファイルは読み出されません。ファイル内のコマンドは、対話的コマンドが実行される名前空間と同じ名前空間内で実行されます。このため、ファイル内で定義されていたり import されたオブジェクトは、そのまま対話セッション内で使うことができます。また、このファイル内で <code class="docutils literal"><span class="pre">sys.ps1</span></code> や <code class="docutils literal"><span class="pre">sys.ps2</span></code> を変更して、プロンプトを変更することもできます。</p>
+<p>もし現在のディレクトリから追加でスタートアップファイルを読み出したいのなら、グローバルのスタートアップファイルの中に <code class="docutils literal"><span class="pre">if</span> <span class="pre">os.path.isfile('.pythonrc.py'):</span> <span class="pre">exec(open('.pythonrc.py').read())</span></code> のようなプログラムを書くことができます。スクリプト中でスタートアップファイルを使いたいのなら、以下のようにしてスクリプト中で明示的に実行しなければなりません:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;PYTHONSTARTUP&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">filename</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="n">exec</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-customization-modules">
+<span id="tut-customize"></span><h3>2.2.5. カスタマイズ用モジュール<a class="headerlink" href="#the-customization-modules" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>Python はユーザーが Python をカスタマイズするための2つのフック、 <code class="xref py py-mod docutils literal"><span class="pre">sitecustomize</span></code> と <code class="xref py py-mod docutils literal"><span class="pre">usercustomize</span></code> を提供しています。
+これがどのように動作しているかを知るには、まずはユーザーの site-packages ディレクトリの場所を見つける必要があります。
+Python を起動して次のコードを実行してください:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">site</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">site</span><span class="o">.</span><span class="n">getusersitepackages</span><span class="p">()</span>
+<span class="go">&#39;/home/user/.local/lib/python3.2/site-packages&#39;</span>
+</pre></div>
+</div>
+<p><code class="file docutils literal"><span class="pre">usercustomize.py</span></code> をそのディレクトリーに作成して、そこでやりたいことをすべて書くことができます。
+このファイルは自動インポートを無効にする <a class="reference internal" href="../using/cmdline.html#cmdoption-s"><code class="xref std std-option docutils literal"><span class="pre">-s</span></code></a> オプションを使わない限り、全ての Python の起動時に実行されます。</p>
+<p><code class="xref py py-mod docutils literal"><span class="pre">sitecustomize</span></code> モジュールも同じように動作しますが、一般的にコンピューターの管理者によって、グローバルの site-packages ディレクトリに作成され、 <code class="xref py py-mod docutils literal"><span class="pre">usercustomize</span></code> より先にインポートされます。
+詳細は <a class="reference internal" href="../library/site.html#module-site" title="site: Module responsible for site-specific configuration."><code class="xref py py-mod docutils literal"><span class="pre">site</span></code></a> モジュールのドキュメントを参照してください。</p>
+<p class="rubric">脚注</p>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><p class="first last">Unixでは、 Python 3.x インタープリタの実行ファイルはデフォルトでは <code class="docutils literal"><span class="pre">python</span></code> という名前ではインストールされません。
+同時にインストールされた Python 2.x 実行ファイルと衝突させないためです。</p>
+</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td><p class="first last">GNU Readline パッケージに関する問題のせいで妨げられることがあります。</p>
+</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2. Python インタプリタを使う</a><ul>
+<li><a class="reference internal" href="#invoking-the-interpreter">2.1. インタプリタを起動する</a><ul>
+<li><a class="reference internal" href="#argument-passing">2.1.1. 引数の受け渡し</a></li>
+<li><a class="reference internal" href="#interactive-mode">2.1.2. 対話モード</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-interpreter-and-its-environment">2.2. インタプリタとその環境</a><ul>
+<li><a class="reference internal" href="#error-handling">2.2.1. エラー処理</a></li>
+<li><a class="reference internal" href="#executable-python-scripts">2.2.2. 実行可能な Python スクリプト</a></li>
+<li><a class="reference internal" href="#source-code-encoding">2.2.3. ソースコードの文字コード</a></li>
+<li><a class="reference internal" href="#the-interactive-startup-file">2.2.4. 対話モード用の起動時実行ファイル</a></li>
+<li><a class="reference internal" href="#the-customization-modules">2.2.5. カスタマイズ用モジュール</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="appetite.html"
+                        title="前の章へ">1. やる気を高めよう</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="introduction.html"
+                        title="次の章へ">3. 形式ばらない Python の紹介</a></p>
+<h3>このページ</h3>
+<ul class="this-page-menu">
+  <li><a href="../bugs.html">Report a Bug</a></li>
+  <li><a href="../_sources/tutorial/interpreter.txt"
+         rel="nofollow">Show Source</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="introduction.html" title="3. 形式ばらない Python の紹介"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="appetite.html" title="1. やる気を高めよう"
+             >前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="http://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.3.6</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Python チュートリアル</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+    &copy; <a href="../copyright.html">Copyright</a> 1990-2015, Python Software Foundation.
+    <br />
+    The Python Software Foundation is a non-profit corporation.
+    <a href="http://www.python.org/psf/donations/">Please donate.</a>
+    <br />
+    Last updated on Dec 28, 2015.
+    <a href="../bugs.html">Found a bug</a>?
+    <br />
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1.
+    <br />
+    <a href="https://github.com/python-doc-ja/python-doc-ja">Pythonドキュメント日本語翻訳プロジェクト</a>
+    によって翻訳されました。
+    <a href="https://github.com/python-doc-ja/python-doc-ja/issues">誤訳を報告する。</a>
+    </div>
+
+  </body>
+</html>

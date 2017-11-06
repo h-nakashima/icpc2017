@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ファイルオブジェクト &mdash; Python 3.3.6 ドキュメント</title>
+    
+    <link rel="stylesheet" href="../_static/pydoctheme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.3.6',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Python 3.3.6 ドキュメント 内を検索"
+          href="../_static/opensearch.xml"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="Python 3.3.6 ドキュメント" href="../contents.html" />
+    <link rel="up" title="具象オブジェクト (concrete object) レイヤ" href="concrete.html" />
+    <link rel="next" title="モジュールオブジェクト (module object)" href="module.html" />
+    <link rel="prev" title="インスタンスメソッドオブジェクト(Instance Method Objects)" href="method.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/py.png" />
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/_jp.js"></script>
+    <script type="text/javascript" src="../_static/version_switch.js"></script>
+    
+ 
+
+  <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-34175846-1', 'python.jp');
+        ga('send', 'pageview');
+
+      </script>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="module.html" title="モジュールオブジェクト (module object)"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="method.html" title="インスタンスメソッドオブジェクト(Instance Method Objects)"
+             accesskey="P">前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="http://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.3.6</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Python/C API リファレンスマニュアル</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="concrete.html" accesskey="U">具象オブジェクト (concrete object) レイヤ</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="file-objects">
+<span id="fileobjects"></span><h1>ファイルオブジェクト<a class="headerlink" href="#file-objects" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p id="index-0">これらの API は、 Python 2 の組み込みのファイルオブジェクトの C API を最低限エミュレートするためのものです。
+それらは、標準 C ライブラリでサポートされているバッファ付き I/O (<code class="xref c c-type docutils literal"><span class="pre">FILE*</span></code>) に頼るために使われます。
+Python 3 では、ファイルとストリームは新しい <a class="reference internal" href="../library/io.html#module-io" title="io: Core tools for working with streams."><code class="xref py py-mod docutils literal"><span class="pre">io</span></code></a> モジュールを使用され、そこに OS の低レベルなバッファ付き I/O の上にいくつかの層が定義されています。
+下で解説されている関数は、それらの新しい API の便利な C ラッパーであり、インタプリタでの内部的なエラー通知に向いています;
+サードパーティーのコードは代わりに <a class="reference internal" href="../library/io.html#module-io" title="io: Core tools for working with streams."><code class="xref py py-mod docutils literal"><span class="pre">io</span></code></a> の API を使うことが推奨されます。</p>
+<dl class="function">
+<dt id="c.PyFile_FromFd">
+<code class="descname">PyFile_FromFd</code><span class="sig-paren">(</span>int<em>&nbsp;fd</em>, char<em>&nbsp;*name</em>, char<em>&nbsp;*mode</em>, int<em>&nbsp;buffering</em>, char<em>&nbsp;*encoding</em>, char<em>&nbsp;*errors</em>, char<em>&nbsp;*newline</em>, int<em>&nbsp;closefd</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyFile_FromFd" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>既に開かれているファイル <em>fd</em> のファイルディスクリプタから Python のファイルオブジェクトを作成します。
+引数 <em>name</em> 、 <em>encoding</em> 、 <em>errors</em> 、 <em>newline</em> には <em>NULL</em> を指定してデフォルトの値を使うことができます;
+<em>buffering</em> には <em>-1</em> を指定してデフォルトの値を使うことができます。
+<em>name</em> は無視されるのですが、後方互換性のために残されています。
+失敗すると <em>NULL</em> を返します。
+より包括的な引数の解説は、 <a class="reference internal" href="../library/io.html#io.open" title="io.open"><code class="xref py py-func docutils literal"><span class="pre">io.open()</span></code></a> 関数のドキュメントを参照してください。</p>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">Python ストリームは自身のバッファリング層を持つため、ファイル記述子のOSレベルのバッファリングと併用すると、様々な問題 (予期せぬデータ順) などを引き起こします。</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">バージョン 3.2 で変更: </span><em>name</em> 属性の無視</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyObject_AsFileDescriptor">
+int <code class="descname">PyObject_AsFileDescriptor</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*p</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyObject_AsFileDescriptor" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>Python オブジェクトからファイル記述子を取り出します。オブジェクトが整数なら、その値を返します。 整数でない場合、オブジェクトに <a class="reference internal" href="../library/io.html#io.IOBase.fileno" title="io.IOBase.fileno"><code class="xref py py-meth docutils literal"><span class="pre">fileno()</span></code></a> メソッドがあれば呼び出します; この場合、 <a class="reference internal" href="../library/io.html#io.IOBase.fileno" title="io.IOBase.fileno"><code class="xref py py-meth docutils literal"><span class="pre">fileno()</span></code></a> メソッドは ファイル記述子の値として整数を返さなければなりません。失敗すると例外を設定して <code class="docutils literal"><span class="pre">-1</span></code> を返します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyFile_GetLine">
+<a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a>* <code class="descname">PyFile_GetLine</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*p</em>, int<em>&nbsp;n</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyFile_GetLine" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p id="index-1"><code class="docutils literal"><span class="pre">p.readline([*n*])</span></code> と同じで、この関数はオブジェクト <em>p</em> の各行を読み出します。 <em>p</em> はファイルオブジェクトか、 <a class="reference internal" href="../library/io.html#io.IOBase.readline" title="io.IOBase.readline"><code class="xref py py-meth docutils literal"><span class="pre">readline()</span></code></a> メソッドを持つ何らかのオブジェクトでかまいません。 <em>n</em> が <code class="docutils literal"><span class="pre">0</span></code> の場合、行の長さに関係なく正確に 1 行だけ読み出します。 <em>n</em> が <code class="docutils literal"><span class="pre">0</span></code> より大きければ、 <em>n</em> バイト以上のデータは読み出しません; 従って、行の一部だけが返される場合があります。 どちらの場合でも、読み出し後すぐにファイルの終端に到達した場合には空文字列を 返します。 <em>n</em> が <code class="docutils literal"><span class="pre">0</span></code> より小さければ、長さに関わらず 1 行だけを 読み出しますが、すぐにファイルの終端に到達した場合には <a class="reference internal" href="../library/exceptions.html#EOFError" title="EOFError"><code class="xref py py-exc docutils literal"><span class="pre">EOFError</span></code></a> を送出します。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyFile_WriteObject">
+int <code class="descname">PyFile_WriteObject</code><span class="sig-paren">(</span><a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*obj</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*p</em>, int<em>&nbsp;flags</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyFile_WriteObject" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p id="index-2">オブジェクト <em>obj</em> をファイルオブジェクト <em>p</em> に書き込みます。 <em>flag</em> がサポートするフラグは <code class="xref py py-const docutils literal"><span class="pre">Py_PRINT_RAW</span></code> だけです; このフラグを指定すると、オブジェクトに <a class="reference internal" href="../library/functions.html#repr" title="repr"><code class="xref py py-func docutils literal"><span class="pre">repr()</span></code></a> ではなく <a class="reference internal" href="../library/stdtypes.html#str" title="str"><code class="xref py py-func docutils literal"><span class="pre">str()</span></code></a> を適用した結果をファイルに書き出します。成功した場合には <code class="docutils literal"><span class="pre">0</span></code> を返し、失敗すると <code class="docutils literal"><span class="pre">-1</span></code> を返して適切な例外をセットします。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.PyFile_WriteString">
+int <code class="descname">PyFile_WriteString</code><span class="sig-paren">(</span>const char<em>&nbsp;*s</em>, <a class="reference internal" href="structures.html#c.PyObject" title="PyObject">PyObject</a><em>&nbsp;*p</em><span class="sig-paren">)</span><a class="headerlink" href="#c.PyFile_WriteString" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>文字列 <em>s</em> をファイルオブジェクト <em>p</em> に書き出します。成功した場合には <code class="docutils literal"><span class="pre">0</span></code> を返し、失敗すると <code class="docutils literal"><span class="pre">-1</span></code> を返して適切な例外をセットします。</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="method.html"
+                        title="前の章へ">インスタンスメソッドオブジェクト(Instance Method Objects)</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="module.html"
+                        title="次の章へ">モジュールオブジェクト (module object)</a></p>
+<h3>このページ</h3>
+<ul class="this-page-menu">
+  <li><a href="../bugs.html">Report a Bug</a></li>
+  <li><a href="../_sources/c-api/file.txt"
+         rel="nofollow">Show Source</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="module.html" title="モジュールオブジェクト (module object)"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="method.html" title="インスタンスメソッドオブジェクト(Instance Method Objects)"
+             >前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="http://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.3.6</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Python/C API リファレンスマニュアル</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="concrete.html" >具象オブジェクト (concrete object) レイヤ</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+    &copy; <a href="../copyright.html">Copyright</a> 1990-2015, Python Software Foundation.
+    <br />
+    The Python Software Foundation is a non-profit corporation.
+    <a href="http://www.python.org/psf/donations/">Please donate.</a>
+    <br />
+    Last updated on Dec 28, 2015.
+    <a href="../bugs.html">Found a bug</a>?
+    <br />
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1.
+    <br />
+    <a href="https://github.com/python-doc-ja/python-doc-ja">Pythonドキュメント日本語翻訳プロジェクト</a>
+    によって翻訳されました。
+    <a href="https://github.com/python-doc-ja/python-doc-ja/issues">誤訳を報告する。</a>
+    </div>
+
+  </body>
+</html>

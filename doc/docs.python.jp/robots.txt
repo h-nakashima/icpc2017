@@ -1,0 +1,5 @@
+User-Agent:*
+Disallow: /2.*/
+
+User-Agent:*
+Disallow: /3.*/

@@ -1,0 +1,428 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>8.4. collections.abc — コレクションの抽象基底クラス &mdash; Python 3.4.3 ドキュメント</title>
+    
+    <link rel="stylesheet" href="../_static/pydoctheme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.4.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Python 3.4.3 ドキュメント 内を検索"
+          href="../_static/opensearch.xml"/>
+    <link rel="author" title="このドキュメントについて" href="../about.html" />
+    <link rel="copyright" title="著作権" href="../copyright.html" />
+    <link rel="top" title="Python 3.4.3 ドキュメント" href="../contents.html" />
+    <link rel="up" title="8. データ型" href="datatypes.html" />
+    <link rel="next" title="8.5. heapq — ヒープキューアルゴリズム" href="heapq.html" />
+    <link rel="prev" title="8.3. collections — コンテナデータ型" href="collections.html" />
+    <link rel="shortcut icon" type="image/png" href="../_static/py.png" />
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/_jp.js"></script>
+    <script type="text/javascript" src="../_static/version_switch.js"></script>
+    
+ 
+
+  <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-34175846-1', 'python.jp');
+        ga('send', 'pageview');
+
+      </script>
+  <body role="document">  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="heapq.html" title="8.5. heapq — ヒープキューアルゴリズム"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="collections.html" title="8.3. collections — コンテナデータ型"
+             accesskey="P">前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="https://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.4.3</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Python 標準ライブラリ</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="datatypes.html" accesskey="U">8. データ型</a> &raquo;</li> 
+      </ul>
+    </div>    
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-collections.abc">
+<span id="collections-abc-abstract-base-classes-for-containers"></span><h1>8.4. <a class="reference internal" href="#module-collections.abc" title="collections.abc: Abstract base classes for containers"><code class="xref py py-mod docutils literal"><span class="pre">collections.abc</span></code></a> &#8212; コレクションの抽象基底クラス<a class="headerlink" href="#module-collections.abc" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="versionadded">
+<p><span class="versionmodified">バージョン 3.3 で追加: </span>以前はこのモジュールは <a class="reference internal" href="collections.html#module-collections" title="collections: Container datatypes"><code class="xref py py-mod docutils literal"><span class="pre">collections</span></code></a> モジュールの一部でした。</p>
+</div>
+<p><strong>ソースコード:</strong> <a class="reference external" href="https://hg.python.org/cpython/file/3.4/Lib/_collections_abc.py">Lib/_collections_abc.py</a></p>
+<hr class="docutils" />
+<p>このモジュールは、 <a class="reference internal" href="../glossary.html#term-abstract-base-class"><span class="xref std std-term">抽象基底クラス</span></a> を提供します。抽象基底クラスは、クラスが特定のインタフェースを提供しているか、例えばハッシュ可能であるかやマッピングであるかを判定します。</p>
+<div class="section" id="collections-abstract-base-classes">
+<span id="id1"></span><h2>8.4.1. コレクション抽象基底クラス<a class="headerlink" href="#collections-abstract-base-classes" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>collections モジュールは以下の <a class="reference internal" href="../glossary.html#term-abstract-base-class"><span class="xref std std-term">ABC (抽象基底クラス)</span></a> を提供します:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="18%" />
+<col width="18%" />
+<col width="43%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">ABC</th>
+<th class="head"><p class="first last">継承しているクラス</p>
+</th>
+<th class="head"><p class="first last">抽象メソッド</p>
+</th>
+<th class="head"><p class="first last">mixin メソッド</p>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="#collections.abc.Container" title="collections.abc.Container"><code class="xref py py-class docutils literal"><span class="pre">Container</span></code></a></td>
+<td>&nbsp;</td>
+<td><code class="docutils literal"><span class="pre">__contains__</span></code></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#collections.abc.Hashable" title="collections.abc.Hashable"><code class="xref py py-class docutils literal"><span class="pre">Hashable</span></code></a></td>
+<td>&nbsp;</td>
+<td><code class="docutils literal"><span class="pre">__hash__</span></code></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#collections.abc.Iterable" title="collections.abc.Iterable"><code class="xref py py-class docutils literal"><span class="pre">Iterable</span></code></a></td>
+<td>&nbsp;</td>
+<td><code class="docutils literal"><span class="pre">__iter__</span></code></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#collections.abc.Iterator" title="collections.abc.Iterator"><code class="xref py py-class docutils literal"><span class="pre">Iterator</span></code></a></td>
+<td><a class="reference internal" href="#collections.abc.Iterable" title="collections.abc.Iterable"><code class="xref py py-class docutils literal"><span class="pre">Iterable</span></code></a></td>
+<td><code class="docutils literal"><span class="pre">__next__</span></code></td>
+<td><code class="docutils literal"><span class="pre">__iter__</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#collections.abc.Sized" title="collections.abc.Sized"><code class="xref py py-class docutils literal"><span class="pre">Sized</span></code></a></td>
+<td>&nbsp;</td>
+<td><code class="docutils literal"><span class="pre">__len__</span></code></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#collections.abc.Callable" title="collections.abc.Callable"><code class="xref py py-class docutils literal"><span class="pre">Callable</span></code></a></td>
+<td>&nbsp;</td>
+<td><code class="docutils literal"><span class="pre">__call__</span></code></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#collections.abc.Sequence" title="collections.abc.Sequence"><code class="xref py py-class docutils literal"><span class="pre">Sequence</span></code></a></td>
+<td><a class="reference internal" href="#collections.abc.Sized" title="collections.abc.Sized"><code class="xref py py-class docutils literal"><span class="pre">Sized</span></code></a>,
+<a class="reference internal" href="#collections.abc.Iterable" title="collections.abc.Iterable"><code class="xref py py-class docutils literal"><span class="pre">Iterable</span></code></a>,
+<a class="reference internal" href="#collections.abc.Container" title="collections.abc.Container"><code class="xref py py-class docutils literal"><span class="pre">Container</span></code></a></td>
+<td><code class="docutils literal"><span class="pre">__getitem__</span></code>,
+<code class="docutils literal"><span class="pre">__len__</span></code></td>
+<td><p class="first last"><code class="docutils literal"><span class="pre">__contains__</span></code>, <code class="docutils literal"><span class="pre">__iter__</span></code>, <code class="docutils literal"><span class="pre">__reversed__</span></code>, <code class="docutils literal"><span class="pre">index</span></code>, <code class="docutils literal"><span class="pre">count</span></code></p>
+</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#collections.abc.MutableSequence" title="collections.abc.MutableSequence"><code class="xref py py-class docutils literal"><span class="pre">MutableSequence</span></code></a></td>
+<td><a class="reference internal" href="#collections.abc.Sequence" title="collections.abc.Sequence"><code class="xref py py-class docutils literal"><span class="pre">Sequence</span></code></a></td>
+<td><code class="docutils literal"><span class="pre">__getitem__</span></code>,
+<code class="docutils literal"><span class="pre">__setitem__</span></code>,
+<code class="docutils literal"><span class="pre">__delitem__</span></code>,
+<code class="docutils literal"><span class="pre">__len__</span></code>,
+<code class="docutils literal"><span class="pre">insert</span></code></td>
+<td><p class="first last"><a class="reference internal" href="#collections.abc.Sequence" title="collections.abc.Sequence"><code class="xref py py-class docutils literal"><span class="pre">Sequence</span></code></a> から継承したメソッドと、 <code class="docutils literal"><span class="pre">append</span></code>, <code class="docutils literal"><span class="pre">reverse</span></code>, <code class="docutils literal"><span class="pre">extend</span></code>, <code class="docutils literal"><span class="pre">pop</span></code>, <code class="docutils literal"><span class="pre">remove</span></code>, <code class="docutils literal"><span class="pre">__iadd__</span></code></p>
+</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#collections.abc.Set" title="collections.abc.Set"><code class="xref py py-class docutils literal"><span class="pre">Set</span></code></a></td>
+<td><a class="reference internal" href="#collections.abc.Sized" title="collections.abc.Sized"><code class="xref py py-class docutils literal"><span class="pre">Sized</span></code></a>,
+<a class="reference internal" href="#collections.abc.Iterable" title="collections.abc.Iterable"><code class="xref py py-class docutils literal"><span class="pre">Iterable</span></code></a>,
+<a class="reference internal" href="#collections.abc.Container" title="collections.abc.Container"><code class="xref py py-class docutils literal"><span class="pre">Container</span></code></a></td>
+<td><code class="docutils literal"><span class="pre">__contains__</span></code>,
+<code class="docutils literal"><span class="pre">__iter__</span></code>,
+<code class="docutils literal"><span class="pre">__len__</span></code></td>
+<td><p class="first last"><code class="docutils literal"><span class="pre">__le__</span></code>, <code class="docutils literal"><span class="pre">__lt__</span></code>, <code class="docutils literal"><span class="pre">__eq__</span></code>, <code class="docutils literal"><span class="pre">__ne__</span></code>, <code class="docutils literal"><span class="pre">__gt__</span></code>, <code class="docutils literal"><span class="pre">__ge__</span></code>, <code class="docutils literal"><span class="pre">__and__</span></code>, <code class="docutils literal"><span class="pre">__or__</span></code> <code class="docutils literal"><span class="pre">__sub__</span></code>, <code class="docutils literal"><span class="pre">__xor__</span></code>, and <code class="docutils literal"><span class="pre">isdisjoint</span></code></p>
+</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#collections.abc.MutableSet" title="collections.abc.MutableSet"><code class="xref py py-class docutils literal"><span class="pre">MutableSet</span></code></a></td>
+<td><a class="reference internal" href="#collections.abc.Set" title="collections.abc.Set"><code class="xref py py-class docutils literal"><span class="pre">Set</span></code></a></td>
+<td><code class="docutils literal"><span class="pre">__contains__</span></code>,
+<code class="docutils literal"><span class="pre">__iter__</span></code>,
+<code class="docutils literal"><span class="pre">__len__</span></code>,
+<code class="docutils literal"><span class="pre">add</span></code>,
+<code class="docutils literal"><span class="pre">discard</span></code></td>
+<td><p class="first last"><a class="reference internal" href="#collections.abc.Set" title="collections.abc.Set"><code class="xref py py-class docutils literal"><span class="pre">Set</span></code></a> から継承したメソッドと、 <code class="docutils literal"><span class="pre">clear</span></code>, <code class="docutils literal"><span class="pre">pop</span></code>, <code class="docutils literal"><span class="pre">remove</span></code>, <code class="docutils literal"><span class="pre">__ior__</span></code>, <code class="docutils literal"><span class="pre">__iand__</span></code>, <code class="docutils literal"><span class="pre">__ixor__</span></code>, <code class="docutils literal"><span class="pre">__isub__</span></code></p>
+</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#collections.abc.Mapping" title="collections.abc.Mapping"><code class="xref py py-class docutils literal"><span class="pre">Mapping</span></code></a></td>
+<td><a class="reference internal" href="#collections.abc.Sized" title="collections.abc.Sized"><code class="xref py py-class docutils literal"><span class="pre">Sized</span></code></a>,
+<a class="reference internal" href="#collections.abc.Iterable" title="collections.abc.Iterable"><code class="xref py py-class docutils literal"><span class="pre">Iterable</span></code></a>,
+<a class="reference internal" href="#collections.abc.Container" title="collections.abc.Container"><code class="xref py py-class docutils literal"><span class="pre">Container</span></code></a></td>
+<td><code class="docutils literal"><span class="pre">__getitem__</span></code>,
+<code class="docutils literal"><span class="pre">__iter__</span></code>,
+<code class="docutils literal"><span class="pre">__len__</span></code></td>
+<td><p class="first last"><code class="docutils literal"><span class="pre">__contains__</span></code>, <code class="docutils literal"><span class="pre">keys</span></code>, <code class="docutils literal"><span class="pre">items</span></code>, <code class="docutils literal"><span class="pre">values</span></code>, <code class="docutils literal"><span class="pre">get</span></code>, <code class="docutils literal"><span class="pre">__eq__</span></code>, <code class="docutils literal"><span class="pre">__ne__</span></code></p>
+</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#collections.abc.MutableMapping" title="collections.abc.MutableMapping"><code class="xref py py-class docutils literal"><span class="pre">MutableMapping</span></code></a></td>
+<td><a class="reference internal" href="#collections.abc.Mapping" title="collections.abc.Mapping"><code class="xref py py-class docutils literal"><span class="pre">Mapping</span></code></a></td>
+<td><code class="docutils literal"><span class="pre">__getitem__</span></code>,
+<code class="docutils literal"><span class="pre">__setitem__</span></code>,
+<code class="docutils literal"><span class="pre">__delitem__</span></code>,
+<code class="docutils literal"><span class="pre">__iter__</span></code>,
+<code class="docutils literal"><span class="pre">__len__</span></code></td>
+<td><p class="first last"><a class="reference internal" href="#collections.abc.Mapping" title="collections.abc.Mapping"><code class="xref py py-class docutils literal"><span class="pre">Mapping</span></code></a> から継承したメソッドと、 <code class="docutils literal"><span class="pre">pop</span></code>, <code class="docutils literal"><span class="pre">popitem</span></code>, <code class="docutils literal"><span class="pre">clear</span></code>, <code class="docutils literal"><span class="pre">update</span></code>, <code class="docutils literal"><span class="pre">setdefault</span></code></p>
+</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#collections.abc.MappingView" title="collections.abc.MappingView"><code class="xref py py-class docutils literal"><span class="pre">MappingView</span></code></a></td>
+<td><a class="reference internal" href="#collections.abc.Sized" title="collections.abc.Sized"><code class="xref py py-class docutils literal"><span class="pre">Sized</span></code></a></td>
+<td>&nbsp;</td>
+<td><code class="docutils literal"><span class="pre">__len__</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#collections.abc.ItemsView" title="collections.abc.ItemsView"><code class="xref py py-class docutils literal"><span class="pre">ItemsView</span></code></a></td>
+<td><a class="reference internal" href="#collections.abc.MappingView" title="collections.abc.MappingView"><code class="xref py py-class docutils literal"><span class="pre">MappingView</span></code></a>,
+<a class="reference internal" href="#collections.abc.Set" title="collections.abc.Set"><code class="xref py py-class docutils literal"><span class="pre">Set</span></code></a></td>
+<td>&nbsp;</td>
+<td><code class="docutils literal"><span class="pre">__contains__</span></code>,
+<code class="docutils literal"><span class="pre">__iter__</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#collections.abc.KeysView" title="collections.abc.KeysView"><code class="xref py py-class docutils literal"><span class="pre">KeysView</span></code></a></td>
+<td><a class="reference internal" href="#collections.abc.MappingView" title="collections.abc.MappingView"><code class="xref py py-class docutils literal"><span class="pre">MappingView</span></code></a>,
+<a class="reference internal" href="#collections.abc.Set" title="collections.abc.Set"><code class="xref py py-class docutils literal"><span class="pre">Set</span></code></a></td>
+<td>&nbsp;</td>
+<td><code class="docutils literal"><span class="pre">__contains__</span></code>,
+<code class="docutils literal"><span class="pre">__iter__</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#collections.abc.ValuesView" title="collections.abc.ValuesView"><code class="xref py py-class docutils literal"><span class="pre">ValuesView</span></code></a></td>
+<td><a class="reference internal" href="#collections.abc.MappingView" title="collections.abc.MappingView"><code class="xref py py-class docutils literal"><span class="pre">MappingView</span></code></a></td>
+<td>&nbsp;</td>
+<td><code class="docutils literal"><span class="pre">__contains__</span></code>, <code class="docutils literal"><span class="pre">__iter__</span></code></td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="collections.abc.Container">
+<em class="property">class </em><code class="descclassname">collections.abc.</code><code class="descname">Container</code><a class="headerlink" href="#collections.abc.Container" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="collections.abc.Hashable">
+<em class="property">class </em><code class="descclassname">collections.abc.</code><code class="descname">Hashable</code><a class="headerlink" href="#collections.abc.Hashable" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="collections.abc.Sized">
+<em class="property">class </em><code class="descclassname">collections.abc.</code><code class="descname">Sized</code><a class="headerlink" href="#collections.abc.Sized" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="collections.abc.Callable">
+<em class="property">class </em><code class="descclassname">collections.abc.</code><code class="descname">Callable</code><a class="headerlink" href="#collections.abc.Callable" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>それぞれメソッド <a class="reference internal" href="../reference/datamodel.html#object.__contains__" title="object.__contains__"><code class="xref py py-meth docutils literal"><span class="pre">__contains__()</span></code></a>, <a class="reference internal" href="../reference/datamodel.html#object.__hash__" title="object.__hash__"><code class="xref py py-meth docutils literal"><span class="pre">__hash__()</span></code></a>, <a class="reference internal" href="../reference/datamodel.html#object.__len__" title="object.__len__"><code class="xref py py-meth docutils literal"><span class="pre">__len__()</span></code></a>, and <a class="reference internal" href="../reference/datamodel.html#object.__call__" title="object.__call__"><code class="xref py py-meth docutils literal"><span class="pre">__call__()</span></code></a> を提供するクラスの ABC です。</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="collections.abc.Iterable">
+<em class="property">class </em><code class="descclassname">collections.abc.</code><code class="descname">Iterable</code><a class="headerlink" href="#collections.abc.Iterable" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="../reference/datamodel.html#object.__iter__" title="object.__iter__"><code class="xref py py-meth docutils literal"><span class="pre">__iter__()</span></code></a> メソッドを提供するクラスの ABC です。 <a class="reference internal" href="../glossary.html#term-iterable"><span class="xref std std-term">iterable</span></a> の定義も参照してください。</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="collections.abc.Iterator">
+<em class="property">class </em><code class="descclassname">collections.abc.</code><code class="descname">Iterator</code><a class="headerlink" href="#collections.abc.Iterator" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p><a class="reference internal" href="stdtypes.html#iterator.__iter__" title="iterator.__iter__"><code class="xref py py-meth docutils literal"><span class="pre">__iter__()</span></code></a> メソッドと <a class="reference internal" href="stdtypes.html#iterator.__next__" title="iterator.__next__"><code class="xref py py-meth docutils literal"><span class="pre">__next__()</span></code></a> メソッドを提供するクラスの ABC です。 <a class="reference internal" href="../glossary.html#term-iterator"><span class="xref std std-term">iterator</span></a> の定義も参照してください。</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="collections.abc.Sequence">
+<em class="property">class </em><code class="descclassname">collections.abc.</code><code class="descname">Sequence</code><a class="headerlink" href="#collections.abc.Sequence" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="collections.abc.MutableSequence">
+<em class="property">class </em><code class="descclassname">collections.abc.</code><code class="descname">MutableSequence</code><a class="headerlink" href="#collections.abc.MutableSequence" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>読み込み専用とミュータブルな <a class="reference internal" href="../glossary.html#term-sequence"><span class="xref std std-term">シーケンス</span></a> の ABC です。</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="collections.abc.Set">
+<em class="property">class </em><code class="descclassname">collections.abc.</code><code class="descname">Set</code><a class="headerlink" href="#collections.abc.Set" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="collections.abc.MutableSet">
+<em class="property">class </em><code class="descclassname">collections.abc.</code><code class="descname">MutableSet</code><a class="headerlink" href="#collections.abc.MutableSet" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>読み込み専用とミュータブルな集合の ABC です。</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="collections.abc.Mapping">
+<em class="property">class </em><code class="descclassname">collections.abc.</code><code class="descname">Mapping</code><a class="headerlink" href="#collections.abc.Mapping" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="collections.abc.MutableMapping">
+<em class="property">class </em><code class="descclassname">collections.abc.</code><code class="descname">MutableMapping</code><a class="headerlink" href="#collections.abc.MutableMapping" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>読み込み専用とミュータブルな <a class="reference internal" href="../glossary.html#term-mapping"><span class="xref std std-term">マッピング</span></a> の ABC です。</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="collections.abc.MappingView">
+<em class="property">class </em><code class="descclassname">collections.abc.</code><code class="descname">MappingView</code><a class="headerlink" href="#collections.abc.MappingView" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="collections.abc.ItemsView">
+<em class="property">class </em><code class="descclassname">collections.abc.</code><code class="descname">ItemsView</code><a class="headerlink" href="#collections.abc.ItemsView" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="collections.abc.KeysView">
+<em class="property">class </em><code class="descclassname">collections.abc.</code><code class="descname">KeysView</code><a class="headerlink" href="#collections.abc.KeysView" title="この定義へのパーマリンク">¶</a></dt>
+<dt id="collections.abc.ValuesView">
+<em class="property">class </em><code class="descclassname">collections.abc.</code><code class="descname">ValuesView</code><a class="headerlink" href="#collections.abc.ValuesView" title="この定義へのパーマリンク">¶</a></dt>
+<dd><p>マッピング、要素、キー、値の <a class="reference internal" href="../glossary.html#term-view"><span class="xref std std-term">ビュー</span></a> の ABC です。</p>
+</dd></dl>
+
+<p>これらの ABC はクラスやインスタンスが特定の機能を提供しているかどうかを調べるのに使えます。例えば:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="n">size</span> <span class="o">=</span> <span class="k">None</span>
+<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">myvar</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Sized</span><span class="p">):</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">myvar</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>幾つかの ABC はコンテナ型 API を提供するクラスを開発するのを助ける mixin 型としても使えます。例えば、 <a class="reference internal" href="#collections.abc.Set" title="collections.abc.Set"><code class="xref py py-class docutils literal"><span class="pre">Set</span></code></a> API を提供するクラスを作る場合、3つの基本になる抽象メソッド <a class="reference internal" href="../reference/datamodel.html#object.__contains__" title="object.__contains__"><code class="xref py py-meth docutils literal"><span class="pre">__contains__()</span></code></a>, <a class="reference internal" href="../reference/datamodel.html#object.__iter__" title="object.__iter__"><code class="xref py py-meth docutils literal"><span class="pre">__iter__()</span></code></a>, <a class="reference internal" href="../reference/datamodel.html#object.__len__" title="object.__len__"><code class="xref py py-meth docutils literal"><span class="pre">__len__()</span></code></a> だけが必要です。ABC が残りの <a class="reference internal" href="../reference/datamodel.html#object.__and__" title="object.__and__"><code class="xref py py-meth docutils literal"><span class="pre">__and__()</span></code></a> や <code class="xref py py-meth docutils literal"><span class="pre">isdisjoint()</span></code> といったメソッドを提供します:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span class="k">class</span> <span class="nc">ListBasedSet</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Set</span><span class="p">):</span>
+     <span class="sd">&#39;&#39;&#39; Alternate set implementation favoring space over speed</span>
+<span class="sd">         and not requiring the set elements to be hashable. &#39;&#39;&#39;</span>
+     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">):</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">elements</span> <span class="o">=</span> <span class="n">lst</span> <span class="o">=</span> <span class="p">[]</span>
+         <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">iterable</span><span class="p">:</span>
+             <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">:</span>
+                 <span class="n">lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+     <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span>
+     <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+         <span class="k">return</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">elements</span>
+     <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span>
+
+<span class="n">s1</span> <span class="o">=</span> <span class="n">ListBasedSet</span><span class="p">(</span><span class="s">&#39;abcdef&#39;</span><span class="p">)</span>
+<span class="n">s2</span> <span class="o">=</span> <span class="n">ListBasedSet</span><span class="p">(</span><span class="s">&#39;defghi&#39;</span><span class="p">)</span>
+<span class="n">overlap</span> <span class="o">=</span> <span class="n">s1</span> <span class="o">&amp;</span> <span class="n">s2</span>            <span class="c"># The __and__() method is supported automatically</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="#collections.abc.Set" title="collections.abc.Set"><code class="xref py py-class docutils literal"><span class="pre">Set</span></code></a> と <a class="reference internal" href="#collections.abc.MutableSet" title="collections.abc.MutableSet"><code class="xref py py-class docutils literal"><span class="pre">MutableSet</span></code></a> を mixin型として利用するときの注意点:</p>
+<ol class="arabic simple">
+<li><p class="first">幾つかの set の操作は新しい set を作るので、デフォルトの mixin メソッドは iterable から新しいインスタンスを作成する方法を必要とします。クラスのコンストラクタは <code class="docutils literal"><span class="pre">ClassName(iterable)</span></code> の形のシグネチャを持つと仮定されます。内部の <code class="xref py py-meth docutils literal"><span class="pre">_from_iterable()</span></code> というクラスメソッドが <code class="docutils literal"><span class="pre">cls(iterable)</span></code> を呼び出して新しい set を作る部分でこの仮定が使われています。コンストラクタのシグネチャが異なるクラスで <a class="reference internal" href="#collections.abc.Set" title="collections.abc.Set"><code class="xref py py-class docutils literal"><span class="pre">Set</span></code></a> を使う場合は、 iterable 引数から新しいインスタンスを生成するように <code class="xref py py-meth docutils literal"><span class="pre">_from_iterable()</span></code> をオーバーライドする必要があります。</p>
+</li>
+<li><p class="first">(たぶん意味はそのままに速度を向上する目的で)比較をオーバーライドする場合、 <a class="reference internal" href="../reference/datamodel.html#object.__le__" title="object.__le__"><code class="xref py py-meth docutils literal"><span class="pre">__le__()</span></code></a> および <a class="reference internal" href="../reference/datamodel.html#object.__ge__" title="object.__ge__"><code class="xref py py-meth docutils literal"><span class="pre">__ge__()</span></code></a> だけを再定義すれば、その他の演算は自動的に追随します。</p>
+</li>
+<li><p class="first"><a class="reference internal" href="#collections.abc.Set" title="collections.abc.Set"><code class="xref py py-class docutils literal"><span class="pre">Set</span></code></a> mixin型は set のハッシュ値を計算する <code class="xref py py-meth docutils literal"><span class="pre">_hash()</span></code> メソッドを提供しますが、すべての set が hashable や immutable とは限らないので、 <a class="reference internal" href="../reference/datamodel.html#object.__hash__" title="object.__hash__"><code class="xref py py-meth docutils literal"><span class="pre">__hash__()</span></code></a> は提供しません。 mixin を使ってハッシュ可能な set を作る場合は、 <a class="reference internal" href="#collections.abc.Set" title="collections.abc.Set"><code class="xref py py-class docutils literal"><span class="pre">Set</span></code></a> と <a class="reference internal" href="#collections.abc.Hashable" title="collections.abc.Hashable"><code class="xref py py-class docutils literal"><span class="pre">Hashable</span></code></a> の両方を継承して、 <code class="docutils literal"><span class="pre">__hash__</span> <span class="pre">=</span> <span class="pre">Set._hash</span></code> と定義してください。</p>
+</li>
+</ol>
+<div class="admonition seealso">
+<p class="first admonition-title">参考</p>
+<ul class="last simple">
+<li><p class="first"><a class="reference internal" href="#collections.abc.MutableSet" title="collections.abc.MutableSet"><code class="xref py py-class docutils literal"><span class="pre">MutableSet</span></code></a> を使った例として <a class="reference external" href="http://code.activestate.com/recipes/576694/">OrderedSet recipe</a>。</p>
+</li>
+<li><p class="first">ABCs についての詳細は、 <a class="reference internal" href="abc.html#module-abc" title="abc: Abstract base classes according to PEP 3119."><code class="xref py py-mod docutils literal"><span class="pre">abc</span></code></a> モジュールと <span class="target" id="index-2"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-3119"><strong>PEP 3119</strong></a> を参照してください。</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">目次</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">8.4. <code class="docutils literal"><span class="pre">collections.abc</span></code> &#8212; コレクションの抽象基底クラス</a><ul>
+<li><a class="reference internal" href="#collections-abstract-base-classes">8.4.1. コレクション抽象基底クラス</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="collections.html"
+                        title="前の章へ">8.3. <code class="docutils literal"><span class="pre">collections</span></code> &#8212; コンテナデータ型</a></p>
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="heapq.html"
+                        title="次の章へ">8.5. <code class="docutils literal"><span class="pre">heapq</span></code> &#8212; ヒープキューアルゴリズム</a></p>
+<h3>このページ</h3>
+<ul class="this-page-menu">
+  <li><a href="../bugs.html">Report a Bug</a></li>
+  <li><a href="../_sources/library/collections.abc.txt"
+         rel="nofollow">Show Source</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="検索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    モジュール、クラス、または関数名を入力してください
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="heapq.html" title="8.5. heapq — ヒープキューアルゴリズム"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="collections.html" title="8.3. collections — コンテナデータ型"
+             >前へ</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+                 style="vertical-align: middle; margin-top: -1px"/></li>
+        <li><a href="https://www.python.org/">Python</a> &raquo;</li>
+        <li>
+          <span class="version_switcher_placeholder">3.4.3</span>
+          <a href="../index.html">Documentation</a> &raquo;
+        </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Python 標準ライブラリ</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="datatypes.html" >8. データ型</a> &raquo;</li> 
+      </ul>
+    </div>  
+    <div class="footer">
+    &copy; <a href="../copyright.html">Copyright</a> 1990-2015, Python Software Foundation.
+    <br />
+    The Python Software Foundation is a non-profit corporation.
+    <a href="https://www.python.org/psf/donations/">Please donate.</a>
+    <br />
+    Last updated on Dec 28, 2015.
+    <a href="../bugs.html">Found a bug</a>?
+    <br />
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1.
+    <br />
+    <a href="https://github.com/python-doc-ja/python-doc-ja">Pythonドキュメント日本語翻訳プロジェクト</a>
+    によって翻訳されました。
+    <a href="https://github.com/python-doc-ja/python-doc-ja/issues">誤訳を報告する。</a>
+    </div>
+
+  </body>
+</html>
